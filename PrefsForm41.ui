@@ -1,0 +1,231 @@
+<ui version="4.0" >
+ <class>PrefsForm</class>
+ <widget class="QDialog" name="PrefsForm" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>431</width>
+    <height>257</height>
+   </rect>
+  </property>
+  <property name="windowTitle" >
+   <string>Blog account settings</string>
+  </property>
+  <layout class="QVBoxLayout" >
+   <property name="margin" >
+    <number>9</number>
+   </property>
+   <property name="spacing" >
+    <number>6</number>
+   </property>
+   <item>
+    <widget class="QGroupBox" name="gbLocalStorage" >
+     <property name="title" >
+      <string>Local storage</string>
+     </property>
+     <layout class="QGridLayout" >
+      <property name="margin" >
+       <number>9</number>
+      </property>
+      <property name="spacing" >
+       <number>6</number>
+      </property>
+      <item row="1" column="3" colspan="2" >
+       <spacer>
+        <property name="orientation" >
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" >
+         <size>
+          <width>151</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item row="1" column="2" >
+       <widget class="QLineEdit" name="leFileExtn" />
+      </item>
+      <item row="1" column="0" colspan="2" >
+       <widget class="QLabel" name="lFileExtn" >
+        <property name="text" >
+         <string>File e&amp;xtension</string>
+        </property>
+        <property name="buddy" >
+         <cstring>leFileExtn</cstring>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="4" >
+       <widget class="QPushButton" name="pbBrowse" >
+        <property name="enabled" >
+         <bool>true</bool>
+        </property>
+        <property name="text" >
+         <string>&amp;Browse</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="2" colspan="2" >
+       <widget class="QLineEdit" name="leLocalDir" />
+      </item>
+      <item row="0" column="0" colspan="2" >
+       <widget class="QLabel" name="label_7" >
+        <property name="text" >
+         <string>&amp;Directory</string>
+        </property>
+        <property name="buddy" >
+         <cstring>leLocalDir</cstring>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <layout class="QGridLayout" >
+     <property name="margin" >
+      <number>0</number>
+     </property>
+     <property name="spacing" >
+      <number>6</number>
+     </property>
+     <item rowspan="3" row="0" column="2" >
+      <widget class="QGroupBox" name="gbFeedbackDefaults" >
+       <property name="title" >
+        <string>Feedback defaults</string>
+       </property>
+       <layout class="QVBoxLayout" >
+        <property name="margin" >
+         <number>9</number>
+        </property>
+        <property name="spacing" >
+         <number>6</number>
+        </property>
+        <item>
+         <widget class="QCheckBox" name="cbAllowComments" >
+          <property name="text" >
+           <string>Allow comments</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QCheckBox" name="cbAllowTB" >
+          <property name="text" >
+           <string>Allow Trackback</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+     </item>
+     <item row="0" column="0" colspan="2" >
+      <widget class="QCheckBox" name="chUseNewWindows" >
+       <property name="text" >
+        <string>&amp;Open entries in new windows</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="0" colspan="2" >
+      <widget class="QCheckBox" name="cbPostAsSave" >
+       <property name="whatsThis" >
+        <string>If this is on, if you try to quit having successfully posted an entry but not saved it to disk, QTM will not prompt you to save.</string>
+       </property>
+       <property name="text" >
+        <string>Treat posting as saving</string>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="0" colspan="2" >
+      <widget class="QCheckBox" name="chCopyTitle" >
+       <property name="text" >
+        <string>Copy title when &amp;Quickposting</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <widget class="Line" name="line_2" >
+     <property name="orientation" >
+      <enum>Qt::Horizontal</enum>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" >
+     <property name="margin" >
+      <number>0</number>
+     </property>
+     <property name="spacing" >
+      <number>6</number>
+     </property>
+     <item>
+      <widget class="QPushButton" name="pbWhatsThis" >
+       <property name="toolTip" >
+        <string>Editor font</string>
+       </property>
+       <property name="text" >
+        <string>What's this?</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer>
+       <property name="orientation" >
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" >
+        <size>
+         <width>91</width>
+         <height>31</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QPushButton" name="okButton" >
+       <property name="text" >
+        <string>OK</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="cancelButton" >
+       <property name="text" >
+        <string>Cancel</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+  </layout>
+ </widget>
+ <tabstops>
+  <tabstop>pbBrowse</tabstop>
+  <tabstop>leLocalDir</tabstop>
+  <tabstop>leFileExtn</tabstop>
+  <tabstop>okButton</tabstop>
+  <tabstop>cancelButton</tabstop>
+ </tabstops>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>cancelButton</sender>
+   <signal>clicked()</signal>
+   <receiver>PrefsForm</receiver>
+   <slot>reject()</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>535</x>
+     <y>383</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>179</x>
+     <y>282</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>

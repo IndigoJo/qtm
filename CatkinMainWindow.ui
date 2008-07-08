@@ -1,0 +1,655 @@
+<ui version="4.0" >
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>800</width>
+    <height>600</height>
+   </rect>
+  </property>
+  <property name="windowTitle" >
+   <string>QTM [*]</string>
+  </property>
+  <property name="layoutDirection" >
+   <enum>Qt::LeftToRight</enum>
+  </property>
+  <property name="toolButtonStyle" >
+   <enum>Qt::ToolButtonTextUnderIcon</enum>
+  </property>
+  <widget class="QWidget" name="centralWidget" />
+  <widget class="QMenuBar" name="menuBar" >
+   <property name="geometry" >
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>800</width>
+     <height>27</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menu_Edit" >
+    <property name="title" >
+     <string>&amp;Edit</string>
+    </property>
+    <widget class="QMenu" name="menuPaste_as" >
+     <property name="title" >
+      <string>Paste as ...</string>
+     </property>
+     <addaction name="actionMarked_paragraphs" />
+     <addaction name="actionBlockquote_2" />
+     <addaction name="actionMarkdown_blockquote" />
+     <addaction name="actionUnordered_list_2" />
+     <addaction name="actionOrdered_list" />
+    </widget>
+    <addaction name="action_Cut" />
+    <addaction name="actionC_opy" />
+    <addaction name="actionCopy_upload_location" />
+    <addaction name="actionPaste" />
+    <addaction name="menuPaste_as" />
+    <addaction name="action_Undo" />
+    <addaction name="action_Redo" />
+    <addaction name="separator" />
+    <addaction name="action_Find" />
+    <addaction name="actionFind_again" />
+    <addaction name="separator" />
+    <addaction name="action_Font" />
+    <addaction name="actionPreview_font" />
+    <addaction name="actionConsole_font" />
+    <addaction name="action_Bold" />
+    <addaction name="action_Italic" />
+    <addaction name="actionU_nderline" />
+    <addaction name="actionBlockquote" />
+    <addaction name="actionP_aragraph" />
+    <addaction name="separator" />
+    <addaction name="actionUnordered_list" />
+    <addaction name="action_Ordered_list" />
+   </widget>
+   <widget class="QMenu" name="menu_Insert" >
+    <property name="title" >
+     <string>&amp;Insert</string>
+    </property>
+    <addaction name="action_Link" />
+    <addaction name="actionLink_from_C_lipboard" />
+    <addaction name="action_Self_link" />
+    <addaction name="action_Auto_link" />
+    <addaction name="actionI_mage" />
+    <addaction name="actionIma_ge_from_Clipboard" />
+    <addaction name="action_More" />
+   </widget>
+   <widget class="QMenu" name="menuView" >
+    <property name="title" >
+     <string>View</string>
+    </property>
+    <addaction name="action_View_Console" />
+    <addaction name="actionView_Toolbar" />
+    <addaction name="actionP_review" />
+    <addaction name="separator" />
+    <addaction name="action_BES" />
+    <addaction name="actionC_ategories" />
+    <addaction name="action_Show_Excerpt_window" />
+    <addaction name="actionTechnorati_tags" />
+    <addaction name="actionTrackback_pings" />
+   </widget>
+   <widget class="QMenu" name="menu_Services" >
+    <property name="title" >
+     <string>&amp;Services</string>
+    </property>
+    <addaction name="actionAdd_tag" />
+    <addaction name="actionAdd_tag_from_clipboard" />
+    <addaction name="action_Remove_tag" />
+    <addaction name="separator" />
+    <addaction name="actionAdd_trackback_ping" />
+    <addaction name="actionAdd_ping_from_clip_board" />
+    <addaction name="actionRe_move_ping" />
+   </widget>
+   <widget class="QMenu" name="menu_Help" >
+    <property name="title" >
+     <string>&amp;Help</string>
+    </property>
+    <addaction name="action_About" />
+    <addaction name="actionAbout_Qt" />
+    <addaction name="separator" />
+    <addaction name="action_What_s_this" />
+   </widget>
+   <widget class="QMenu" name="menu_File" >
+    <property name="title" >
+     <string>&amp;File</string>
+    </property>
+    <addaction name="action_New" />
+    <addaction name="action_Open" />
+    <addaction name="actionOpen_recent" />
+    <addaction name="action_Save" />
+    <addaction name="actionSave_As" />
+    <addaction name="action_Upload" />
+    <addaction name="separator" />
+    <addaction name="actionPrint" />
+    <addaction name="actionRefresh_blog_list" />
+    <addaction name="actionRefresh_categories" />
+    <addaction name="action_Blog_this" />
+    <addaction name="actionStop_this_job" />
+    <addaction name="actionSend_categories" />
+    <addaction name="separator" />
+    <addaction name="actionAccounts" />
+    <addaction name="actionPr_eferences" />
+    <addaction name="actionSave_blogs" />
+    <addaction name="actionQuickpost_Templates" />
+    <addaction name="actionClear_console" />
+    <addaction name="action_Close" />
+    <addaction name="actionClose_and_Delete" />
+    <addaction name="separator" />
+    <addaction name="actionE_xit" />
+   </widget>
+   <addaction name="menu_File" />
+   <addaction name="menu_Edit" />
+   <addaction name="menu_Insert" />
+   <addaction name="menuView" />
+   <addaction name="menu_Services" />
+   <addaction name="menu_Help" />
+  </widget>
+  <widget class="QStatusBar" name="statusBar" />
+  <widget class="QToolBar" name="toolBar" >
+   <property name="windowTitle" >
+    <string>Toolbar</string>
+   </property>
+   <property name="orientation" >
+    <enum>Qt::Horizontal</enum>
+   </property>
+   <property name="toolButtonStyle" >
+    <enum>Qt::ToolButtonIconOnly</enum>
+   </property>
+   <attribute name="toolBarArea" >
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak" >
+    <bool>false</bool>
+   </attribute>
+  </widget>
+  <action name="action_New" >
+   <property name="text" >
+    <string>&amp;New</string>
+   </property>
+   <property name="shortcut" >
+    <string>Ctrl+N</string>
+   </property>
+  </action>
+  <action name="action_Save" >
+   <property name="icon" >
+    <iconset/>
+   </property>
+   <property name="text" >
+    <string>&amp;Save</string>
+   </property>
+   <property name="whatsThis" >
+    <string>Save this entry to disk for editing or publication later</string>
+   </property>
+   <property name="shortcut" >
+    <string>Ctrl+S</string>
+   </property>
+  </action>
+  <action name="actionSave_As" >
+   <property name="text" >
+    <string>Save &amp;As ...</string>
+   </property>
+  </action>
+  <action name="actionPrint" >
+   <property name="enabled" >
+    <bool>false</bool>
+   </property>
+   <property name="icon" >
+    <iconset/>
+   </property>
+   <property name="text" >
+    <string>Print ...</string>
+   </property>
+   <property name="visible" >
+    <bool>false</bool>
+   </property>
+  </action>
+  <action name="actionP_review" >
+   <property name="checkable" >
+    <bool>true</bool>
+   </property>
+   <property name="text" >
+    <string>Entry in p&amp;review</string>
+   </property>
+   <property name="whatsThis" >
+    <string>Preview the entry in this window</string>
+   </property>
+  </action>
+  <action name="action_Blog_this" >
+   <property name="text" >
+    <string>&amp;Blog this!</string>
+   </property>
+   <property name="whatsThis" >
+    <string>Post this entry to the blog</string>
+   </property>
+  </action>
+  <action name="actionAccounts" >
+   <property name="text" >
+    <string>Accounts ...</string>
+   </property>
+  </action>
+  <action name="actionPr_eferences" >
+   <property name="text" >
+    <string>Pr&amp;eferences ...</string>
+   </property>
+   <property name="shortcut" >
+    <string>Ctrl+,</string>
+   </property>
+  </action>
+  <action name="action_Close" >
+   <property name="text" >
+    <string>&amp;Close</string>
+   </property>
+   <property name="shortcut" >
+    <string>Ctrl+W</string>
+   </property>
+  </action>
+  <action name="actionClose_and_Delete" >
+   <property name="enabled" >
+    <bool>false</bool>
+   </property>
+   <property name="text" >
+    <string>Close and &amp;Delete</string>
+   </property>
+   <property name="visible" >
+    <bool>false</bool>
+   </property>
+  </action>
+  <action name="actionE_xit" >
+   <property name="enabled" >
+    <bool>true</bool>
+   </property>
+   <property name="text" >
+    <string>&amp;Quit</string>
+   </property>
+  </action>
+  <action name="action_Cut" >
+   <property name="text" >
+    <string>&amp;Cut</string>
+   </property>
+  </action>
+  <action name="actionC_opy" >
+   <property name="text" >
+    <string>C&amp;opy</string>
+   </property>
+  </action>
+  <action name="actionPaste" >
+   <property name="text" >
+    <string>Paste</string>
+   </property>
+  </action>
+  <action name="action_Undo" >
+   <property name="text" >
+    <string>&amp;Undo</string>
+   </property>
+  </action>
+  <action name="action_Redo" >
+   <property name="text" >
+    <string>&amp;Redo</string>
+   </property>
+  </action>
+  <action name="action_Font" >
+   <property name="text" >
+    <string>Editor &amp;font ...</string>
+   </property>
+  </action>
+  <action name="action_Bold" >
+   <property name="icon" >
+    <iconset/>
+   </property>
+   <property name="text" >
+    <string>&amp;Bold</string>
+   </property>
+   <property name="whatsThis" >
+    <string>Make the selected text bold</string>
+   </property>
+  </action>
+  <action name="action_Italic" >
+   <property name="icon" >
+    <iconset/>
+   </property>
+   <property name="text" >
+    <string>&amp;Italic</string>
+   </property>
+   <property name="whatsThis" >
+    <string>Italicise the selected text</string>
+   </property>
+  </action>
+  <action name="actionU_nderline" >
+   <property name="icon" >
+    <iconset/>
+   </property>
+   <property name="text" >
+    <string>U&amp;nderline</string>
+   </property>
+   <property name="whatsThis" >
+    <string>Underline the selected text</string>
+   </property>
+  </action>
+  <action name="actionP_aragraph" >
+   <property name="icon" >
+    <iconset/>
+   </property>
+   <property name="text" >
+    <string>P&amp;aragraph</string>
+   </property>
+  </action>
+  <action name="action_Link" >
+   <property name="icon" >
+    <iconset/>
+   </property>
+   <property name="text" >
+    <string>&amp;Link ...</string>
+   </property>
+   <property name="whatsThis" >
+    <string>Inserts a link to another page, the location to be specified now</string>
+   </property>
+  </action>
+  <action name="actionLink_from_C_lipboard" >
+   <property name="text" >
+    <string>Link from C&amp;lipboard</string>
+   </property>
+  </action>
+  <action name="actionI_mage" >
+   <property name="icon" >
+    <iconset/>
+   </property>
+   <property name="text" >
+    <string>I&amp;mage ...</string>
+   </property>
+   <property name="whatsThis" >
+    <string>Insert an image into the text, the location, alignment and alternate text to be specified now</string>
+   </property>
+  </action>
+  <action name="actionIma_ge_from_Clipboard" >
+   <property name="text" >
+    <string>Ima&amp;ge from Clipboard</string>
+   </property>
+  </action>
+  <action name="action_More" >
+   <property name="icon" >
+    <iconset/>
+   </property>
+   <property name="text" >
+    <string>&amp;More</string>
+   </property>
+   <property name="whatsThis" >
+    <string>Set this as the end of the main entry (which appears on the index) and the beginning of the extended entry (which appears when you click More, Extended entry or view the entry on its own page).</string>
+   </property>
+  </action>
+  <action name="action_About" >
+   <property name="text" >
+    <string>&amp;About ...</string>
+   </property>
+  </action>
+  <action name="actionAbout_Qt" >
+   <property name="text" >
+    <string>About &amp;Qt ...</string>
+   </property>
+  </action>
+  <action name="action_What_s_this" >
+   <property name="text" >
+    <string>&amp;What's this?</string>
+   </property>
+  </action>
+  <action name="action_Quit" >
+   <property name="text" >
+    <string>Quit</string>
+   </property>
+  </action>
+  <action name="actionRefresh_categories" >
+   <property name="text" >
+    <string>Refresh categories</string>
+   </property>
+   <property name="whatsThis" >
+    <string>Refresh the category list</string>
+   </property>
+  </action>
+  <action name="actionRefresh_blog_list" >
+   <property name="text" >
+    <string>Refresh blog list</string>
+   </property>
+  </action>
+  <action name="action_View_Console" >
+   <property name="checkable" >
+    <bool>true</bool>
+   </property>
+   <property name="text" >
+    <string>&amp;Console</string>
+   </property>
+  </action>
+  <action name="actionFile" >
+   <property name="text" >
+    <string>File ...</string>
+   </property>
+  </action>
+  <action name="actionEntry" >
+   <property name="text" >
+    <string>Entries ...</string>
+   </property>
+  </action>
+  <action name="action_Open" >
+   <property name="text" >
+    <string>&amp;Open ...</string>
+   </property>
+   <property name="whatsThis" >
+    <string>Load a saved entry from the disk</string>
+   </property>
+   <property name="shortcut" >
+    <string>Ctrl+O</string>
+   </property>
+  </action>
+  <action name="actionView_Toolbar" >
+   <property name="checkable" >
+    <bool>true</bool>
+   </property>
+   <property name="checked" >
+    <bool>true</bool>
+   </property>
+   <property name="text" >
+    <string>&amp;Toolbar</string>
+   </property>
+  </action>
+  <action name="action_Show_Excerpt_window" >
+   <property name="checkable" >
+    <bool>false</bool>
+   </property>
+   <property name="checked" >
+    <bool>false</bool>
+   </property>
+   <property name="text" >
+    <string>E&amp;xcerpt</string>
+   </property>
+  </action>
+  <action name="actionC_ategories" >
+   <property name="text" >
+    <string>C&amp;ategories</string>
+   </property>
+  </action>
+  <action name="action_BES" >
+   <property name="text" >
+    <string>&amp;Basic entry settings</string>
+   </property>
+  </action>
+  <action name="actionTechnorati_tags" >
+   <property name="text" >
+    <string>Tec&amp;hnorati tags</string>
+   </property>
+  </action>
+  <action name="actionAdd_tag" >
+   <property name="text" >
+    <string>&amp;Add tag ...</string>
+   </property>
+  </action>
+  <action name="actionAdd_tag_from_clipboard" >
+   <property name="text" >
+    <string>Add tag from clipboard</string>
+   </property>
+  </action>
+  <action name="action_Remove_tag" >
+   <property name="text" >
+    <string>&amp;Remove tag</string>
+   </property>
+  </action>
+  <action name="actionPreview_font" >
+   <property name="text" >
+    <string>Preview font ...</string>
+   </property>
+   <property name="whatsThis" >
+    <string>Set the font to be used when previewing an entry</string>
+   </property>
+  </action>
+  <action name="actionBlockquote" >
+   <property name="text" >
+    <string>Blockquote</string>
+   </property>
+   <property name="whatsThis" >
+    <string>Mark the selected text as a block of quoted text</string>
+   </property>
+  </action>
+  <action name="actionConsole_font" >
+   <property name="text" >
+    <string>Console font ...</string>
+   </property>
+  </action>
+  <action name="actionQuickpost_Templates" >
+   <property name="text" >
+    <string>Quickpost Templates ...</string>
+   </property>
+  </action>
+  <action name="actionTrackback_pings" >
+   <property name="text" >
+    <string>Trackback &amp;pings</string>
+   </property>
+  </action>
+  <action name="actionAdd_trackback_ping" >
+   <property name="text" >
+    <string>Add trackback &amp;ping ...</string>
+   </property>
+  </action>
+  <action name="actionAdd_ping_from_clip_board" >
+   <property name="text" >
+    <string>Add ping from clip&amp;board</string>
+   </property>
+  </action>
+  <action name="actionRe_move_ping" >
+   <property name="text" >
+    <string>Re&amp;move ping</string>
+   </property>
+  </action>
+  <action name="action_Self_link" >
+   <property name="text" >
+    <string>&amp;Self link</string>
+   </property>
+   <property name="whatsThis" >
+    <string>Make a link out of this text (which has to be a location in itself)</string>
+   </property>
+  </action>
+  <action name="actionStop_this_job" >
+   <property name="text" >
+    <string>Abort this &amp;job</string>
+   </property>
+  </action>
+  <action name="actionUnordered_list" >
+   <property name="text" >
+    <string>Unordered &amp;list</string>
+   </property>
+  </action>
+  <action name="action_Ordered_list" >
+   <property name="text" >
+    <string>&amp;Ordered list</string>
+   </property>
+  </action>
+  <action name="actionMarked_paragraphs" >
+   <property name="text" >
+    <string>Marked paragraphs</string>
+   </property>
+  </action>
+  <action name="actionBlockquote_2" >
+   <property name="text" >
+    <string>Blockquote</string>
+   </property>
+  </action>
+  <action name="actionUnordered_list_2" >
+   <property name="text" >
+    <string>Unordered list</string>
+   </property>
+  </action>
+  <action name="actionOrdered_list" >
+   <property name="text" >
+    <string>Ordered list</string>
+   </property>
+  </action>
+  <action name="actionMarkdown_blockquote" >
+   <property name="text" >
+    <string>Markdown blockquote</string>
+   </property>
+  </action>
+  <action name="actionSend_categories" >
+   <property name="text" >
+    <string>Update this post's cate&amp;gories</string>
+   </property>
+   <property name="whatsThis" >
+    <string>Tell your blog system what categories you want this post to be in</string>
+   </property>
+  </action>
+  <action name="action_Upload" >
+   <property name="text" >
+    <string>&amp;Upload ...</string>
+   </property>
+  </action>
+  <action name="actionCopy_upload_location" >
+   <property name="text" >
+    <string>Copy uploaded file's location</string>
+   </property>
+   <property name="visible" >
+    <bool>false</bool>
+   </property>
+  </action>
+  <action name="action_Auto_link" >
+   <property name="text" >
+    <string>&amp;Auto link</string>
+   </property>
+  </action>
+  <action name="actionClear_console" >
+   <property name="text" >
+    <string>C&amp;lear console</string>
+   </property>
+  </action>
+  <action name="action_Find" >
+   <property name="text" >
+    <string>&amp;Find ...</string>
+   </property>
+  </action>
+  <action name="actionFind_again" >
+   <property name="text" >
+    <string>Find &amp;again ...</string>
+   </property>
+  </action>
+  <action name="actionSave_blogs" >
+   <property name="enabled" >
+    <bool>false</bool>
+   </property>
+   <property name="text" >
+    <string>Save blogs &amp;&amp; categories</string>
+   </property>
+   <property name="visible" >
+    <bool>false</bool>
+   </property>
+  </action>
+  <action name="actionSave_blogs_categories_2" >
+   <property name="text" >
+    <string>Save blogs &amp;&amp; categories</string>
+   </property>
+  </action>
+  <action name="actionOpen_recent" >
+   <property name="text" >
+    <string>Open &amp;recent</string>
+   </property>
+  </action>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

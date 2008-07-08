@@ -1,0 +1,392 @@
+<ui version="4.0" >
+ <author>Matthew J Smith (Yusuf)</author>
+ <class>PrefsForm</class>
+ <widget class="QDialog" name="PrefsForm" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>514</width>
+    <height>330</height>
+   </rect>
+  </property>
+  <property name="sizePolicy" >
+   <sizepolicy>
+    <hsizetype>0</hsizetype>
+    <vsizetype>0</vsizetype>
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
+  </property>
+  <property name="windowTitle" >
+   <string>Preferences</string>
+  </property>
+  <property name="windowIcon" >
+   <iconset/>
+  </property>
+  <layout class="QVBoxLayout" >
+   <property name="margin" >
+    <number>9</number>
+   </property>
+   <property name="spacing" >
+    <number>6</number>
+   </property>
+   <item>
+    <widget class="QTabWidget" name="tabWidget" >
+     <property name="currentIndex" >
+      <number>0</number>
+     </property>
+     <widget class="QWidget" name="storageTab" >
+      <attribute name="title" >
+       <string>Tab 2</string>
+      </attribute>
+      <layout class="QGridLayout" >
+       <property name="margin" >
+        <number>9</number>
+       </property>
+       <property name="spacing" >
+        <number>6</number>
+       </property>
+       <item row="2" column="0" colspan="2" >
+        <layout class="QVBoxLayout" >
+         <property name="margin" >
+          <number>0</number>
+         </property>
+         <property name="spacing" >
+          <number>6</number>
+         </property>
+         <item>
+          <widget class="QCheckBox" name="chUseNewWindows" >
+           <property name="text" >
+            <string>&amp;Open entries in new windows</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QCheckBox" name="cbPostAsSave" >
+           <property name="whatsThis" >
+            <string>If this is on, if you try to quit having successfully posted an entry but not saved it to disk, QTM will not prompt you to save.</string>
+           </property>
+           <property name="text" >
+            <string>Treat &amp;posting as saving</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QCheckBox" name="chCopyTitle" >
+           <property name="text" >
+            <string>Copy title when &amp;Quickposting</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QCheckBox" name="chAllowRegexSearch" >
+           <property name="whatsThis" >
+            <string>Allows searching by regular expressions, a programmers' text matching code</string>
+           </property>
+           <property name="text" >
+            <string>Enable expert search</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item row="0" column="0" >
+        <widget class="QLabel" name="label_7" >
+         <property name="text" >
+          <string>&amp;Directory</string>
+         </property>
+         <property name="buddy" >
+          <cstring>leLocalDir</cstring>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="2" >
+        <layout class="QVBoxLayout" >
+         <property name="margin" >
+          <number>0</number>
+         </property>
+         <property name="spacing" >
+          <number>6</number>
+         </property>
+         <item>
+          <widget class="QGroupBox" name="gbDefault" >
+           <property name="title" >
+            <string>Feedback defaults</string>
+           </property>
+           <layout class="QVBoxLayout" >
+            <property name="margin" >
+             <number>9</number>
+            </property>
+            <property name="spacing" >
+             <number>6</number>
+            </property>
+            <item>
+             <widget class="QCheckBox" name="cbAllowComments" >
+              <property name="text" >
+               <string>&amp;Allow comments</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QCheckBox" name="cbAllowTB" >
+              <property name="text" >
+               <string>Allow &amp;Trackback</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+         </item>
+         <item>
+          <spacer>
+           <property name="orientation" >
+            <enum>Qt::Vertical</enum>
+           </property>
+           <property name="sizeHint" >
+            <size>
+             <width>20</width>
+             <height>31</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+        </layout>
+       </item>
+       <item row="3" column="2" >
+        <widget class="QComboBox" name="cbSTI2ClickFunction" >
+         <item>
+          <property name="text" >
+           <string>New entry</string>
+          </property>
+         </item>
+         <item>
+          <property name="text" >
+           <string>QuickPost</string>
+          </property>
+         </item>
+        </widget>
+       </item>
+       <item row="3" column="0" colspan="2" >
+        <widget class="QLabel" name="label_10" >
+         <property name="text" >
+          <string>When system-tray &amp;icon double-clicked:</string>
+         </property>
+         <property name="buddy" >
+          <cstring>cbSTI2ClickFunction</cstring>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="2" >
+        <spacer>
+         <property name="orientation" >
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" >
+          <size>
+           <width>141</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item row="1" column="1" >
+        <widget class="QLineEdit" name="leFileExtn" />
+       </item>
+       <item row="1" column="0" >
+        <widget class="QLabel" name="lFileExtn" >
+         <property name="text" >
+          <string>File e&amp;xtension</string>
+         </property>
+         <property name="buddy" >
+          <cstring>leFileExtn</cstring>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="2" >
+        <widget class="QPushButton" name="pbBrowse" >
+         <property name="enabled" >
+          <bool>true</bool>
+         </property>
+         <property name="text" >
+          <string>&amp;Browse</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1" >
+        <widget class="QLineEdit" name="leLocalDir" />
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="fontTab" >
+      <attribute name="title" >
+       <string>Page</string>
+      </attribute>
+      <layout class="QVBoxLayout" >
+       <property name="margin" >
+        <number>9</number>
+       </property>
+       <property name="spacing" >
+        <number>6</number>
+       </property>
+       <item>
+        <layout class="QGridLayout" >
+         <property name="margin" >
+          <number>0</number>
+         </property>
+         <property name="spacing" >
+          <number>6</number>
+         </property>
+         <item row="0" column="1" >
+          <widget class="QFontComboBox" name="fcbComposer" />
+         </item>
+         <item row="0" column="0" >
+          <widget class="QLabel" name="label_5" >
+           <property name="text" >
+            <string>Editing font</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="0" >
+          <widget class="QLabel" name="label_8" >
+           <property name="text" >
+            <string>Preview font</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="2" >
+          <widget class="QSpinBox" name="sbPreview" >
+           <property name="minimum" >
+            <number>1</number>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="2" >
+          <widget class="QSpinBox" name="sbConsole" >
+           <property name="minimum" >
+            <number>1</number>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="1" >
+          <widget class="QFontComboBox" name="fcbConsole" />
+         </item>
+         <item row="2" column="0" >
+          <widget class="QLabel" name="label_9" >
+           <property name="text" >
+            <string>Console font</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="1" >
+          <widget class="QFontComboBox" name="fcbPreview" />
+         </item>
+         <item row="0" column="2" >
+          <widget class="QSpinBox" name="sbComposer" >
+           <property name="minimum" >
+            <number>1</number>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <spacer>
+         <property name="orientation" >
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" >
+          <size>
+           <width>20</width>
+           <height>40</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </widget>
+    </widget>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" >
+     <property name="margin" >
+      <number>0</number>
+     </property>
+     <property name="spacing" >
+      <number>6</number>
+     </property>
+     <item>
+      <widget class="QPushButton" name="pbWhatsThis" >
+       <property name="text" >
+        <string>What's this?</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer>
+       <property name="orientation" >
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" >
+        <size>
+         <width>131</width>
+         <height>31</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QPushButton" name="okButton" >
+       <property name="text" >
+        <string>OK</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="cancelButton" >
+       <property name="text" >
+        <string>Cancel</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+  </layout>
+ </widget>
+ <tabstops>
+  <tabstop>tabWidget</tabstop>
+  <tabstop>leLocalDir</tabstop>
+  <tabstop>pbBrowse</tabstop>
+  <tabstop>leFileExtn</tabstop>
+  <tabstop>chUseNewWindows</tabstop>
+  <tabstop>cbAllowComments</tabstop>
+  <tabstop>cbAllowTB</tabstop>
+  <tabstop>fcbComposer</tabstop>
+  <tabstop>sbComposer</tabstop>
+  <tabstop>fcbPreview</tabstop>
+  <tabstop>sbPreview</tabstop>
+  <tabstop>fcbConsole</tabstop>
+  <tabstop>sbConsole</tabstop>
+  <tabstop>okButton</tabstop>
+  <tabstop>cancelButton</tabstop>
+ </tabstops>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>cancelButton</sender>
+   <signal>clicked()</signal>
+   <receiver>PrefsForm</receiver>
+   <slot>reject()</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>474</x>
+     <y>319</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>179</x>
+     <y>282</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>

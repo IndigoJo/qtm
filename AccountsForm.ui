@@ -1,0 +1,354 @@
+<ui version="4.0" >
+ <class>AccountSelectorForm</class>
+ <widget class="QDialog" name="AccountSelectorForm" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>642</width>
+    <height>423</height>
+   </rect>
+  </property>
+  <property name="windowTitle" >
+   <string>Accounts</string>
+  </property>
+  <layout class="QVBoxLayout" >
+   <property name="margin" >
+    <number>9</number>
+   </property>
+   <property name="spacing" >
+    <number>6</number>
+   </property>
+   <item>
+    <layout class="QHBoxLayout" >
+     <property name="margin" >
+      <number>0</number>
+     </property>
+     <property name="spacing" >
+      <number>6</number>
+     </property>
+     <item>
+      <layout class="QGridLayout" >
+       <property name="margin" >
+        <number>0</number>
+       </property>
+       <property name="spacing" >
+        <number>6</number>
+       </property>
+       <item row="0" column="0" colspan="2" >
+        <widget class="QLabel" name="label" >
+         <property name="text" >
+          <string>&amp;Accounts:</string>
+         </property>
+         <property name="buddy" >
+          <cstring>lwAccountList</cstring>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="0" colspan="2" >
+        <widget class="QListWidget" name="lwAccountList" >
+         <property name="contextMenuPolicy" >
+          <enum>Qt::ActionsContextMenu</enum>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="0" >
+        <spacer>
+         <property name="orientation" >
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" >
+          <size>
+           <width>201</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item row="2" column="1" >
+        <widget class="QPushButton" name="pbNew" >
+         <property name="toolTip" >
+          <string>New account</string>
+         </property>
+         <property name="whatsThis" >
+          <string>Create a new account</string>
+         </property>
+         <property name="text" >
+          <string>&amp;New account</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <layout class="QGridLayout" >
+       <property name="margin" >
+        <number>0</number>
+       </property>
+       <property name="spacing" >
+        <number>6</number>
+       </property>
+       <item row="6" column="1" >
+        <widget class="QLabel" name="lLogin" >
+         <property name="text" >
+          <string>Log&amp;in name</string>
+         </property>
+         <property name="buddy" >
+          <cstring>leLogin</cstring>
+         </property>
+        </widget>
+       </item>
+       <item rowspan="9" row="0" column="0" >
+        <widget class="Line" name="line_2" >
+         <property name="orientation" >
+          <enum>Qt::Vertical</enum>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="2" colspan="2" >
+        <widget class="QLineEdit" name="leServer" />
+       </item>
+       <item row="0" column="2" colspan="2" >
+        <widget class="QLineEdit" name="leName" />
+       </item>
+       <item row="8" column="1" colspan="3" >
+        <widget class="QCheckBox" name="chCategories" >
+         <property name="whatsThis" >
+          <string>Click here if this account is on a blog that has or supports categories</string>
+         </property>
+         <property name="text" >
+          <string>Enable categories</string>
+         </property>
+         <property name="checked" >
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="1" colspan="3" >
+        <widget class="Line" name="line_3" >
+         <property name="orientation" >
+          <enum>Qt::Horizontal</enum>
+         </property>
+        </widget>
+       </item>
+       <item row="6" column="2" colspan="2" >
+        <widget class="QLineEdit" name="leLogin" >
+         <property name="whatsThis" >
+          <string>The user name you use when you log in</string>
+         </property>
+        </widget>
+       </item>
+       <item row="7" column="1" >
+        <widget class="QLabel" name="lPassword" >
+         <property name="text" >
+          <string>Pass&amp;word</string>
+         </property>
+         <property name="buddy" >
+          <cstring>lePassword</cstring>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="2" colspan="2" >
+        <widget class="QComboBox" name="cbHostedBlogType" >
+         <item>
+          <property name="text" >
+           <string>Wordpress.com</string>
+          </property>
+         </item>
+         <item>
+          <property name="text" >
+           <string>TypePad</string>
+          </property>
+         </item>
+         <item>
+          <property name="text" >
+           <string>SquareSpace</string>
+          </property>
+         </item>
+        </widget>
+       </item>
+       <item row="7" column="2" colspan="2" >
+        <widget class="QLineEdit" name="lePassword" >
+         <property name="echoMode" >
+          <enum>QLineEdit::Password</enum>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="1" >
+        <widget class="QLabel" name="lBlogType" >
+         <property name="text" >
+          <string>Hosted blog &amp;type</string>
+         </property>
+         <property name="wordWrap" >
+          <bool>true</bool>
+         </property>
+         <property name="buddy" >
+          <cstring>cbHostedBlogType</cstring>
+         </property>
+        </widget>
+       </item>
+       <item row="5" column="1" >
+        <widget class="QLabel" name="lPort" >
+         <property name="text" >
+          <string>&amp;Port</string>
+         </property>
+         <property name="buddy" >
+          <cstring>lePort</cstring>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="1" >
+        <widget class="QLabel" name="lServer" >
+         <property name="text" >
+          <string>&amp;Server</string>
+         </property>
+         <property name="buddy" >
+          <cstring>leServer</cstring>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1" >
+        <widget class="QLabel" name="lName" >
+         <property name="text" >
+          <string>&amp;Name</string>
+         </property>
+         <property name="buddy" >
+          <cstring>leName</cstring>
+         </property>
+        </widget>
+       </item>
+       <item row="9" column="1" colspan="3" >
+        <widget class="QCheckBox" name="chPostDateTime" >
+         <property name="whatsThis" >
+          <string>Post the current date and time when posting an entry; this could fix problems with blogs showing inaccurate entry timings</string>
+         </property>
+         <property name="text" >
+          <string>Post entries with date and time</string>
+         </property>
+        </widget>
+       </item>
+       <item row="4" column="1" >
+        <widget class="QLabel" name="lLocation" >
+         <property name="whatsThis" >
+          <string>The location of the XML-RPC endpoint on the server.  Right-click for common names of such files.</string>
+         </property>
+         <property name="text" >
+          <string>&amp;Location</string>
+         </property>
+         <property name="buddy" >
+          <cstring>leLocation</cstring>
+         </property>
+        </widget>
+       </item>
+       <item row="5" column="2" colspan="2" >
+        <widget class="QLineEdit" name="lePort" >
+         <property name="whatsThis" >
+          <string>The HTTP port through which your site is accessed; if you have a sitename like www.site.com:25, you need to type 25 here.  However, this is not normally the case and you can leave this blank.</string>
+         </property>
+         <property name="inputMask" >
+          <string>00000; </string>
+         </property>
+        </widget>
+       </item>
+       <item row="4" column="2" colspan="2" >
+        <widget class="QLineEdit" name="leLocation" />
+       </item>
+       <item row="11" column="1" colspan="3" >
+        <widget class="QCheckBox" name="chTB" >
+         <property name="whatsThis" >
+          <string>Set this to allow trackbacks on this site by default.  You can override this for individual entries.</string>
+         </property>
+         <property name="text" >
+          <string>Allow trackbacks by default</string>
+         </property>
+         <property name="checked" >
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item row="10" column="1" colspan="3" >
+        <widget class="QCheckBox" name="chComments" >
+         <property name="whatsThis" >
+          <string>Set this to allow comments by default on this account.  You can override this for individual entries.</string>
+         </property>
+         <property name="text" >
+          <string>Allow comments by default</string>
+         </property>
+         <property name="checked" >
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <layout class="QGridLayout" >
+     <property name="margin" >
+      <number>0</number>
+     </property>
+     <property name="spacing" >
+      <number>6</number>
+     </property>
+     <item row="1" column="4" >
+      <widget class="QPushButton" name="pbOK" >
+       <property name="text" >
+        <string>&amp;OK</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="0" colspan="5" >
+      <widget class="Line" name="line" >
+       <property name="orientation" >
+        <enum>Qt::Horizontal</enum>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="0" >
+      <widget class="QPushButton" name="pbWhatsThis" >
+       <property name="text" >
+        <string>What's this?</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="3" >
+      <widget class="QPushButton" name="pbCancel" >
+       <property name="text" >
+        <string>&amp;Cancel</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="1" >
+      <spacer>
+       <property name="orientation" >
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" >
+        <size>
+         <width>211</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item row="1" column="2" >
+      <widget class="QPushButton" name="pbReset" >
+       <property name="toolTip" >
+        <string>Reset the accounts</string>
+       </property>
+       <property name="whatsThis" >
+        <string>Reset the accounts to how they were when you opened this window</string>
+       </property>
+       <property name="text" >
+        <string>&amp;Reset</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

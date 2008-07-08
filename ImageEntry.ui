@@ -1,0 +1,174 @@
+<ui version="4.0" >
+ <author></author>
+ <comment></comment>
+ <exportmacro></exportmacro>
+ <class>ImageEntry</class>
+ <widget class="QDialog" name="ImageEntry" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>422</width>
+    <height>137</height>
+   </rect>
+  </property>
+  <property name="windowTitle" >
+   <string>New image</string>
+  </property>
+  <layout class="QGridLayout" >
+   <property name="margin" >
+    <number>9</number>
+   </property>
+   <property name="spacing" >
+    <number>6</number>
+   </property>
+   <item row="0" column="1" >
+    <widget class="QLineEdit" name="leImageURL" />
+   </item>
+   <item row="2" column="1" >
+    <widget class="QComboBox" name="cbAlign" >
+     <property name="enabled" >
+      <bool>false</bool>
+     </property>
+     <property name="toolTip" >
+      <string>Positioning of image in paragraph</string>
+     </property>
+     <item>
+      <property name="text" >
+       <string>Left</string>
+      </property>
+     </item>
+     <item>
+      <property name="text" >
+       <string>Right</string>
+      </property>
+     </item>
+    </widget>
+   </item>
+   <item row="2" column="2" >
+    <spacer>
+     <property name="orientation" >
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeHint" >
+      <size>
+       <width>81</width>
+       <height>26</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item row="1" column="2" >
+    <widget class="QPushButton" name="cancelButton" >
+     <property name="text" >
+      <string>Cancel</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="0" >
+    <widget class="QLabel" name="label_2" >
+     <property name="toolTip" >
+      <string>Text to be displayed if image cannot be</string>
+     </property>
+     <property name="text" >
+      <string>Alt text</string>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="0" >
+    <widget class="QCheckBox" name="chAlign" >
+     <property name="toolTip" >
+      <string>Positioning of image in paragraph</string>
+     </property>
+     <property name="text" >
+      <string>Align</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="1" >
+    <widget class="QLineEdit" name="leAltText" >
+     <property name="toolTip" >
+      <string>Text to be displayed if image cannot be</string>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="2" >
+    <widget class="QPushButton" name="okButton" >
+     <property name="text" >
+      <string>OK</string>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="0" >
+    <widget class="QLabel" name="label" >
+     <property name="toolTip" >
+      <string>Uniform Resource Identifier (location of image on web)</string>
+     </property>
+     <property name="text" >
+      <string>URI</string>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <pixmapfunction></pixmapfunction>
+ <tabstops>
+  <tabstop>leImageURL</tabstop>
+  <tabstop>leAltText</tabstop>
+  <tabstop>chAlign</tabstop>
+  <tabstop>cbAlign</tabstop>
+  <tabstop>okButton</tabstop>
+  <tabstop>cancelButton</tabstop>
+ </tabstops>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>okButton</sender>
+   <signal>clicked()</signal>
+   <receiver>ImageEntry</receiver>
+   <slot>accept()</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>351</x>
+     <y>38</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>233</x>
+     <y>29</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>cancelButton</sender>
+   <signal>clicked()</signal>
+   <receiver>ImageEntry</receiver>
+   <slot>reject()</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>330</x>
+     <y>66</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>197</x>
+     <y>125</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>chAlign</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>cbAlign</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>61</x>
+     <y>115</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>203</x>
+     <y>115</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>
