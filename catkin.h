@@ -129,6 +129,7 @@ class Catkin : public QMainWindow
   void saveAccountsDom();
 
   int currentBlog, loadedEntryBlog;
+  QString applicationVersion;
   QString server;
   QString location;
   QString login;

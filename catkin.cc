@@ -189,85 +189,14 @@ Catkin::Catkin( QDomDocument &dd, QString &cid, QWidget *parent )
   mainStack->setCurrentIndex( edID );
 }
 
-/*Catkin::Catkin( QList<QString> uB, QList<QString> cl,
-		int b, QWidget *parent )
-  : QMainWindow( parent )
-{
-  QFont f, g, h;
-
-  setAttribute( Qt::WA_QuitOnClose );
-  setAttribute( Qt::WA_DeleteOnClose );
-
-  initialChangeBlog = false;
-  doUiSetup();
-
-  usersBlogs = uB;
-  categoryList = cl;
-  currentBlog = b;
-
-  for( int a = 0; a < usersBlogs.size(); a++ ) {
-    //console->
-    addToConsole( QString( "%1\n" ).arg( usersBlogs[a] ) );
-    cw.cbBlogSelector->addItem( QString( usersBlogs[a].section( "blogName:", 1, 1 ) ).
-				section( ";", 0, 0 ) );
-    // currentBlog = cw.cbBlogSelector->currentIndex();
-
-    // readSettings();
-
-  }
-  readSettings();
-  if( editorFontString != "" ) {
-      f.fromString( editorFontString );
-      EDITOR->setFont( f );
-  } else {
-      f = EDITOR->font();
-      editorFontString = f.toString();
-  }
-  if( previewFontString != "" ) {
-      g.fromString( previewFontString );
-      previewWindow->setFont( g );
-  } else {
-      g = previewWindow->font();
-      previewFontString = g.toString();
-  }
-  if( consoleFontString != "" ) {
-    h.fromString( consoleFontString );
-    console->setFont( h );
-  } else {
-    h = console->font();
-    consoleFontString = h.toString();
-  }
-
-  for( int a = 0; a < categoryList.size(); a++ ) {
-    addToConsole( categoryList[a] );
-    cw.cbMainCat->addItem( QString( categoryList[a].section( " ##ID:", 0, 0 ) ) );
-    //				      .section( ";", 0, 0 ) ) );
-    cw.lwOtherCats->addItem( QString( categoryList[a].section( " ##ID:", 0, 0 ) ) );
-    //					.section( ";", 0, 0 ) ) );
-  }
-
-
-  cw.chComments->setCheckState( allowComments ? Qt::Checked :
-				Qt::Unchecked );
-  cw.chTB->setCheckState( allowTB ? Qt::Checked : Qt::Unchecked );
-
-  handleEnableCategories();
-
-  connect( cw.cbBlogSelector, SIGNAL( currentIndexChanged( int ) ),
-	   this, SLOT( changeCurrentBlog( int ) ) );
-  connect( cw.cbBlogSelector, SIGNAL( currentIndexChanged( int ) ),
-    this, SLOT( changeBlog( int ) ) );
-
-  mainStack->setCurrentIndex( edID );
-  mainWindowLayout->setStretchFactor( leftWidget, 1 );
-  mainWindowLayout->setStretchFactor( mainStack, 2 );
-} */
-
 Catkin::Catkin( bool noRefreshBlogs, QWidget *parent )
   : QMainWindow( parent )
 {
   //qDebug() << "Starting window";
   QFont f, g, h;
+
+  QDomElement detailElem, serverElem, locElem, loginElem, pwdElem;
+  QSettings settings;
 
   setAttribute( Qt::WA_QuitOnClose );
   setAttribute( Qt::WA_DeleteOnClose );
@@ -315,6 +244,36 @@ Catkin::Catkin( bool noRefreshBlogs, QWidget *parent )
       accountsXmlFile.close();
       accountsElement = accountsDom.createElement( "QTMAccounts" );
       currentAccountElement = accountsDom.createElement( "account" );
+      currentAccountElement.setAttribute( "id", "default" );
+
+      if( !server.isEmpty() ) {
+	detailElem = accountsDom.createElement( "details" );
+	nameElem = accountsDom.createElement( "title" );
+	nameElem.appendChild( accountsDom.createTextNode( tr( "Default account" ) ) );
+	serverElem = accountsDom.createElement( "server" );
+	serverElem.appendChild( accountsDom.createTextNode( server ) );
+	locElem = accountsDom.createElement( "location" );
+	locElem.appendChild( accountsDom.createTextNode( location ) );
+	loginElem = accountsDom.createElement( "login" );
+	loginElem.appendChild( accountsDom.createTextNode( login ) );
+	pwdElem = accountsDom.createElement( "password" );
+	pwdElem.appendChild( accountsDom.createTextNode( password ) );
+	detailElem.appendChild( nameElem );
+	detailElem.appendChild( serverElem );
+	detailElem.appendChild( locElem );
+	detailElem.appendChild( loginElem );
+	detailElem.appendChild( pwdElem );
+	currentAccountElement.appendChild( detailElem );
+
+	// Delete the old account from the settings
+	settings.beginGroup( "account" );
+	settings.remove( "server" );
+	settings.remove( "location" );
+	settings.remove( "login" );
+	settings.remove( "password" );
+	settings.endGroup( "account" );
+      }
+
       accountsElement.appendChild( currentAccountElement );
       accountsDom.appendChild( accountsElement );
       accountsDom.insertBefore( accountsDom.createProcessingInstruction( "xml", "version=\"1.0\"" ),
@@ -983,6 +942,7 @@ void Catkin::readSettings()
   Application::recentFile currentRF;
 
   QSettings settings;
+  applicationVersion = settings.value( "application/version", "" ).toString();
   settings.beginGroup( "geometry" );
   resize( settings.value( "size", QSize( 640, 450 )).toSize() );
   move( settings.value( "position", QPoint( 20, 20 )).toPoint() );
@@ -1220,7 +1180,7 @@ void Catkin::getAccounts()
   QDomNodeList accountsList;
   QDomDocument newAccountsDom;
   QDomElement newQTMAccounts, newAccount, detailElement, nameElement, serverElement, locationElement, 
-    portElement, loginElement, pwdElement, blogsElement;
+    portElement, loginElement, pwdElement, blogsElement, boolElement;
   QString oldCurrentAccountId, currentTitle;
   int i, j;
 
@@ -1250,22 +1210,45 @@ void Catkin::getAccounts()
       detailElement = newAccountsDom.createElement( "details" );
       nameElement = newAccountsDom.createElement( "title" );
       nameElement.appendChild( newAccountsDom.createTextNode( returnedAccountsList.at( i ).name ) );
-      detailElement.appendChild( nameElement );
       serverElement = newAccountsDom.createElement( "server" );
       serverElement.appendChild( newAccountsDom.createTextNode( returnedAccountsList.at( i ).server ) );
-      detailElement.appendChild( serverElement );
       locationElement = newAccountsDom.createElement( "location" );
       locationElement.appendChild( newAccountsDom.createTextNode( returnedAccountsList.at( i ).location ) );
-      detailElement.appendChild( locationElement );
       portElement = newAccountsDom.createElement( "port" );
       portElement.appendChild( newAccountsDom.createTextNode( returnedAccountsList.at( i ).port ) );
-      detailElement.appendChild( portElement );
       loginElement = newAccountsDom.createElement( "login" );
       loginElement.appendChild( newAccountsDom.createTextNode( returnedAccountsList.at( i ).login ) );
-      detailElement.appendChild( loginElement );
       pwdElement = newAccountsDom.createElement( "password" );
       pwdElement.appendChild( newAccountsDom.createTextNode( returnedAccountsList.at( i ).password ) );
+
+      detailElement.appendChild( nameElement );
+      detailElement.appendChild( serverElement );
+      detailElement.appendChild( locationElement );
+      detailElement.appendChild( portElement );
+      detailElement.appendChild( loginElement );
       detailElement.appendChild( pwdElement );
+
+      if( returnedAccountsList.at( i ).categoriesEnabled ) {
+	boolElement = newAccountsDom.createElement( "attribute" );
+	boolElement.setAttribute( "name", "categoriesEnabled" );
+	detailElement.appendChild( boolElement );
+      }
+      if( returnedAccountsList.at( i ).postDateTime ) {
+	boolElement = newAccountsDom.createElement( "attribute" );
+	boolElement.setAttribute( "name", "postDateTime" );
+	detailElement.appendChild( boolElement );
+      }
+      if( returnedAccountsList.at( i ).comments ) {
+	boolElement = newAccountsDom.createElement( "attribute" );
+	boolElement.setAttribute( "name", "allowComments" );
+	detailElement.appendChild( boolElement );
+      }
+      if( returnedAccountsList.at( i ).trackback ) {
+	boolElement = newAccountsDom.createElement( "attribute" );
+	boolElement.setAttribute( "name", "allowTB" );
+	detailElement.appendChild( boolElement );
+      }
+
       newAccount.appendChild( detailElement );
       
       // Check if each account is matched from the old list; if it is, copy the blogs list
