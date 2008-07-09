@@ -781,6 +781,12 @@ void Catkin::doUiSetup()
   accountAttributes["comments"] = &comments;
   accountAttributes["trackback"] = &trackback;
 
+  accountStrings["server"] = &server;
+  accountStrings["location"] = &location;
+  accountStrings["port"] = &port;
+  accountStrings["login"] = &login;
+  accountStrings["password"] = &password;
+
   setWindowModified( false );
   entryEverSaved = false;
   cleanSave = false;
@@ -1193,12 +1199,12 @@ void Catkin::getAccounts()
 {
   QList<AccountsDialog::Account> acctsList, returnedAccountsList;
   AccountsDialog::Account acct;
-  QDomNodeList accountsList;
+  QDomNodeList accountsList, thisAccountsAttribs;
   QDomDocument newAccountsDom;
   QDomElement newQTMAccounts, newAccount, detailElement, nameElement, serverElement, locationElement, 
     portElement, loginElement, pwdElement, blogsElement, boolElement;
   QString oldCurrentAccountId, currentTitle;
-  int i, j;
+  int c, i, j;
 
   // Extract accounts list from account tree
   accountsList = accountsDom.elementsByTagName( "account" );
@@ -1211,6 +1217,31 @@ void Catkin::getAccounts()
     acct.port = accountsList.at( i ).firstChildElement( "port" ).text();
     acct.login = accountsList.at( i ).firstChildElement( "login" ).text();
     acct.password = accountsList.at( i ).firstChildElement( "password" ).text();
+
+    acct.categoriesEnabled = false;
+    acct.postDateTime = false;
+    acct.comments = false;
+    acct.trackbacks = false;
+
+    thisAccountsAttribs = accountsList.at( i ).firstChildElement( "details" )
+      .firstChildElement( "attributes" );
+    for( j = 0; j < thisAccountsAttribs.count(); j++ ) {
+      if( thisAccountsAttribs.at( j ).attribute( "name" ) == "categoriesEnabled" ) {
+	acct.categoriesEnabled = true;
+	continue;
+      }
+      if( thisAccountsAttribs.at( j ).attribute( "name" ) == "postDateTime" ) {
+	acct.postDateTime = true;
+	continue;
+      }
+      if( thisAccountsAttribs.at( j ).attribute( "name" ) == "comments" ) {
+	acct.comments = true;
+	continue;
+      }
+      if( thisAccountsAttribs.at( j ).attribute( "name" ) == "trackback" )
+	acct.trackbacks = true;
+    }
+
     acctsList.append( acct );
   }
 
@@ -1302,6 +1333,12 @@ void Catkin::getAccounts()
       if( accountsList.at( i ).toElement().attribute( "id" ) == oldCurrentAccountId ) {
 	cw.cbAccountSelector->setCurrentIndex( i );
 	currentAccountElement = accountsList.at( i ).toElement();
+
+	QStringList accountStringNames( accountStrings.keys() );
+	Q_FOREACH( QString s, accountStringNames ) {
+	  *(accountStrings[s]) = currentAccountElement.firstChildElement( "details" )
+	    .firstChildElement( s ).text();
+	}
 
 	// Now check if the current account has any blogs
 	if( !currentAccountElement.firstChildElement( "blogs" ).isNull() )
@@ -1822,6 +1859,7 @@ void Catkin::changeCurrentBlog( int b ) // slot
 void Catkin::changeAccount( int a ) // slot
 {
   QString currentBlogText;
+  int i;
 
   currentAccount = a;
 
@@ -1829,6 +1867,24 @@ void Catkin::changeAccount( int a ) // slot
     .elementsByTagName( "account" ).at( a ).toElement();
   currentAccountId = currentAccountElement.attribute( "id" );
 
+  QStringList accountStringNames( accountStrings.keys() );
+  QStringList accountAttribNames( accountAttribs.keys() );
+  QDomNodeList attribNodes = currentAccountElement.firstChildElement( "details" )
+    .elementsByTagName( "attribute" );
+  int c = attribNodes.count();
+
+  Q_FOREACH( QString s, accountStringNames )
+    *(accountStrings[s]) = currentAccountElement.firstChildElement( "details" )
+      .firstChildElement( s ).text();
+
+  Q_FOREACH( QString t, accountAttribNames ) {
+    *(accountAttribs[t]) = false;
+    for( i = 0; i < attribNodes.count(); i++ ) {
+      if( i.attribute( "name" ) == t )
+	*(accountAttribs[t]) = true;
+    }
+  }
+    
   QDomElement blogsElement = currentAccountElement.firstChildElement( "blogs" );
   if( !blogsElement.isNull() ) {
     QDomNodeList blogsList = blogsElement.elementsByTagName( "blog" );

@@ -54,48 +54,12 @@ AccountsDialog::AccountsDialog( QList<Account> &acctList, QWidget *parent )
   accountList = acctList;
   originalAccountList = acctList;
 
-  /*  teTemplateText->setWhatsThis( tr( "<p>Enter the text of your template here, in HTML "
-				    "format.</p>"
-				    "<p>Four place-markers are supported:</p>"
-				    "<p><strong>%title%</strong> - The page's title<br />"
-				    "<strong>%url%</strong> - the full web location (URL) of "
-				    "the page being blogged;<br />"
-				    "<strong>%host%</strong> - the page's host name (after http://), and<br />"
-				    "<strong>%domain%</strong> - the page's hostname without the \"www\".</p>" ) );
-  lTemplate->setWhatsThis( tr( "<p>Enter the text of your template here, in HTML "
-			       "format.</p>"
-			       "<p>Four place-markers are supported:</p>"
-			       "<p><strong>%title%</strong> - The page's title<br />"
-			       "<strong>%url%</strong> - the full web location (URL) of "
-			       "the page being blogged;<br />"
-			       "<strong>%host%</strong> - the page's host name (after http://), and<br />"
-			       "<strong>%domain%</strong> - the page's hostname without the \"www\".</p>" ) );
-  cbDefaultPublishStatus->setWhatsThis( tr( "<p>Set this to Draft or Publish if you always want "
-					    "posts based on this template to have that status.</p>"
-					    "<p>Otherwise, the post will have the status you specify in "
-					    "the Preferences window.</p>" ) );
-  lDefaultPublishStatus->setWhatsThis( tr( "<p>Set this to Draft or Publish if you always want "
-					   "posts based on this template to have that status.</p>"
-					   "<p>Otherwise, the post will have the status you specify in "
-					   "the Preferences window.</p>" ) );
-  */
-
-
-  // lowestNumber = lwTemplates->count();
-
   hboxLayout->setStretchFactor( hboxLayout->itemAt( 0 )->layout(), 2 );
   hboxLayout->setStretchFactor( hboxLayout->itemAt( 1 )->layout(), 3 );
 
-  /*  //QHBoxLayout *bl = qobject_cast<QHBoxLayout *>(lwTemplates->layout()->parent() );
-  QHBoxLayout *bl = (QHBoxLayout *)(lwTemplates->layout()->parent());
-  if( bl ) {
-    bl->setStretchFactor( lwTemplates->layout(), 2 );
-    bl->setStretchFactor( leName->layout(), 3 );
-    }*/
-  /*  lwTemplates->layout()->parent()->setStretchFactor(
-      lwTemplates->layout()->parent()->setColumnStretch( 1, 3 );*/
 
-  for( int i = 0; i < accountList.count()l i++ ) {
+
+  for( int i = 0; i < accountList.count(); i++ ) {
     a = &(accountList.at( i ).name);
     if( a->isEmpty() )
       lwAccountList->addItem( tr( "(No name)" ) );
@@ -211,6 +175,14 @@ void AccountsDialog::changeListIndex( int index )
   lePort->setText( accountList[currentRow].port );
   leLogin->setText( accountList[currentRow].login );
   lePassword->setText( accountList[currentRow].password );
+
+  chCategoriesEnabled->setCheckState( accountList[currentRow].categoriesEnabled ?
+				      Qt::Checked : Qt::Unchecked );
+  chPostDateTime->setCheckState( accountList[currentRow].postDateTime ?
+				 Qt::Checked : Qt::Unchecked );
+  chComments->setCheckState( accountList[currentRow].comments ? Qt::Checked :
+			     Qt::Unchecked );
+  chTB->setCheckState( accountList[currentRow].trackback ? Qt::Checked : Qt::Unchecked );
 
   Q_FOREACH( QWidget *w, accountWidgets )
     w->setEnabled( true );

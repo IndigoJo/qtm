@@ -65,6 +65,7 @@ private:
   QList<Account> accountList, originalAccountList;
   Account currentAcct;
   QList<QWidget *> accountWidgets;
+  QList<QWidget *> boolWidgets;
   bool doingNewAccount;
   bool dirty;
   int currentRow;
