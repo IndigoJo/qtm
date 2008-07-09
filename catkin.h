@@ -143,6 +143,7 @@ class Catkin : public QMainWindow
       postAsSave, noPassword, initialChangeBlog, allowComments, allowTB, postDateTime,
     copyTitle, allowRegexSearch, useTwoNewlines;
   QHash<QString, bool *> accountAttributes;
+  QHash<QString, QString *> accountStrings;
   bool entryEverSaved, cleanSave, noAutoSave, noAlphaCats;
   QList<QString> usersBlogs;
   QList<QString> categoryList;

@@ -1299,7 +1299,7 @@ void Catkin::getAccounts()
     }
     // Check if the old current account is in this list; if so, make it current again
     for( i = 0; i < accountsList.count(); ++i ) {
-      if( accountsList.at( i ).toElement().attribute( id ) == oldCurrentAccountId ) {
+      if( accountsList.at( i ).toElement().attribute( "id" ) == oldCurrentAccountId ) {
 	cw.cbAccountSelector->setCurrentIndex( i );
 	currentAccountElement = accountsList.at( i ).toElement();
 
