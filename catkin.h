@@ -39,6 +39,7 @@
 #endif
 #include "Application.h"
 
+#include <QHash>
 #include <QtXml>
 
 class QWidget;
@@ -141,6 +142,7 @@ class Catkin : public QMainWindow
   bool categoriesEnabled, entryBlogged, useNewWindows, savePassword,
       postAsSave, noPassword, initialChangeBlog, allowComments, allowTB, postDateTime,
     copyTitle, allowRegexSearch, useTwoNewlines;
+  QHash<QString, bool *> accountAttributes;
   bool entryEverSaved, cleanSave, noAutoSave, noAlphaCats;
   QList<QString> usersBlogs;
   QList<QString> categoryList;

@@ -195,7 +195,7 @@ Catkin::Catkin( bool noRefreshBlogs, QWidget *parent )
   //qDebug() << "Starting window";
   QFont f, g, h;
 
-  QDomElement detailElem, serverElem, locElem, loginElem, pwdElem;
+  QDomElement detailElem, serverElem, locElem, loginElem, pwdElem, attribElem;
   QSettings settings;
 
   setAttribute( Qt::WA_QuitOnClose );
@@ -272,6 +272,16 @@ Catkin::Catkin( bool noRefreshBlogs, QWidget *parent )
 	settings.remove( "login" );
 	settings.remove( "password" );
 	settings.endGroup( "account" );
+
+	// Now transfer the attributes to the default accounts
+	QStringList attribs( accountAttribs.keys() );
+	Q_FOREACH( QString s, attribs ) {
+	  if( *(accountAttribs[s]) ) {
+	    attribElem = accountsDom.createElement( "attribute" );
+	    attribElem.setAttribute( "name", s );
+	    detailElem.appendChild( attribElem );
+	  }
+	}
       }
 
       accountsElement.appendChild( currentAccountElement );
@@ -764,6 +774,12 @@ void Catkin::doUiSetup()
   statusBar()->addPermanentWidget( dirtyIndicator );
   connect( EDITOR, SIGNAL( textChanged() ), this, SLOT( dirtify() ) );
   dirtyIndicator->hide();
+
+  // Set up hash of entry attributes
+  accountAttributes["categoriesEnabled"] = &categoriesEnabled;
+  accountAttributes["postDateTime"] = &postDateTime;
+  accountAttributes["comments"] = &comments;
+  accountAttributes["trackback"] = &trackback;
 
   setWindowModified( false );
   entryEverSaved = false;
