@@ -218,7 +218,8 @@
         <string>An URI (also known as a URL) is the identifier for a place on the Internet, as in http://www.google.com/</string>
        </property>
        <property name="text" >
-        <string>&amp;URI</string>
+        <string>&amp;URI
+(optional)</string>
        </property>
        <property name="buddy" >
         <cstring>leBlogURI</cstring>

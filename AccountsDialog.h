@@ -31,6 +31,7 @@
 class QDialog;
 class QWidget;
 class QAction;
+class QHttp;
 
 class AccountsDialog : public QDialog, public Ui::AccountsForm
 {
@@ -74,6 +75,11 @@ private:
   QAction *removeAccount;
   Account currentAccount;
   QDateTime entryDateTime;
+  QHttp *http;
+  typedef enum _biz {
+    NoBusiness,
+    FindingRsdXml
+  } HttpBusiness;
 
 private slots:
   void changeListIndex( int );
@@ -81,6 +87,9 @@ private slots:
   void setDirty();
   void setClean();
   void assignSlug();
+  void on_leBlogURI_returnPressed();
+  void handleResponseHeader( int, bool );
+  void handleHttpDone( bool );
   void on_pbNew_clicked() { doNewAccount(); }
   void removeThisAccount();
   // void on_pbAccept_clicked() { acceptTemplate(); }

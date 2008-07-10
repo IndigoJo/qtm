@@ -316,32 +316,14 @@ void AccountsDialog::acceptAccount()
   Account newAcct;
   if( doingNewAccount ) {
     accountList.append( currentAcct );
-    /*
-    _templateTitles.append( leName->text() );
-    _templateStrings.append( teTemplateText->toPlainText() );
-    _defaultPublishStates.append( cbDefaultPublishStatus->currentIndex() );
-    _copyTitleStates.append( chCopyTitle->isChecked() );
-    _assocHostStrings.append( teAssocHosts->toPlainText().trimmed() );
-    lwTemplates->item( lwTemplates->count()-1 )->setText( leName->text().isEmpty() ?
-							  tr( "(No name)" ) :
-							  leName->text() );*/
+
     if( lwAccountList->count() == 1 )
       connect( lwAccountList, SIGNAL( currentRowChanged( int ) ),
 	       this, SLOT( changeListIndex( int ) ) );
-
-    /*   QListWidgetItem *newItem = new QListWidgetItem( leName->text() );
-    lwTemplates->addItem( newItem );
-    lwTemplates->setCurrentItem( newItem );*/
-
   } else {
     if( lwAccountList->count() ) {
       lwAccountList->item( currentRow )->setText( leName->text().isEmpty() ?
 						  tr( "(No name)" ) : leName->text() );
-      /*      _templateTitles[currentRow] = leName->text();
-      _templateStrings[currentRow] = teTemplateText->toPlainText();
-      _defaultPublishStates[currentRow] = cbDefaultPublishStatus->currentIndex();
-      _copyTitleStates[currentRow] = chCopyTitle->isChecked();
-      _assocHostLists[currentRow] = teAssocHosts->toPlainText().trimmed().split( QRegExp( "\\n+" ) ); */
     }
   }
 
@@ -390,6 +372,58 @@ void AccountsDialog::on_pbOK_clicked()
   }
   */
   accept();
+}
+
+void AccountsDialog::on_leBlogURL_returnPressed()
+{
+  int i;
+
+  QUrl uri = QUrl( leBlogURI->text(), QUrl::TolerantMode );
+  QString uris = uri.toString();
+
+  if( !uri.isValid() ) {
+    QMessageBox::information( 0, tr( "QTM: URI not valid" ),
+			      tr( "That web location is not valid." ),
+			      QMessageBox::Cancel );
+    return;
+  }
+
+  bool found = false;
+  QStringList hostedAccountStrings, hostedAccountServers, hostedAccountLocations;
+  hostedAccountStrings << "wordpress.com" << "typepad.com" << "squarespace.com"
+		       << "hadithuna.com" << "blogsome.com" << "blog.ie";
+  hostedAccountEndpoints << "@host@;xmlrpc.php"
+			 << "www.typepad.com;/t/api"
+			 << "www.squarespace.com;/do/process/external/PostInterceptor"
+			 << "@host@;xmlrpc.php"
+			 << "@host@;xmlrpc.php"
+			 << "@host@;xmlrpc.php";
+
+  for( i = 0; i <= hostedAccountStrings.count(); i++ ) {
+    if( i < hostedAccountStrings.count() ) {
+      if( uris.contains( hostedAccountStrings.at( i ) ) ) {
+	leLocation->setText( hostedAccountEndpoints.at( i ).section( ";", 1 ) );
+	leServer->setText( hostedAccountEndpoints.at( i ).section( ";", 0, 0 )
+			   .replace( "@host@", uris.host() ) );
+	return;
+      }
+    }
+  }
+
+  // Now test for a rsd.xml file
+  http->setHost( uris.host() );
+  QString loc( uris.path() );
+  QRegExp re( "/.*\\.[shtml|dhtml|phtml|html|htm|php|cgi|pl|py]$" );
+  if( re.exactMatch( loc ) )
+    http->get( loc.section( "/", -2, 0 ) );
+  else
+    http->get( loc );
+
+  connect( http, SIGNAL( requestFinished( int, bool ) ),
+	   this, SLOT( handleResponseHeader() ) );
+  connect( http, SIGNAL( done( bool ) ),
+	   this, SLOT( handleHttpDone( bool ) ) );
+
 }
 
 void AccountsDialog::on_leName_textEdited( const QString &newName )
@@ -457,3 +491,4 @@ void AccountsDialog::on_chTB_toggled( bool state )
   if( currentRow != 1 )
     accountList[currentRow].trackback = state;
 }
+
