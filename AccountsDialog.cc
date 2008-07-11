@@ -390,21 +390,35 @@ void AccountsDialog::on_leBlogURL_returnPressed()
 
   bool found = false;
   QStringList hostedAccountStrings, hostedAccountServers, hostedAccountLocations;
-  hostedAccountStrings << "wordpress.com" << "typepad.com" << "squarespace.com"
-		       << "hadithuna.com" << "blogsome.com" << "blog.ie";
-  hostedAccountEndpoints << "@host@;xmlrpc.php"
+  wpmuHosts << "wordpress.com" << "blogsome.com" << "blogs.ie"
+	    << "hadithuna.com" << "edublogs.com" << "weblogs.us"
+	    << "blogvis.com" << "blogates.com";
+  /*  hostedAccountEndpoints << "@host@;xmlrpc.php"
 			 << "www.typepad.com;/t/api"
 			 << "www.squarespace.com;/do/process/external/PostInterceptor"
 			 << "@host@;xmlrpc.php"
 			 << "@host@;xmlrpc.php"
-			 << "@host@;xmlrpc.php";
+			 << "@host@;xmlrpc.php"; */
 
-  for( i = 0; i <= hostedAccountStrings.count(); i++ ) {
-    if( i < hostedAccountStrings.count() ) {
-      if( uris.contains( hostedAccountStrings.at( i ) ) ) {
-	leLocation->setText( hostedAccountEndpoints.at( i ).section( ";", 1 ) );
-	leServer->setText( hostedAccountEndpoints.at( i ).section( ";", 0, 0 )
-			   .replace( "@host@", uris.host() ) );
+  // First check for TypePad and SquareSpace
+  if( uris.contains( "squarespace.com" ) ) {
+    leServer->setText( "www.squarespace.com" );
+    leLocation->setText( "/do/process/external/PostInterceptor" );
+    return;
+  }
+
+  if( uris.contains( "typepad.com" ) ) {
+    leServer->setText( "www.typepad.com" );
+    leLocation->setText( "/t/api" );
+    return;
+  }
+
+  // Now check if it's a Wordpress MU host
+  for( i = 0; i <= wpmuHosts.count(); i++ ) {
+    if( i < wpmuHosts.at( i ) ) {
+      if( uris.contains( wpmuHosts.at( i ) ) ) {
+	leLocation->setText( uris );
+	leServer->setText( "/xmlrpc.php" );
 	return;
       }
     }
