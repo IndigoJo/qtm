@@ -46,6 +46,7 @@ AccountsDialog::AccountsDialog( QList<Account> &acctList, QWidget *parent )
   : QDialog( parent )
 {
   QString *a;
+  networkBiz = noBusiness;
 
   setupUi( this );
 
@@ -438,6 +439,54 @@ void AccountsDialog::on_leBlogURL_returnPressed()
   connect( http, SIGNAL( done( bool ) ),
 	   this, SLOT( handleHttpDone( bool ) ) );
 
+}
+
+void AccountsDialog::requestFinished( int /* id */,
+				      bool error )
+{
+  if( !error )
+    httpByteArray = http->readAll();
+}
+
+void AccountsDialog::handleHttpDone( bool error )
+{
+  QDomDocument rsdXml;
+  QDomNodeList attributes;
+  QDomElement thisApi;
+  int i;
+  QUrl url;
+
+  if( !error ) {
+    switch( networkBiz ) {
+    case FindingRsdXml:
+      rsdXml = QDomDocument( QString( httpByteArray ) );
+      httpByteArray = QByteArray();
+      if( rsdXml.documentElement().tagName == "rsd" ) {
+	attributes = rsdXml.documentElement().firstChildElement( "apis" )
+	  .elementsByTagName( "api" );
+	for( i = 0; i < attributes.count(); i++ ) {
+	  if( attributes.at( i ).attribute( "name" ) == "MetaWeblog" ) {
+	    url = QUrl( attributes.at( i ).attribute( "apiLink" ) );
+	    if( url.isValid() ) {
+	      leServer->setText( url.host() );
+	      leLocation->setText( url.path() );
+	      break;
+	    }
+	  }
+	}
+      }
+      break;
+    case FindingXmlrpcPhp:
+      // It only needs to exist; it's only likely to return an error message
+      leServer->setText( currentHost );
+      currentHost = QString();
+      leLocation->setText( "/xmlrpc.php" );
+      break;
+
+    }
+  }
+  //  else {
+  networkBiz = NoBusiness;
 }
 
 void AccountsDialog::on_leName_textEdited( const QString &newName )

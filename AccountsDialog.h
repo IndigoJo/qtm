@@ -76,10 +76,14 @@ private:
   Account currentAccount;
   QDateTime entryDateTime;
   QHttp *http;
+  QByteArray httpByteArray;
+  QString currentHost;
   typedef enum _biz {
     NoBusiness,
-    FindingRsdXml
+    FindingRsdXml,
+    FindingXmlrpcPhp
   } HttpBusiness;
+  HttpBusiness networkBiz;
 
 private slots:
   void changeListIndex( int );
