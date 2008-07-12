@@ -78,13 +78,6 @@ AccountsDialog::AccountsDialog( QList<Account> &acctList, QWidget *parent )
 
   Q_FOREACH( QWidget *w, accountWidgets )
     w->setEnabled( false );
-  /*  leName->setEnabled( false );
-  cbHostedBlogType->setEnabled( false );
-  leServer->setEnabled( false );
-  leLocation->setEnabled( false );
-  lePort->setEnabled( false );
-  leLogin->setEnabled( false );
-  lePassword->setEnabled( false );*/
 
   doingNewAccount = false;
   // setClean();
@@ -96,11 +89,6 @@ AccountsDialog::AccountsDialog( QList<Account> &acctList, QWidget *parent )
   lwAccountList->addAction( addAccount );
   lwAccountList->addAction( removeAccount );
   lwAccountList->setContextMenuPolicy( Qt::ActionsContextMenu );
-
-  /*  insertTabIntoTemplate = new QAction( teTemplateText );
-  insertTabIntoTemplate->setShortcut( tr( "Ctrl+T" ) );
-  insertTabIntoTemplate->setShortcutContext( Qt::WidgetShortcut );
-  teTemplateText->addAction( insertTabIntoTemplate ); */
 
   connect( addAccount, SIGNAL( triggered( bool ) ),
 	   this, SLOT( doNewAccount() ) );
@@ -120,11 +108,6 @@ void AccountsDialog::changeListIndex( int index )
 								tr( "(No name)" ) :
 								leName->text() );
     else {
-      /*      _templateTitles.removeAt( currentRow );
-      _templateStrings.removeAt( currentRow );
-      _defaultPublishStates.removeAt( currentRow );
-      _assocHostStrings.removeAt( currentRow );
-      _copyTitleStates.removeAt( currentRow ); */
       accountList.removeAt( currentRow );
       lwAccountList->takeItem( lwAccountList->count()-1 );
     }
@@ -132,9 +115,6 @@ void AccountsDialog::changeListIndex( int index )
 
   doingNewAccount = false;
   currentRow = index;
-
-  /*  currentTemplateTitle = _templateTitles[currentRow];
-      currentTemplateString = _templateStrings[currentRow]; */
 
   leName->setText( accountList[currentRow].name );
   leServer->setText( accountList[currentRow].server );
@@ -153,7 +133,6 @@ void AccountsDialog::changeListIndex( int index )
 
   Q_FOREACH( QWidget *w, accountWidgets )
     w->setEnabled( true );
-  // setClean();
 }
 
 void AccountsDialog::doNewAccount()
@@ -162,11 +141,6 @@ void AccountsDialog::doNewAccount()
   Q_FOREACH( QWidget *w, accountWidgets )
     w->setEnabled( true );
 
-  /*  _templateTitles.append( QString() );
-  _templateStrings.append( QString() );
-  _defaultPublishStates.append( int( 2 ) );
-  _assocHostStrings.append( QString() );
-  _copyTitleStates.append( bool( defaultCPStatus ) ); */
   accountList.append( Account() );
 
   lwAccountList->disconnect( SIGNAL( currentRowChanged( int ) ),
@@ -199,36 +173,16 @@ void AccountsDialog::removeThisAccount()
     lwAccountList->disconnect( SIGNAL( currentRowChanged( int ) ) );
     lwAccountList->clear();
     accountList.clear();
-    /*    _templateTitles.clear();
-    _templateStrings.clear();
-    _defaultPublishStates.clear();
-    _copyTitleStates.clear();
-    _assocHostStrings.clear(); */
-    foreach( QWidget *w, accountWidgets ) {
-      if( qobject_cast<QLineEdit *>( w ) )
-	w->clear();
+
+    if( qobject_cast<QLineEdit *>( w ) )
+      w->clear();
       w->setEnabled( false );
     }
-    /*    leName->clear();
-    leName->setEnabled( false );
-    teTemplateText->clear();
-    teTemplateText->setEnabled( false );
-    cbDefaultPublishStatus->addItem( "" );
-    cbDefaultPublishStatus->setCurrentIndex( 3 );
-    cbDefaultPublishStatus->setEnabled( false );
-    teAssocHosts->clear();
-    teAssocHosts->setEnabled( false );
-    chCopyTitle->setEnabled( false ); */
-    // pbAccept->setEnabled( false );
     currentRow = -1;
   } else {
     lwAccountList->takeItem( c );
     accountList.removeAt( c );
   }
-  // setClean();
-  // qDebug( "exiting" );
-  /*if( originalTitles.size() < lowestNumber )
-    lowestNumber = titles.size(); */
 }
 
 void AccountsDialog::setDirty()
@@ -236,13 +190,6 @@ void AccountsDialog::setDirty()
   dirty = true;
   Q_FOREACH( QWidget *w, accountWidgets )
     disconnect( w, 0, this, SLOT( setDirty() ) );
-
-  /*  disconnect( leName, 0, this, SLOT( setDirty() ) );
-  disconnect( teTemplateText, 0, this, SLOT( setDirty() ) );
-  disconnect( teAssocHosts, 0, this, SLOT( setDirty() ) );
-  disconnect( cbDefaultPublishStatus, 0, this, SLOT( setDirty() ) );
-  disconnect( chCopyTitle, 0, this, SLOT( setDirty() ) ); */
-  // disconnect( this, SLOT( setDirty() ) );
 }
 
 void AccountsDialog::setClean()
@@ -254,28 +201,11 @@ void AccountsDialog::setClean()
   Q_FOREACH( QWidget *w, accountWidgets )
     disconnect( w, 0, this, SLOT( setDirty() ) );
 
-  /*  disconnect( leName, 0, this, SLOT( setDirty() ) );
-  disconnect( teTemplateText, 0, this, SLOT( setDirty() ) );
-  disconnect( teAssocHosts, 0, this, SLOT( setDirty() ) );
-  disconnect( cbDefaultPublishStatus, 0, this, SLOT( setDirty() ) );
-  disconnect( chCopyTitle, 0, this, SLOT( setDirty() ) );
-  */
-
   Q_FOREACH( QWidget *v, accountWidgets ) {
     if( qobject_cast<QLineEdit *>( v ) )
       connect( v, SIGNAL( textChanged( const QString & ) ),
 	       this, SLOT( setDirty() ) );
   }
-  /*  connect( leName, SIGNAL( textChanged( const QString & ) ),
-	   this, SLOT( setDirty() ) );
-  connect( teTemplateText, SIGNAL( textChanged() ),
-	   this, SLOT( setDirty() ) );
-  connect( teAssocHosts, SIGNAL( textChanged() ),
-	   this, SLOT( setDirty() ) );
-  connect( cbDefaultPublishStatus, SIGNAL( currentIndexChanged( int ) ),
-	   this, SLOT( setDirty() ) );
-  connect( chCopyTitle, SIGNAL( clicked( bool ) ),
-  this, SLOT( setDirty() ) ); */
 }
 
 void AccountsDialog::acceptAccount()
@@ -324,20 +254,6 @@ void AccountsDialog::on_pbOK_clicked()
   if( doingNewAccount && !dirty )
     accountList.remove( currentRow );
 
-  // We need to get rid of any empty or whitespace-only associated hosts entries
-  /*  QRegExp emptyString( "^\\s+$" );
-  int i, j;
-  _assocHostLists = compileAssocHostLists( _assocHostStrings );
-  if( _assocHostLists.count() ) {
-    for( i = 0; i < _assocHostLists.count(); i++ ) {
-      for( j = 0; j < _assocHostLists[i].count(); j++ ) {
-	if( _assocHostLists[i].at( j ).isEmpty() ||
-	    emptyString.exactMatch( _assocHostLists[i].at( j ) ) )
-	  _assocHostLists[i].removeAt( j );
-      }
-    }
-  }
-  */
   accept();
 }
 
