@@ -112,40 +112,6 @@ AccountsDialog::AccountsDialog( QList<Account> &acctList, QWidget *parent )
   entryDateTime = QDateTime();
 }
 
-/*void AccountsDialog::on_lwTemplates_clicked( const QModelIndex &ind )
-{
-  qDebug( "lwTemplates clicked" );
-
-  int row = ind.row();
-
-  if( row != currentRow ) {
-    if( dirty ) {
-      qDebug( "status is dirty" );
-      int ret = QMessageBox::warning( 0, tr("QTM"),
-				      tr("The template has been modified.\n"
-					 "Do you want to save your changes?"),
-				      tr( "&Save" ), tr( "&Discard" ),
-				      tr( "&Cancel" ), 0, 2 );
-
-      switch( ret ) {
-      case 2:
-	return; // Click will have no effect
-      case 0:
-	acceptTemplate();
-      default:
-	lwTemplates->setCurrentRow( row );
-	changeListIndex( row );
-      }
-    }
-    else {
-      lwTemplates->setCurrentRow( row );
-      changeListIndex( row );
-    }
-  }
-  else
-    qDebug( "row is current row" );
-    }*/
-
 void AccountsDialog::changeListIndex( int index )
 {
   if( doingNewAccount ) {
