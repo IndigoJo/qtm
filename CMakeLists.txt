@@ -15,6 +15,30 @@ ELSE(NOT APPLE)
     set( PROGNAME qtm )
 ENDIF(APPLE)
 
+find_package (Qt4 REQUIRED)
+
+if( QT_VERSION_MINOR ) # this requires CMake 2.6
+  if( QT_VERSION_MINOR LESS 2 )
+    set( DONT_USE_STI TRUE )
+    set( USE_DBUS FALSE )
+    set( USE_STI FALSE )
+  endif( QT_VERSION_MINOR LESS 2 )
+endif( QT_VERSION_MINOR )
+
+if( DONT_USE_DBUS )
+  set( USE_DBUS FALSE )
+else( DONT_USE_DBUS )
+  set( USE_DBUS TRUE )
+
+endif( DONT_USE_DBUS )
+
+if( DONT_USE_STI )
+  set( USE_STI FALSE )
+  set( USE_DBUS FALSE )
+else( DONT_USE_STI )
+  set( USE_STI TRUE )
+endif( DONT_USE_STI )
+
 if( USE_DBUS )
   set( USE_STI TRUE )
   set( DBUSADAPTOR_CC DBusAdaptor.cc )
@@ -186,7 +210,7 @@ if( USE_DBUS )
   set( QT_USE_QTDBUS TRUE )
 endif( USE_DBUS )
 
-find_package (Qt4 REQUIRED)
+# find_package (Qt4 REQUIRED)
 
 include (${QT_USE_FILE})
 
