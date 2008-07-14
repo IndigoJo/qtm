@@ -170,7 +170,6 @@ void AccountsDialog::doNewAccount()
 void AccountsDialog::removeThisAccount()
 {
   int c = lwAccountList->currentRow();
-  // lwTemplates->takeItem( c );
 
   if( lwAccountList->count() == 1 ) {
     lwAccountList->disconnect( SIGNAL( currentRowChanged( int ) ) );
@@ -197,10 +196,8 @@ void AccountsDialog::setDirty()
 
 void AccountsDialog::setClean()
 {
-  // qDebug( "clean" );
   dirty = false;
 
-  // disconnect( this, SLOT( setDirty() ) ); // to prevent duplicates
   Q_FOREACH( QWidget *w, accountWidgets )
     disconnect( w, 0, this, SLOT( setDirty() ) );
 
@@ -229,7 +226,6 @@ void AccountsDialog::acceptAccount()
 
   doingNewAccount = false;
   setClean();
-  // qDebug( "Finished accept routine" );
 }
 
 /* Private slot method to assign a unique slug name to identify an account.
@@ -251,9 +247,6 @@ void AccountsDialog::on_pbWhatsThis_clicked()
 
 void AccountsDialog::on_pbOK_clicked()
 {
-  //qDebug( "Accept clicked" );
-  //on_pbAccept_clicked();
-
   if( doingNewAccount && !dirty )
     accountList.remove( currentRow );
 
@@ -275,7 +268,8 @@ void AccountsDialog::on_leBlogURL_returnPressed()
   }
 
   bool found = false;
-  QStringList hostedAccountStrings, hostedAccountServers, hostedAccountLocations;
+  //  QStringList hostedAccountStrings, hostedAccountServers, hostedAccountLocations;
+  QStringList wpmuHosts;
   wpmuHosts << "wordpress.com" << "blogsome.com" << "blogs.ie"
 	    << "hadithuna.com" << "edublogs.com" << "weblogs.us"
 	    << "blogvis.com" << "blogates.com";
