@@ -24,9 +24,12 @@
 
 #include "ui_AccountsForm.h"
 
-#include <QStringList>
+#include <QStringList> // also includes QString
+#include <QByteArray>
 #include <QList>
 #include <QDialog>
+
+#include <QtNetwork>
 
 class QDialog;
 class QWidget;
@@ -84,6 +87,7 @@ private:
     FindingXmlrpcPhp
   } HttpBusiness;
   HttpBusiness networkBiz;
+  QHttpRequestHeader currentReq;
 
 private slots:
   void changeListIndex( int );

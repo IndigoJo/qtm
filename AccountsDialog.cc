@@ -35,6 +35,9 @@
 #include <QLineEdit>
 #include <QTextEdit>
 #include <QDateTime>
+#include <QHttp>
+#include <QHttpRequestHeader>
+#include <QHttpResponseHeader>
 #if QT_VERSION <= 0x040300
 #include <QTextDocument>
 #endif
@@ -307,14 +310,15 @@ void AccountsDialog::on_leBlogURL_returnPressed()
     }
   }
 
-  // Now test for a rsd.xml file
+  // Now test for a xmlrpc.php file
   http->setHost( uris.host() );
   QString loc( uris.path() );
   QRegExp re( "/.*\\.[shtml|dhtml|phtml|html|htm|php|cgi|pl|py]$" );
   if( re.exactMatch( loc ) )
-    http->get( loc.section( "/", -2, 0 ) );
+    http->get( loc.section( "/", -2, 0, QString::SectionIncludeTrailingSep )
+	       .append( "index.php" ) );
   else
-    http->get( loc );
+    http->get( loc.append( loc.endsWith( '/' ) ? "index.php" : "/index.php" ) );
 
   connect( http, SIGNAL( requestFinished( int, bool ) ),
 	   this, SLOT( handleResponseHeader() ) );
@@ -335,40 +339,77 @@ void AccountsDialog::handleHttpDone( bool error )
   QDomDocument rsdXml;
   QDomNodeList attributes;
   QDomElement thisApi;
+  QHttpResponseHeader responseHeader;
   int i;
   QUrl url;
+
+  responseHeader = http->lastResponse();
 
   if( !error ) {
     switch( networkBiz ) {
     case FindingRsdXml:
-      rsdXml = QDomDocument( QString( httpByteArray ) );
-      httpByteArray = QByteArray();
-      if( rsdXml.documentElement().tagName == "rsd" ) {
-	attributes = rsdXml.documentElement().firstChildElement( "apis" )
-	  .elementsByTagName( "api" );
-	for( i = 0; i < attributes.count(); i++ ) {
-	  if( attributes.at( i ).attribute( "name" ) == "MetaWeblog" ) {
-	    url = QUrl( attributes.at( i ).attribute( "apiLink" ) );
-	    if( url.isValid() ) {
-	      leServer->setText( url.host() );
-	      leLocation->setText( url.path() );
-	      break;
+      if( responseHeader.statusCode() == 200 ) { /* 200 means success */
+	rsdXml = QDomDocument( QString( httpByteArray ) );
+	httpByteArray = QByteArray();
+	if( rsdXml.documentElement().tagName == "rsd" ) {
+	  attributes = rsdXml.documentElement().firstChildElement( "apis" )
+	    .elementsByTagName( "api" );
+	  for( i = 0; i < attributes.count(); i++ ) {
+	    if( attributes.at( i ).attribute( "name" ) == "MetaWeblog" ) {
+	      url = QUrl( attributes.at( i ).attribute( "apiLink" ) );
+	      if( url.isValid() ) {
+		leServer->setText( url.host() );
+		leLocation->setText( url.path() );
+		break;
+	      }
 	    }
 	  }
 	}
       }
+      else {
+	// Attempt to find tell-tale files has failed
+	QMessageBox::information( this, tr( "QTM: Failure" ),
+				  tr( "QTM failed to auto-configure access to your account. "
+				      "Please consult the documentation for your content management system "
+				      "or service.",
+				      QMessageBox::Cancel ) );
+      }
+      http->close();
+      currentReq = QHttpRequestHeader();
+      disconnect( http, SIGNAL( requestFinished() ), this, 0 );
+      disconnect( http, SIGNAL( done( bool ), this, 0 );
       break;
     case FindingXmlrpcPhp:
-      // It only needs to exist; it's only likely to return an error message
-      leServer->setText( currentHost );
-      currentHost = QString();
-      leLocation->setText( "/xmlrpc.php" );
-      break;
-
+      // If it finds xmlrpc.php, it returns a short string with a successful (200) status code
+      if( responseHeader.statusCode() == 200 ) {
+	leServer->setText( currentHost );
+	currentHost = QString();
+	leLocation->setText( QUrl( currentReq.path() ).path() );
+	http->close();
+	currentReq = QHttpRequestHeader();
+	networkBiz = NoBusiness;
+	disconnect( http, SIGNAL( requestFinished() ), this, 0 );
+	disconnect( http, SIGNAL( done( bool ), this, 0 );
+	break;
+      }
+      else {
+	http->close();
+	http->setHost( QUrl( currentReq.path() ).host() );
+	http->get( QUrl( currentReq.path() ).path().replace( "xmlrpc.php", "rsd.xml" ) );
+	currentReq = QHttpRequestHeader();
+	networkBiz = FindingRsdXml;
+      }
     }
   }
-  //  else {
-  networkBiz = NoBusiness;
+  else {
+    QMessageBox::information( this, tr( "QTM - Network failure" ),
+			      tr( "QTM could not contact the site.  Please consult the documentation "
+				  "for your content management system or service and enter the "
+				  "server and location manually." ),
+			      QMessageBox::Cancel );
+    http->close();
+    currentReq = QHttpRequestHeader();
+  }
 }
 
 void AccountsDialog::on_leName_textEdited( const QString &newName )
