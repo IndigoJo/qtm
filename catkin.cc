@@ -1628,7 +1628,7 @@ void Catkin::saveAccountsDom()
   }
 }
 
-void Catkin::pouplateAccountList() // slot
+void Catkin::populateAccountList() // slot
 {
   int i;
   QDomElement ct, detail;
@@ -1651,8 +1651,8 @@ void Catkin::pouplateAccountList() // slot
 	  cname = tr( "Unnamed account %1" ).arg( i + 1 );
 	cw.cbBlogSelector->addItem( cname, cid );
       }
-
-
+    }
+  
   }
 }
 
@@ -1675,41 +1675,35 @@ void Catkin::populateBlogList() // slot
     cw.cbBlogSelector->clear();
    for( i = 0; i < a; i++ ) {
       ct = blogNodeList.at( i ).firstChildElement( "blogName" );
-      /*if( ct.isNull() )
-	qDebug() << "ct is null: " << i;*/
       cw.cbBlogSelector->addItem( blogNodeList.at( i ).firstChildElement( "blogName" ).text(),
 				  QVariant( blogNodeList.at( i ).firstChildElement( "blogid" ).text() ));
-      // cw.cbBlogSelector->addItem( ct.text() );
       currentBlog = i;
       currentBlogElement = currentAccountElement.firstChildElement( "blogs" )
           .elementsByTagName( "blog" ).at( currentBlog ).toElement();
-      //qDebug() << "set current blog element";
       currentBlogid = currentBlogElement.firstChildElement( "blogid" ).text();
-      //qDebug() << "one pass";
     }
 
    currentBlog = cw.cbBlogSelector->currentIndex();
 
-   //   qDebug() << "currentBlog:" << currentBlog;
-    catsElement = blogNodeList.at( currentBlog ).firstChildElement( "categories" );
-    if( !catsElement.isNull() ) {
-      catNodeList = catsElement.elementsByTagName( "category" );
-      b = catNodeList.count();
-      if( b ) {
-	for( j = 0; j < b; j++ ) {
-	  cw.cbMainCat->addItem( catNodeList.at( j ).firstChildElement( "categoryName" ).text(),
-				 QVariant( catNodeList.at( j ).firstChildElement( "categoryId" ).text() ) );
-	  cw.lwOtherCats->addItem( catNodeList.at( j ).firstChildElement( "categoryName" ).text() );
-	}
-      }
-      else {
-	cw.cbMainCat->setEnabled( false );
-	cw.lwOtherCats->setEnabled( false );
-      }
+   catsElement = blogNodeList.at( currentBlog ).firstChildElement( "categories" );
+   if( !catsElement.isNull() ) {
+     catNodeList = catsElement.elementsByTagName( "category" );
+     b = catNodeList.count();
+     if( b ) {
+       for( j = 0; j < b; j++ ) {
+	 cw.cbMainCat->addItem( catNodeList.at( j ).firstChildElement( "categoryName" ).text(),
+				QVariant( catNodeList.at( j ).firstChildElement( "categoryId" ).text() ) );
+	 cw.lwOtherCats->addItem( catNodeList.at( j ).firstChildElement( "categoryName" ).text() );
+       }
+     }
+     else {
+       cw.cbMainCat->setEnabled( false );
+       cw.lwOtherCats->setEnabled( false );
+     }
 
-    }
-    connect( cw.cbBlogSelector, SIGNAL( activated( int ) ),
-	     this, SLOT( changeBlog( int ) ) );
+   }
+   connect( cw.cbBlogSelector, SIGNAL( activated( int ) ),
+	    this, SLOT( changeBlog( int ) ) );
   }
 }
 
@@ -3237,7 +3231,7 @@ void Catkin::save( const QString &fname )
     out << QString( "Password:%1\n" ).arg( password );
   if( cw.lwTags->count() ) {
   tags = cw.lwTags->count(); */
-  out << QString( "Blog:%1@%2 (%3)" ) // Include the blog name so it can be relayed to the user later
+  out << QString( "AcctBlog:%1@%2 (%3)" ) // Include the blog name so it can be relayed to the user later
     .arg( currentBlogid )
     .arg( currentAccountId )
     .arg( cw.cbBlogSelector->itemText( cw.cbBlogSelector->currentIndex() );
@@ -3523,6 +3517,15 @@ bool Catkin::load( const QString &fname, bool fromSTI )
     }
   }
 
+  if( emap.contains( "AcctBlog" ) ) {
+    loadedAccountId = emap.value( "AcctBlog" ).section( "@", 1, 1 ).section( " (", 0, 0 );
+    b = emap.value( "AcctBlog" ).section( "@", 0, 0 ).toInt( &isOK );
+    if( isOK ) {
+      currentBlog = b;
+      loadedEntryBlog = b;
+    }
+  }
+
   /*
   if( emap.contains( "BlogID" ) ) {
     b = emap.value( "BlogID" ).toInt( &isOK );
@@ -3577,6 +3580,94 @@ bool Catkin::load( const QString &fname, bool fromSTI )
   connect( EDITOR, SIGNAL( textChanged() ), this, SLOT( dirtify() ) );
   dirtyIndicator->hide();
   setWindowModified( false );
+
+  // First of all, deal with entries saved to accounts
+
+  if( !loadedAccountId.isNull() ) {
+    QDomNodeList accts = accountsDom.elementsByTagName( "account" );
+    for( int g = 0; g <= accts.count(); g++ ) {
+      if( g == accts.count() ) {
+	// i.e. if it gets to the end of the accounts tree without finding the account
+	QMessageBox::information( 0, tr( "QTM - No such account" ),
+				  tr( "QTM could not find this account (perhaps it was deleted).\n\n"
+				      "Will set up a blank default account; you will need to fill in the access"
+				      "details by choosing Accounts from the File menu." ),
+				  QMessageBox::Ok );
+	QDomElement newDefaultAccount = accountsDom.createElement( "account" );
+	newDefaultAccount.setAttribute( "id", QString( "newAccount_%1" ).arg( ) );
+	QDomElement newDetailElement = accountsDom.createElement( "details" );
+	QDomElement newNameElement = accountsDom.createElement( );
+	newNameElement.appendChild( QDomText( accountsDom.createTextNode( tr( "New blank element" ) ) ) );
+	newDetailElement.appendChild( newNameElement );
+	newDefaultAccount.appendChild( newDetailElement );
+	accountsDom.documentElement().appendChild( newDefaultAccount );
+	currentAccountElement = newDefaultAccount;
+	return true;
+      }
+
+      if( accts.at( g ).attribute( "id" ) == loadedAccountId ) {
+	populateAccountList();
+	currentAccountElement = accts.at( g ).toElement();
+
+	QString st;
+	for( int h = 0; h < cw.cbAccountSelector->count(); h++ ) {
+	  st = cw.cbAccountSelector->itemData( h ).toString();
+	  if( st == id )
+	    cw.cbAccountSelector->setCurrentIndex( h );
+	}
+
+	// Now populate the blog list
+	QDomNodeList blogNodeList = currentAccountElement.elementsByTagName( "blog" );
+	cw.cbBlogSelector->clear();
+	for( h = 0; h < blogNodeList.count(); h++ ) {
+	  cw.cbBlogSelector->addItem( blogNodeList.at( h ).toElement()
+				      .firstChildElement( "blogName" ).text(),
+				      blogNodeList.at( h ).toElement()
+				      .firstChildElement( "blogid" ).text() );
+	  cw.cbBlogSelector->disconnect( SIGNAL( activated( int ) ), this, 0 );
+	  connect( cw.cbBlogSelector, SIGNAL( activated( int ) ),
+		   this, SLOT( changeBlog( int ) ) );
+	}
+	if( !isOK ) {
+	  QMessageBox::information( 0, tr( "QTM - Invalid blog" ),
+				    tr( "Could not get a valid blog number.  Please set it again." ),
+				    QMessageBox::Ok );
+	  return true;
+	}
+	
+	// Now populate and set the categories
+	cw.cbBlogSelector->setCurrentIndex( currentBlog );
+	catsElement = blogNodeList.at( currentBlog ).firstChildElement( "categories" );
+	if( !catsElement.isNull() ) {
+	  QDomNodeList catNodeList = catsElement.elementsByTagName( "category" );
+	  int b = catNodeList.count();
+	  if( b ) {
+	    for( j = 0; j < b; j++ ) {
+	      cw.cbMainCat->addItem( catNodeList.at( j ).firstChildElement( "categoryName" ).text(),
+				     QVariant( catNodeList.at( j ).firstChildElement( "categoryId" ).text() ) );
+	      cw.lwOtherCats->addItem( catNodeList.at( j ).firstChildElement( "categoryName" ).text() );
+	    }
+	    for( int i = 0; i < catNodes.size(); i++ ) {
+	      cc = catNodes.at( i ).firstChildElement( "categoryId" ).text();
+	      if( cc == QString::number( primaryCat ) )
+		cw.cbMainCat->setCurrentIndex( i );
+	      else {
+		if( catStringList.contains( cc ) )
+		  cw.lwOtherCats->setItemSelected( cw.lwOtherCats->item( i ), true );
+	      }
+	    }
+	  }
+	  else {
+	    cw.cbMainCat->setEnabled( false );
+	    cw.lwOtherCats->setEnabled( false );
+	  }
+	}
+	return true;
+      }
+    }
+    return true;
+  }
+  
 
   if( fromSTI )
     getDetailsAgain = true;
@@ -4099,8 +4190,6 @@ void Catkin::doInitialChangeBlog()
   }
   changeBlog( currentBlog );
 
-  /* connect( cw.cbBlogSelector, SIGNAL( currentIndexChanged( int ) ),
-     this, SLOT( changeCurrentBlog( int ) ) );*/
   connect( cw.cbBlogSelector, SIGNAL( activated( int ) ),
 	   this, SLOT( changeBlog( int ) ) );
 }
