@@ -3744,6 +3744,13 @@ bool Catkin::load( const QString &fname, bool fromSTI )
 	   this, SLOT( setLoadedPostCategories() ) );
   refreshBlogList();
 
+  filename = fname;
+  entryEverSaved = true;
+
+  return true;
+
+  // This is the old routine, commented-out
+
   /*
   if( fromSTI )
     getDetailsAgain = true;
@@ -3817,12 +3824,7 @@ bool Catkin::load( const QString &fname, bool fromSTI )
    }
   }
   */
-  filename = fname;
-  if( pwd )
-    pwd->deleteLater();
-  entryEverSaved = true;
 
-  return true;
 }
 
 void Catkin::setLoadedPostCategories() // slot
