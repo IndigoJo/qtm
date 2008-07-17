@@ -3405,6 +3405,7 @@ bool Catkin::load( const QString &fname, bool fromSTI )
   addToConsole( "Starting load" );
   QMap<QString, QString> emap;
   QString currentLine, key, value, fetchedText, tags;
+  QDomNodeList accts;
   bool getDetailsAgain = false;
   bool isOK;
   int b, c, d;
@@ -3584,7 +3585,7 @@ bool Catkin::load( const QString &fname, bool fromSTI )
   // First of all, deal with entries saved to accounts
 
   if( !loadedAccountId.isNull() ) {
-    QDomNodeList accts = accountsDom.elementsByTagName( "account" );
+    accts = accountsDom.elementsByTagName( "account" );
     for( int g = 0; g <= accts.count(); g++ ) {
       if( g == accts.count() ) {
 	// i.e. if it gets to the end of the accounts tree without finding the account
@@ -3667,7 +3668,39 @@ bool Catkin::load( const QString &fname, bool fromSTI )
     }
     return true;
   }
-  
+
+  // Now we know this isn't an account entry, check whether the saved details actually
+  // belong to an account; if it does, there is no need to check for the password
+
+
+  QDomElement details; 
+  QDomNodeList blogs;
+
+  accts = accountsDom.documentElement.elementsByTagName( "account" );
+  for( int e = 0; e <= accts.count(); e++ ) {
+    if( e == accts.count() ) {
+
+    }
+    details = accts.at( e ).toElement().firstChildElement( "details" );
+    if( details.firstChildElement( "server" ).text() == server &&
+	details.firstChildElement( "location" ).text() == location &&
+	details.firstChildElement( "login" ).text() == login ) {
+      currentAccountElement = accts.at( e );
+      // First check whether the blog still exists
+      blogs = currentAccountElement.elementsByTagName( "blogs" );
+      if( currentBlog > blogs.count() ) {
+
+      }
+      else {
+	// currentBlogAccount = blogs.at( currentBlog );
+	setLoadedPostCategories();
+	return true;
+      }
+
+    }
+
+   
+  }
 
   if( fromSTI )
     getDetailsAgain = true;

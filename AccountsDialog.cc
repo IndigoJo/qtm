@@ -359,6 +359,10 @@ void AccountsDialog::handleHttpDone( bool error )
 	    }
 	  }
 	}
+	else {
+	  // Now that it's established that it's not an MT blog, see if it's a Wordpress one.
+
+	}
       }
       else {
 	// Attempt to find tell-tale files has failed
