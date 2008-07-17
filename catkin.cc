@@ -3705,11 +3705,19 @@ bool Catkin::load( const QString &fname, bool fromSTI )
   }
 
   if( noPassword ) {
-    pwd = new QDialog;
-    pui.setupUi( pwd );
-    if( pwd->exec() ) {
+    QDialog pwd;
+    //pwd = new QDialog;
+    pui.setupUi( &pwd );
+    if( pwd.exec() ) {
       password = pui.lePassword->text();
     }
+    else
+      QMessageBox::warning( 0, tr( "No password" ),
+			    tr( "This entry was saved without a password.\n"
+				"You will need to set one, using the\n"
+				"Preferences window." ),
+			    QMessageBox::Ok, QMessageBox::NoButton );
+      
   }
 
   QDomElement newAcct, newDetails, newServer, newLocation, newLogin, newPwd;
@@ -3729,15 +3737,22 @@ bool Catkin::load( const QString &fname, bool fromSTI )
   newDetails.appendChild( newLogin );
   newDetails.appendChild( newPwd );
   newAcct.appendChild( newDetails );
+  accountsDom.documentElement().appendChild( newAcct );
+  currentBlogElement = newAcct;
 
+  connect( this, SIGNAL( categoryRefreshFinished() ),
+	   this, SLOT( setLoadedPostCategories() ) );
+  refreshBlogList();
+
+  /*
   if( fromSTI )
     getDetailsAgain = true;
 
   if( !noPassword ) {
     if( getDetailsAgain ) {
       initialChangeBlog = true;
-      /*connect( this, SIGNAL( httpBusinessFinished() ),
-	this, SLOT( doInitialChangeBlog() ) ); */
+      //connect( this, SIGNAL( httpBusinessFinished() ),
+	this, SLOT( doInitialChangeBlog() ) );
       connect( this, SIGNAL( categoryRefreshFinished() ),
 	       this, SLOT( setLoadedPostCategories() ) );
       refreshBlogList();
@@ -3758,15 +3773,16 @@ bool Catkin::load( const QString &fname, bool fromSTI )
       setLoadedPostCategories();
     }
     else {
-      pwd = new QDialog;
-      pui.setupUi( pwd );
-      if( pwd->exec() ) {
+      QDialog pwd;
+      // pwd = new QDialog;
+      pui.setupUi( &pwd );
+      if( pwd.exec() ) {
 	password = pui.lePassword->text();
 	if( getDetailsAgain ) {
 	  //qDebug( "Now getting blog list" );
 	  refreshBlogList();
-	  /*connect( this, SIGNAL( httpBusinessFinished() ),
-	    this, SLOT( doInitialChangeBlog() ) );*/
+	  //connect( this, SIGNAL( httpBusinessFinished() ),
+	  //  this, SLOT( doInitialChangeBlog() ) );
 	  connect( this, SIGNAL( categoryRefreshFinished() ),
 		   this, SLOT( setLoadedPostCategories() ) );
 	}
@@ -3774,9 +3790,9 @@ bool Catkin::load( const QString &fname, bool fromSTI )
 	  QDomNodeList blogNodes = currentAccountElement.firstChildElement( "blogs" )
 	    .elementsByTagName( "blog" );
 	  if( !cw.cbBlogSelector->count() ) {
-	    /*for( int z = 0; z < usersBlogs.size(); z++ )
-	      cw.cbBlogSelector->addItem( usersBlogs[z].section( "blogName:", 1 )
-	      .section( ";", 0, 0 ) );*/
+	    //for( int z = 0; z < usersBlogs.size(); z++ )
+	    //  cw.cbBlogSelector->addItem( usersBlogs[z].section( "blogName:", 1 )
+	    //  .section( ";", 0, 0 ) );
 	    int i = blogNodes.size();
 	    //	      usersBlogIDs.size() : usersBlogNames.size();
 	    for( int z = 0; z < i; z++ )
@@ -3798,9 +3814,9 @@ bool Catkin::load( const QString &fname, bool fromSTI )
 			      "You will need to set one, using the\n"
 			      "Preferences window." ),
 			      QMessageBox::Ok, QMessageBox::NoButton );
-    }
+   }
   }
-
+  */
   filename = fname;
   if( pwd )
     pwd->deleteLater();
