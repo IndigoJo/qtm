@@ -3690,7 +3690,8 @@ bool Catkin::load( const QString &fname, bool fromSTI )
       // First check whether the blog still exists
       blogs = currentAccountElement.elementsByTagName( "blogs" );
       if( currentBlog > blogs.count() ) {
-
+	// Message box telling the user to set the blog and category himself cos the blog is gone
+	return true;
       }
       else {
 	// currentBlogAccount = blogs.at( currentBlog );
@@ -3702,6 +3703,32 @@ bool Catkin::load( const QString &fname, bool fromSTI )
 
    
   }
+
+  if( noPassword ) {
+    pwd = new QDialog;
+    pui.setupUi( pwd );
+    if( pwd->exec() ) {
+      password = pui.lePassword->text();
+    }
+  }
+
+  QDomElement newAcct, newDetails, newServer, newLocation, newLogin, newPwd;
+  newAcct = accountsDom.createElement( "account" );
+  newAcct.setAttribute( "id", tr( "newAccount_%1" ).arg( QDateTime::currentDateTime().toString( Qt::ISODate ) ) );
+  newDetails = accountsDom.createElement( "details" );
+  newServer = accountsDom.createElement( "server" );
+  newServer.appendChild( QDomText( doc.createTextNode( server ) ) );
+  newLocation = accountsDom.createElement( "location" );
+  newLocation.appendChild( QDomText( doc.createTextNode( location ) ) );
+  newLogin = accountsDom.createTextNode( "login" );
+  newLogin.appendChild( QDomText( doc.createTextNode( login ) ) );
+  newPwd = accountsDom.createTextNode( "password" );
+  newPwd.appendChild( QDomtext( doc.createTextNode( password ) ) );
+  newDetails.appendChild( newServer );
+  newDetails.appendChild( newLocation );
+  newDetails.appendChild( newLogin );
+  newDetails.appendChild( newPwd );
+  newAcct.appendChild( newDetails );
 
   if( fromSTI )
     getDetailsAgain = true;
