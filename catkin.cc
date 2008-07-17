@@ -3676,6 +3676,7 @@ bool Catkin::load( const QString &fname, bool fromSTI )
   QDomElement details; 
   QDomNodeList blogs;
 
+
   accts = accountsDom.documentElement.elementsByTagName( "account" );
   for( int e = 0; e <= accts.count(); e++ ) {
     if( e == accts.count() ) {
