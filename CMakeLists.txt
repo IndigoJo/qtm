@@ -25,7 +25,7 @@ if( QT_VERSION_MINOR ) # this requires CMake 2.6
   endif( QT_VERSION_MINOR LESS 2 )
 endif( QT_VERSION_MINOR )
 
-if( DONT_USE_DBUS )
+if( DONT_USE_DBUS OR WIN32 )
   set( USE_DBUS FALSE )
 else( DONT_USE_DBUS )
   set( USE_DBUS TRUE )
