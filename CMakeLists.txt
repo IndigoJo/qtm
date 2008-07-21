@@ -25,12 +25,13 @@ if( QT_VERSION_MINOR ) # this requires CMake 2.6
   endif( QT_VERSION_MINOR LESS 2 )
 endif( QT_VERSION_MINOR )
 
-if( DONT_USE_DBUS OR WIN32 )
-  set( USE_DBUS FALSE )
+if( DONT_USE_DBUS OR WIN32 ) # Because you don't get D-Bus on Windows
+  if( NOT USE_DBUS )         # But let's let the user specify it, in case someone ports it  
+    set( USE_DBUS FALSE )
+  endif( NOT USE_DBUS )
 else( DONT_USE_DBUS )
   set( USE_DBUS TRUE )
-
-endif( DONT_USE_DBUS )
+endif( DONT_USE_DBUS OR WIN32 )
 
 if( DONT_USE_STI )
   set( USE_STI FALSE )
@@ -182,27 +183,9 @@ if(COMMAND cmake_policy)
 endif(COMMAND cmake_policy)
 
 add_definitions( -Wall )
-if( WIN32 AND NOT UNIX )
-  file( REMOVE qtm_version.h )
-  add_custom_command( OUTPUT qtm_version.h
-    COMMAND qtm_version.bat ${QTM_VERSION}
-    DEPENDS qtm_version.bat	 
-    COMMENT "Generating version header"
-  )
-  add_custom_target( WINDOWS_VERSION_HEADER ALL
-    DEPENDS qtm_version.h
-  )
-else( WIN32 AND NOT UNIX )
-  file( REMOVE qtm_version.h )
-  add_custom_command( OUTPUT qtm_version.h
-    COMMAND sh ${QTM_SOURCE_DIR}/qtm_version.sh ${QTM_VERSION}
-    DEPENDS qtm_version.sh
-    COMMENT "Generating version header"
-  )
-  add_custom_target( VERSION_HEADER ALL
-    DEPENDS qtm_version.h
-  )
-endif( WIN32 AND NOT UNIX )
+
+configure_file( ${QTM_SOURCE_DIR}/qtm_version.h.in ${QTM_BINARY_DIR}/qtm_version.h @ONLY IMMEDIATE )
+set( GENERATED_SOURCES ${QTM_BINARY_DIR}/qtm_version.h )
 
 SET(QT_USE_QTNETWORK TRUE)
 SET(QT_USE_QTXML TRUE)
@@ -233,13 +216,13 @@ if(MINGW)
 endif(MINGW)
 
 IF(APPLE)
-    add_executable(${PROGNAME} MACOSX_BUNDLE ${QTM_SRCS} ${QTM_UIS_H} ${QTM_MOC_SRCS} ${QTM_RC_SRCS})
+    add_executable(${PROGNAME} MACOSX_BUNDLE ${QTM_SRCS} ${QTM_UIS_H} ${QTM_MOC_SRCS} ${QTM_RC_SRCS} ${GENERATED_SOURCES})
     add_custom_command( TARGET ${PROGNAME} POST_BUILD
       COMMAND mkdir ARGS -p ${CMAKE_CURRENT_BINARY_DIR}/${PROGNAME}.app/Contents/Resources
       COMMAND cp ARGS ${MACOSX_BUNDLE_ICON_FILE} ${CMAKE_CURRENT_BINARY_DIR}/${PROGNAME}.app/Contents/Resources
       )
 ELSE(NOT APPLE)
-    add_executable(${PROGNAME} WIN32 ${QTM_SRCS} ${QTM_UIS_H} ${QTM_MOC_SRCS} ${QTM_RC_SRCS})
+    add_executable(${PROGNAME} WIN32 ${QTM_SRCS} ${QTM_UIS_H} ${QTM_MOC_SRCS} ${QTM_RC_SRCS} ${GENERATED_SOURCES})
     if( NOT QDEBUG )
      if( MINGW )  
       add_custom_command( TARGET ${PROGNAME} POST_BUILD

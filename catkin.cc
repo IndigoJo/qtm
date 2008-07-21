@@ -3018,22 +3018,6 @@ void Catkin::setPostCategories()
 	  data.appendChild( arrayValue );
 	}
       }
-      /*
-      for( int a = 0; a < cw.lwOtherCats->count(); a++ ) {
-	if( cw.lwOtherCats->isItemSelected( cw.lwOtherCats->item( a ) ) ) {
-	  secCatId = categoryList[a].section( "##ID:", 1, 1 );
-	  secCatName = categoryList[a].section( " ##ID:", 0, 0 );
-	  //	    .section( ";", 0, 0 );
-	  arrayValue = doc.createElement( "value" );
-	  arrayStruct = doc.createElement( "struct" );
-	  arrayStruct.appendChild( XmlMember( doc, "categoryId", "int", secCatId ) );
-	  arrayStruct.appendChild( XmlMember( doc, "categoryName", "string",
-					      secCatName ) );
-	  arrayStruct.appendChild( XmlMember( doc, "isPrimary", "boolean", "0" ) );
-	  arrayValue.appendChild( arrayStruct );
-	  data.appendChild( arrayValue );
-	}
-	}*/
 
       array.appendChild( data );
       value.appendChild( array );
@@ -3835,14 +3819,6 @@ void Catkin::setLoadedPostCategories() // slot
   disconnect( SIGNAL( categoryRefreshFinished() ) );
   disconnect( SIGNAL( httpBusinessFinished() ) );
 
-  /*  if( !cw.cbBlogSelector->count() ) {
-    for( int z = 0; z < usersBlogs.size(); z++ )
-      cw.cbBlogSelector->addItem( usersBlogs[z].section( "blogName:", 1 )
-				  .section( ";", 0, 0 ) );
-    cw.cbBlogSelector->setCurrentIndex( currentBlog );
-    }*/
-    /*int j = (usersBlogIDs.size() <= usersBlogURIs.size()) ?
-      usersBlogIDs.size() : usersBlogURIs.size(); */
   QDomNodeList blogNodes = currentAccountElement.firstChildElement( "blogs" )
     .elementsByTagName( "blog" );
 
@@ -3912,8 +3888,6 @@ void Catkin::uploadFile()
   QByteArray conversionBuffer;
   QFile *inFile;
   QDomDocument doc;
-  //char inBytes[3072]; // i.e. 3K; Base64 expands 3 bytes into 4
-  //int bytesRead;
 
   if( !currentHttpBusiness ) {
     QString uploadFilename = QFileDialog::getOpenFileName( this,
@@ -3923,14 +3897,6 @@ void Catkin::uploadFile()
       if( QFile::exists( uploadFilename ) ){
 	inFile = new QFile( uploadFilename );
 	if( inFile->open( QIODevice::ReadOnly ) ) {
-	/*QDataStream inStream( inFile );
-	do {
-	  bytesRead = inStream.readRawData( inBytes, 3072 );
-	  if( bytesRead ) {
-	    conversionBuffer = QByteArray( inBytes );
-	    fileInBase64 += conversionBuffer.toBase64();
-	  }
-	  } while( !inStream.atEnd() ); */
 	  conversionBuffer = inFile->readAll();
 	  if( conversionBuffer.isEmpty() )
 	    statusBar()->showMessage( tr( "This file was empty, or an error occurred." ), 2000 );
@@ -4610,44 +4576,3 @@ void Catkin::addToConsole( const QString &t )
 #endif
 }
 
-/*void Catkin::sortNodes( QDomNodeList &arr, QString index,
-			int start, int end )
-{
-  QList<QDomNode> nodeList;
-  QString pivot;
-  int starth, endh; // store pivot # keep start & end in memory for split
-  starth = start;
-  endh = end;
-
-  if( arr.count() ) {
-    for( int i = 0; i < arr.count(); i++ )
-      nodeList[i] = arr.at( i );
-
-    pivot = nodeList.at( start ).firstChildElement( index ).text().toLower();
-
-    while( start < end ) {
-      while( ( nodeList.at( end ).firstChildElement( index ).text().toLower() >= pivot ) )
-	end--;
-      if (start != end) {
-	nodeList[start] = nodeList.at( end );
-	start++;
-      }
-      while ( (nodeList.at( start ).firstChildElement( index ).text().toLower() <= pivot )
-	      && (start < end))
-	start++;
-      if (start != end) {
-	nodeList[end] = nodeList.at( start );
-	end--;
-      }
-    }
-    nodeList[start] = pivot;
-    pivot = start;
-    start = starth;
-    end = endh;
-    if( start.firstChildElement( index ).text().toLower() < pivot )
-      quicksort( nodeList, start, pivot-1 );
-    if( end.firstChildElement( index ).text().toLower() > pivot )
-      quicksort( nodeList, pivot+1, end );
-  }
-}
-*/
