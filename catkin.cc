@@ -854,12 +854,11 @@ bool Catkin::handleArguments()
 
 void Catkin::about() // slot
 {
-  QDialog *about_box = new QDialog( this );
+  QDialog about_box( this );
   Ui::AboutBox abui;
-  abui.setupUi( about_box );
+  abui.setupUi( &about_box );
   abui.label->setText( abui.label->text().replace( "(VERSION)", QTM_VERSION ) );
-  about_box->exec();
-  about_box->deleteLater();
+  about_box.exec();
 }
 
 void Catkin::newDoc()
@@ -1363,17 +1362,17 @@ void Catkin::getPreferences()
   bool blogUnchanged;
   QSettings settings;
 
-  PrefsDialog *prefsDialog = new PrefsDialog( this );
+  PrefsDialog prefsDialog( this );
   /*if( blogType )
     prefsDialog->cbBlogType->setCurrentIndex( blogType-1 );
   else
   prefsDialog->cbBlogType->setCurrentIndex( 4 );*/
-  prefsDialog->lePort->setEnabled( false );   // This can come later.
-  prefsDialog->lPort->setEnabled( false );  //
-  prefsDialog->leServer->setText( server );
-  prefsDialog->leLocation->setText( location );
-  prefsDialog->leLogin->setText( login );
-  prefsDialog->lePassword->setText( password );
+  prefsDialog.lePort->setEnabled( false );   // This can come later.
+  prefsDialog.lPort->setEnabled( false );  //
+  prefsDialog.leServer->setText( server );
+  prefsDialog.leLocation->setText( location );
+  prefsDialog.leLogin->setText( login );
+  prefsDialog.lePassword->setText( password );
   if( localStorageDirectory.isEmpty() ) {
 #ifdef Q_WS_WIN
     QString lsd = QString( "%1/QTM blog" ).arg( QDir::homePath() )
@@ -1381,28 +1380,28 @@ void Catkin::getPreferences()
 #else
     QString lsd = QString( "%1/qtm-blog" ).arg( QDir::homePath() );
 #endif
-    prefsDialog->leLocalDir->setText( lsd );
+    prefsDialog.leLocalDir->setText( lsd );
   }
   else
-    prefsDialog->leLocalDir->setText( localStorageDirectory );
-  prefsDialog->leFileExtn->setText( localStorageFileExtn );
+    prefsDialog.leLocalDir->setText( localStorageDirectory );
+  prefsDialog.leFileExtn->setText( localStorageFileExtn );
   /*prefsDialog->chCategories->setCheckState( categoriesEnabled ? Qt::Checked :
     Qt::Unchecked ); */
-  prefsDialog->chUseNewWindows->setCheckState( useNewWindows ? Qt::Checked :
+  prefsDialog.chUseNewWindows->setCheckState( useNewWindows ? Qt::Checked :
 				       Qt::Unchecked );
   /*prefsDialog->chSavePassword->setCheckState( savePassword ? Qt::Checked :
     Qt::Unchecked ); */
-  prefsDialog->cbPostAsSave->setCheckState( postAsSave ? Qt::Checked :
+  prefsDialog.cbPostAsSave->setCheckState( postAsSave ? Qt::Checked :
 					    Qt::Unchecked );
-  prefsDialog->cbAllowComments->setCheckState( allowComments ? Qt::Checked :
+  prefsDialog.cbAllowComments->setCheckState( allowComments ? Qt::Checked :
 					       Qt::Unchecked );
-  prefsDialog->cbAllowTB->setCheckState( allowTB ? Qt::Checked :
+  prefsDialog.cbAllowTB->setCheckState( allowTB ? Qt::Checked :
 				       Qt::Unchecked );
   //prefsDialog->chPostDateTime->setCheckState( postDateTime ? Qt::Checked : Qt::Unchecked );
 #ifdef USE_SYSTRAYICON
-  prefsDialog->chCopyTitle->setCheckState( copyTitle ? Qt::Checked : Qt::Unchecked );
+  prefsDialog.chCopyTitle->setCheckState( copyTitle ? Qt::Checked : Qt::Unchecked );
 #else
-  prefsDialog->chCopyTitle->setVisible( false );
+  prefsDialog.chCopyTitle->setVisible( false );
 #endif
 #if QT_VERSION >= 0x040200
   prefsDialog->chAllowRegexSearch->setCheckState( allowRegexSearch ? Qt::Checked : Qt::Unchecked );
@@ -1412,33 +1411,33 @@ void Catkin::getPreferences()
   //				     Qt::Unchecked );
   //prefsDialog->cbBloggerTitleFormat->setCurrentIndex( bloggerTitleFormat );
 #ifdef Q_WS_MAC
-  prefsDialog->setWindowFlags( Qt::Sheet );
+  prefsDialog.setWindowFlags( Qt::Sheet );
 #endif
 
 #if QT_VERSION >= 0x040200
-  prefsDialog->tabWidget->setTabText( 0, tr( "General" ) );
-  prefsDialog->tabWidget->setTabText( 1, tr( "Fonts" ) );
-  prefsDialog->tabWidget->setCurrentIndex( 0 );
+  prefsDialog.tabWidget->setTabText( 0, tr( "General" ) );
+  prefsDialog.tabWidget->setTabText( 1, tr( "Fonts" ) );
+  prefsDialog.tabWidget->setCurrentIndex( 0 );
 
   QFont editorFont = EDITOR->font();
   QFont previewFont = previewWindow->font();
   QFont consoleFont = console->font();
-  prefsDialog->fcbComposer->setCurrentFont( editorFont );
-  prefsDialog->sbComposer->setValue( editorFont.pointSize() );
-  prefsDialog->fcbPreview->setCurrentFont( previewFont );
-  prefsDialog->sbPreview->setValue( previewFont.pointSize() );
-  prefsDialog->fcbConsole->setCurrentFont( consoleFont );
-  prefsDialog->sbConsole->setValue( consoleFont.pointSize() );
+  prefsDialog.fcbComposer->setCurrentFont( editorFont );
+  prefsDialog.sbComposer->setValue( editorFont.pointSize() );
+  prefsDialog.fcbPreview->setCurrentFont( previewFont );
+  prefsDialog.sbPreview->setValue( previewFont.pointSize() );
+  prefsDialog.fcbConsole->setCurrentFont( consoleFont );
+  prefsDialog.sbConsole->setValue( consoleFont.pointSize() );
 #ifdef USE_SYSTRAYICON
-  prefsDialog->cbSTI2ClickFunction->setCurrentIndex( STI2ClickFunction );
+  prefsDialog.cbSTI2ClickFunction->setCurrentIndex( STI2ClickFunction );
 #else
-  prefsDialog->cbSTI2ClickFunction->hide();
-  prefsDialog->label_10->hide();
+  prefsDialog.cbSTI2ClickFunction->hide();
+  prefsDialog.label_10->hide();
 #endif
 #endif
-  prefsDialog->resize( QSize( prefsDialog->width(),
+  prefsDialog.resize( QSize( prefsDialog->width(),
 			      prefsDialog->minimumHeight() ) );
-  if( prefsDialog->exec() ) {
+  if( prefsDialog.exec() ) {
     /*if( (server == prefsDialog->leServer->text())
 	&& (location == prefsDialog->leLocation->text() ) )
       blogUnchanged = true;
@@ -1450,47 +1449,47 @@ void Catkin::getPreferences()
     /*blogType = prefsDialog->cbBlogType->currentIndex()+1; // 0 means no type is set
     if( blogType == 5 )
     blogType = 0; */
-    /*    server = prefsDialog->leServer->text();
-    location = prefsDialog->leLocation->text();
-    login = prefsDialog->leLogin->text();
-    password = prefsDialog->lePassword->text(); */
-    localStorageDirectory = prefsDialog->leLocalDir->text();
-    localStorageFileExtn = prefsDialog->leFileExtn->text();
-    //categoriesEnabled = (int)prefsDialog->chCategories->checkState();
-    useNewWindows = prefsDialog->chUseNewWindows->isChecked();
-    //savePassword = prefsDialog->chSavePassword->isChecked();
-    postAsSave = prefsDialog->cbPostAsSave->isChecked();
-    allowComments = prefsDialog->cbAllowComments->isChecked();
-    allowTB = prefsDialog->cbAllowTB->isChecked();
-    //    postDateTime = prefsDialog->chPostDateTime->isChecked();
+    /*    server = prefsDialog.leServer->text();
+    location = prefsDialog.leLocation->text();
+    login = prefsDialog.leLogin->text();
+    password = prefsDialog.lePassword->text(); */
+    localStorageDirectory = prefsDialog.leLocalDir->text();
+    localStorageFileExtn = prefsDialog.leFileExtn->text();
+    //categoriesEnabled = (int)prefsDialog.chCategories->checkState();
+    useNewWindows = prefsDialog.chUseNewWindows->isChecked();
+    //savePassword = prefsDialog.chSavePassword->isChecked();
+    postAsSave = prefsDialog.cbPostAsSave->isChecked();
+    allowComments = prefsDialog.cbAllowComments->isChecked();
+    allowTB = prefsDialog.cbAllowTB->isChecked();
+    //    postDateTime = prefsDialog.chPostDateTime->isChecked();
 #ifdef USE_SYSTRAYICON
-    copyTitle = prefsDialog->chCopyTitle->isChecked();
+    copyTitle = prefsDialog.chCopyTitle->isChecked();
 #endif
 #if QT_VERSION >= 0x040200
-    allowRegexSearch = prefsDialog->chAllowRegexSearch->isChecked();
+    allowRegexSearch = prefsDialog.chAllowRegexSearch->isChecked();
 #endif
-    //useTwoNewlines = prefsDialog->cbUseTwoNewlines->isChecked();
-    //useBloggerTitleFormatting = prefsDialog->chUseBloggerTitleFormatting->isChecked();
-    //bloggerTitleFormat = prefsDialog->cbBloggerTitleFormat->currentIndex();
+    //useTwoNewlines = prefsDialog.cbUseTwoNewlines->isChecked();
+    //useBloggerTitleFormatting = prefsDialog.chUseBloggerTitleFormatting->isChecked();
+    //bloggerTitleFormat = prefsDialog.cbBloggerTitleFormat->currentIndex();
 #if QT_VERSION >= 0x040200
 #ifndef NO_DEBUG_OUTPUT
     qDebug( "setting fonts" );
 #endif
-    QFont ef = prefsDialog->fcbComposer->currentFont();
-    ef.setPointSize( prefsDialog->sbComposer->value() );
+    QFont ef = prefsDialog.fcbComposer->currentFont();
+    ef.setPointSize( prefsDialog.sbComposer->value() );
     editorFontString = ef.toString();
     EDITOR->setFont( ef );
-    QFont pf = prefsDialog->fcbPreview->currentFont();
-    pf.setPointSize( prefsDialog->sbPreview->value() );
+    QFont pf = prefsDialog.fcbPreview->currentFont();
+    pf.setPointSize( prefsDialog.sbPreview->value() );
     previewFontString = pf.toString();
     previewWindow->setFont( pf );
-    QFont cf = prefsDialog->fcbConsole->currentFont();
-    cf.setPointSize( prefsDialog->sbConsole->value() );
+    QFont cf = prefsDialog.fcbConsole->currentFont();
+    cf.setPointSize( prefsDialog.sbConsole->value() );
     consoleFontString = cf.toString();
     console->setFont( cf );
 #endif
 #if defined USE_SYSTRAYICON
-    STI2ClickFunction = prefsDialog->cbSTI2ClickFunction->currentIndex();
+    STI2ClickFunction = prefsDialog.cbSTI2ClickFunction->currentIndex();
     if( sti ) {
 #ifndef NO_DEBUG_OUTPUT
       qDebug( "setting double click function" );
@@ -1575,7 +1574,7 @@ void Catkin::getPreferences()
 #endif
 
     if( server.isEmpty() || location.isEmpty() || login.isEmpty() ||
-	prefsDialog->noValidHost() ) {
+	prefsDialog.noValidHost() ) {
       // Adequate network details absent or host not valid, therefore disable
       // all widgets and actions leading to network use.
       setNetworkActionsEnabled( false );
@@ -1589,7 +1588,6 @@ void Catkin::getPreferences()
     connect( this, SIGNAL( httpBusinessFinished() ),
 	     this, SLOT( doInitialChangeBlog() ) );
   }
-  prefsDialog->deleteLater();
 }
 
 void Catkin::saveAccountsDom()
@@ -2421,16 +2419,18 @@ void Catkin::insertLink( bool isAutoLink )
   QString insertionString = "";
   QString selectedString = EDITOR->textCursor().selectedText();
   QString selectedStringLC;
-  QDialog *linkEntry = new QDialog( this );
+  QDialog linkEntry( this );
   Ui::LinkEntry leui;
 #ifdef Q_WS_MAC
-  linkEntry->setWindowFlags( Qt::Sheet );
+  linkEntry.setWindowFlags( Qt::Sheet );
 #endif
-  leui.setupUi( linkEntry );
+  leui.setupUi( &linkEntry );
   if( isAutoLink )
     leui.cbMakeAutoLink->setChecked( Qt::Checked );
+  if( !selectedString.isEmpty() )
+    leui.leLinkText->setText( selectedString );
 
-  if( linkEntry->exec() ) {
+  if( linkEntry.exec() ) {
     linkString = leui.leLinkURL->text();
     // linkString.replace( QChar( '&' ), "&amp;" );
     insertionString += QString( "<a href=\"%1\"" ).arg( linkString );
@@ -2448,9 +2448,8 @@ void Catkin::insertLink( bool isAutoLink )
     insertionString += ">";
     EDITOR->insertPlainText( QString( "%1%2</a>" )
 			     .arg( insertionString )
-			     .arg( selectedString ) );
+			     .arg( leui.leLinkText->text() ) );
   }
-  linkEntry->deleteLater();
   if( leui.cbMakeAutoLink->isChecked() ) {
     selectedStringLC = selectedString.toLower().trimmed();
     autoLinkDictionary.insert( selectedStringLC, linkString );
@@ -2510,13 +2509,13 @@ void Catkin::insertAutoLink()
 void Catkin::insertImage()
 {
   QString insertionString;
-  QDialog *image_entry = new QDialog( this );
+  QDialog image_entry( this );
   Ui::ImageEntry ieui;
 #ifdef Q_WS_MAC
-  image_entry->setWindowFlags( Qt::Sheet );
+  image_entry.setWindowFlags( Qt::Sheet );
 #endif
-  ieui.setupUi( image_entry );
-  if( image_entry->exec() ) {
+  ieui.setupUi( &image_entry );
+  if( image_entry.exec() ) {
     insertionString = QString( "<img src=\"%1\"" )
       .arg( ieui.leImageURL->text() );
     if( ieui.leAltText->text().size() )
@@ -2531,7 +2530,6 @@ void Catkin::insertImage()
     insertionString += ">";
     EDITOR->insertPlainText( insertionString );
   }
-  image_entry->deleteLater();
 }
 
 void Catkin::insertImageFromClipboard()

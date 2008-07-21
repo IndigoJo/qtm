@@ -953,21 +953,20 @@ void SysTrayIcon::configureQuickpostTemplates( QWidget *parent )
   /*  QList<QString> titles, templateStrings;
       QStringListModel *titlesModel;*/
 
-  QuickpostTemplateDialog *templateDialog = 
-    new QuickpostTemplateDialog( templateTitleList, templateList,
-				 defaultPublishStatusList, copyTitleStatusList,
-				 assocHostLists, _copyTitle, parent );
+  QuickpostTemplateDialog templateDialog( templateTitleList, templateList,
+					  defaultPublishStatusList, copyTitleStatusList,
+					  assocHostLists, _copyTitle, parent );
 
   configureTemplates->setEnabled( false );
   configureTemplates->setMenu( 0 );
-  if( templateDialog->exec() ) {
+  if( templateDialog.exec() ) {
     // Set templates menu back up
     templateMenu->clear();
-    templateTitleList = templateDialog->templateTitles();
-    templateList = templateDialog->templateStrings();
-    defaultPublishStatusList = templateDialog->defaultPublishStates();
-    copyTitleStatusList = templateDialog->copyTitleStates();
-    assocHostLists = templateDialog->assocHostLists();
+    templateTitleList = templateDialog.templateTitles();
+    templateList = templateDialog.templateStrings();
+    defaultPublishStatusList = templateDialog.defaultPublishStates();
+    copyTitleStatusList = templateDialog.copyTitleStates();
+    assocHostLists = templateDialog.assocHostLists();
     quickpostTemplates = templateDocument.createElement( "QuickpostTemplates" );
     int numTemplates = (templateTitleList.size() <= templateList.size()) ?
       templateTitleList.size() : templateList.size();
@@ -1032,7 +1031,6 @@ void SysTrayIcon::configureQuickpostTemplates( QWidget *parent )
   else {
     configureTemplates->setEnabled( true );
   }
-  templateDialog->deleteLater();
 }
 
 QDomElement SysTrayIcon::templateElement( QDomDocument &doc,
