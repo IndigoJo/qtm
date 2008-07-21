@@ -1,6 +1,6 @@
 <ui version="4.0" >
- <class>AccountSelectorForm</class>
- <widget class="QDialog" name="AccountSelectorForm" >
+ <class>AccountsForm</class>
+ <widget class="QDialog" name="AccountsForm" >
   <property name="geometry" >
    <rect>
     <x>0</x>
@@ -154,7 +154,7 @@
       <widget class="QLineEdit" name="leServer" />
      </item>
      <item row="6" column="0" colspan="2" >
-      <widget class="QCheckBox" name="chCategories" >
+      <widget class="QCheckBox" name="chCategoriesEnabled" >
        <property name="whatsThis" >
         <string>Click here if this account is on a blog that has or supports categories</string>
        </property>

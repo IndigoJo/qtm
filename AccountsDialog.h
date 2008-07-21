@@ -19,6 +19,9 @@
  *
  *****************************************************************************/
 
+#ifndef ACCOUNTSDIALOG_H
+#define ACCOUNTSDIALOG_H
+
 #include <QtGlobal>
 #if QT_VERSION >= 0x040200
 
@@ -41,15 +44,6 @@ class AccountsDialog : public QDialog, public Ui::AccountsForm
   Q_OBJECT
 
 public:
-  AccountsDialog( QList<Account> &, QWidget *parent = 0 );
-  QList<Account> accounts() { return accountList; }
-  /*QStringList templateTitles() { return _templateTitles; }
-  QStringList templateStrings() { return _templateStrings; }
-  QList<int> defaultPublishStates() { return _defaultPublishStates; }
-  QList<bool> copyTitleStates() { return _copyTitleStates; }
-  QList<QStringList> compileAssocHostLists( QStringList & );
-  QStringList compileAssocHostStrings( QList<QStringList> & );
-  QList<QStringList> assocHostLists(); */
   typedef struct _acct {
     QString id;
     QString name;
@@ -63,6 +57,17 @@ public:
     bool comments;
     bool trackback;
   } Account;
+
+  AccountsDialog( QList<AccountsDialog::Account> &, QWidget *parent = 0 );
+  QList<Account> accounts() { return accountList; }
+  /*QStringList templateTitles() { return _templateTitles; }
+  QStringList templateStrings() { return _templateStrings; }
+  QList<int> defaultPublishStates() { return _defaultPublishStates; }
+  QList<bool> copyTitleStates() { return _copyTitleStates; }
+  QList<QStringList> compileAssocHostLists( QStringList & );
+  QStringList compileAssocHostStrings( QList<QStringList> & );
+  QList<QStringList> assocHostLists(); */
+
 
 private:
   void acceptAccount();
@@ -96,13 +101,14 @@ private slots:
   void setClean();
   void assignSlug();
   void on_leBlogURI_returnPressed();
-  void handleResponseHeader( int, bool );
+  // void handleResponseHeader( int, bool );
   void handleHttpDone( bool );
   void on_pbNew_clicked() { doNewAccount(); }
   void removeThisAccount();
   // void on_pbAccept_clicked() { acceptTemplate(); }
   void on_pbWhatsThis_clicked();
   void on_pbOK_clicked();
+  void on_leBlogURL_returnPressed();
   void on_pbCancel_clicked() { reject(); }
   void on_leName_textEdited( const QString & );
   void on_leServer_textEdited( const QString & );
@@ -115,6 +121,8 @@ private slots:
   void on_chPostDateTime_toggled( bool );
   void on_chComments_toggled( bool );
   void on_chTB_toggled( bool );
+  void requestFinished( int, bool );
 };
 
+#endif
 #endif

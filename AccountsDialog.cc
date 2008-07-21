@@ -42,14 +42,16 @@
 #include <QTextDocument>
 #endif
 
+#include <QtXml>
+
 #include "AccountsDialog.h"
 #include "ui_AccountsForm.h"
 
-AccountsDialog::AccountsDialog( QList<Account> &acctList, QWidget *parent )
+AccountsDialog::AccountsDialog( QList<AccountsDialog::Account> &acctList, QWidget *parent )
   : QDialog( parent )
 {
-  QString *a;
-  networkBiz = noBusiness;
+  QString a;
+  networkBiz = NoBusiness;
 
   setupUi( this );
 
@@ -64,18 +66,18 @@ AccountsDialog::AccountsDialog( QList<Account> &acctList, QWidget *parent )
 
 
   for( int i = 0; i < accountList.count(); i++ ) {
-    a = &(accountList.at( i ).name);
-    if( a->isEmpty() )
+    a = accountList.at( i ).name;
+    if( a.isEmpty() )
       lwAccountList->addItem( tr( "(No name)" ) );
     else
-      lwAccountList->addItem( *a );
+      lwAccountList->addItem( a );
   }
   //qDebug( "added the templates" );
 
   // Set up list of account widgets;
-  accountWidgets << leName << cbHostedBlogTypes << leServer << leLocation
+  accountWidgets << leName << cbHostedBlogType << leServer << leLocation
 		 << lePort << leLogin << lePassword
-		 << chCategories << chPostDateTime << chComments << chTB;
+		 << chCategoriesEnabled << chPostDateTime << chComments << chTB;
 
   pbReset->setVisible( false );
 
@@ -85,7 +87,6 @@ AccountsDialog::AccountsDialog( QList<Account> &acctList, QWidget *parent )
   doingNewAccount = false;
   // setClean();
   currentRow = -1;
-  defaultCPStatus = status;
 
   addAccount = new QAction( tr( "&Add account" ), lwAccountList );
   removeAccount = new QAction( tr( "&Remove this account" ), lwAccountList );
@@ -140,6 +141,8 @@ void AccountsDialog::changeListIndex( int index )
 
 void AccountsDialog::doNewAccount()
 {
+  QLineEdit *le;
+
   entryDateTime = QDateTime::currentDateTime();
   Q_FOREACH( QWidget *w, accountWidgets )
     w->setEnabled( true );
@@ -149,9 +152,11 @@ void AccountsDialog::doNewAccount()
   lwAccountList->disconnect( SIGNAL( currentRowChanged( int ) ),
 			     this, SLOT( changeListIndex( int ) ) );
   currentRow = -1;
-  Q_FOREACH( QWidget *v, accountWidgets )
-    if( qobject_cast<QLineEdit *>( w ) )
-      w->clear();
+  Q_FOREACH( QWidget *v, accountWidgets ) {
+    le = qobject_cast<QLineEdit *>( v );
+    if( le )
+      le->clear();
+  }
 
   lwAccountList->addItem( tr( "New account" ) );
   currentRow = lwAccountList->count()-1;
@@ -169,6 +174,7 @@ void AccountsDialog::doNewAccount()
 
 void AccountsDialog::removeThisAccount()
 {
+  QLineEdit *le;
   int c = lwAccountList->currentRow();
 
   if( lwAccountList->count() == 1 ) {
@@ -176,9 +182,12 @@ void AccountsDialog::removeThisAccount()
     lwAccountList->clear();
     accountList.clear();
 
-    if( qobject_cast<QLineEdit *>( w ) )
-      w->clear();
-      w->setEnabled( false );
+    Q_FOREACH( QWidget *w, accountWidgets ) {
+      le = qobject_cast<QLineEdit *>( w );
+      if( le ) {
+	le->clear();
+	le->setEnabled( false );
+      }
     }
     currentRow = -1;
   } else {
@@ -234,7 +243,7 @@ void AccountsDialog::acceptAccount()
  */
 void AccountsDialog::assignSlug()
 {
-  currentAccountId = QString( "%1_%2" ).arg( entryDateTime )
+  currentAccountId = QString( "%1_%2" ).arg( entryDateTime.toString( Qt::ISODate ) )
                                        .arg( leName->text().toLower()
                                              .replace( QRegExp( "\\s" ), "_" ) );
   accountList[currentRow].id = currentAccountId;
@@ -248,7 +257,7 @@ void AccountsDialog::on_pbWhatsThis_clicked()
 void AccountsDialog::on_pbOK_clicked()
 {
   if( doingNewAccount && !dirty )
-    accountList.remove( currentRow );
+    accountList.removeAt( currentRow );
 
   accept();
 }
@@ -295,7 +304,7 @@ void AccountsDialog::on_leBlogURL_returnPressed()
 
   // Now check if it's a Wordpress MU host
   for( i = 0; i <= wpmuHosts.count(); i++ ) {
-    if( i < wpmuHosts.at( i ) ) {
+    if( i < wpmuHosts.count() ) {
       if( uris.contains( wpmuHosts.at( i ) ) ) {
 	leLocation->setText( uris );
 	leServer->setText( "/xmlrpc.php" );
@@ -305,8 +314,8 @@ void AccountsDialog::on_leBlogURL_returnPressed()
   }
 
   // Now test for a xmlrpc.php file
-  http->setHost( uris.host() );
-  QString loc( uris.path() );
+  http->setHost( uri.host() );
+  QString loc( uri.path() );
   QRegExp re( "/.*\\.[shtml|dhtml|phtml|html|htm|php|cgi|pl|py]$" );
   if( re.exactMatch( loc ) )
     http->get( loc.section( "/", -2, 0, QString::SectionIncludeTrailingSep )
@@ -345,12 +354,12 @@ void AccountsDialog::handleHttpDone( bool error )
       if( responseHeader.statusCode() == 200 ) { /* 200 means success */
 	rsdXml = QDomDocument( QString( httpByteArray ) );
 	httpByteArray = QByteArray();
-	if( rsdXml.documentElement().tagName == "rsd" ) {
+ 	if( rsdXml.documentElement().tagName() == "rsd" ) {
 	  attributes = rsdXml.documentElement().firstChildElement( "apis" )
 	    .elementsByTagName( "api" );
 	  for( i = 0; i < attributes.count(); i++ ) {
-	    if( attributes.at( i ).attribute( "name" ) == "MetaWeblog" ) {
-	      url = QUrl( attributes.at( i ).attribute( "apiLink" ) );
+	    if( attributes.at( i ).toElement().attribute( "name" ) == "MetaWeblog" ) {
+	      url = QUrl( attributes.at( i ).toElement().attribute( "apiLink" ) );
 	      if( url.isValid() ) {
 		leServer->setText( url.host() );
 		leLocation->setText( url.path() );
@@ -369,13 +378,13 @@ void AccountsDialog::handleHttpDone( bool error )
 	QMessageBox::information( this, tr( "QTM: Failure" ),
 				  tr( "QTM failed to auto-configure access to your account. "
 				      "Please consult the documentation for your content management system "
-				      "or service.",
-				      QMessageBox::Cancel ) );
+				      "or service." ),
+				  QMessageBox::Cancel );
       }
       http->close();
       currentReq = QHttpRequestHeader();
       disconnect( http, SIGNAL( requestFinished() ), this, 0 );
-      disconnect( http, SIGNAL( done( bool ), this, 0 );
+      disconnect( http, SIGNAL( done( bool ) ), this, 0 );
       break;
     case FindingXmlrpcPhp:
       // If it finds xmlrpc.php, it returns a short string with a successful (200) status code
@@ -387,7 +396,7 @@ void AccountsDialog::handleHttpDone( bool error )
 	currentReq = QHttpRequestHeader();
 	networkBiz = NoBusiness;
 	disconnect( http, SIGNAL( requestFinished() ), this, 0 );
-	disconnect( http, SIGNAL( done( bool ), this, 0 );
+	disconnect( http, SIGNAL( done( bool ) ), this, 0 );
 	break;
       }
       else {
@@ -420,13 +429,13 @@ void AccountsDialog::on_leName_textEdited( const QString &newName )
   }
 }
 
-void AccountsDialog::on_leServer_textEdited( const QSting &newServ )
+void AccountsDialog::on_leServer_textEdited( const QString &newServ )
 {
   if( currentRow != -1 )
     accountList[currentRow].server = newServ;
 }
 
-void AccountsDialog::on_leLocation_textEdited( const QSting &text )
+void AccountsDialog::on_leLocation_textEdited( const QString &text )
 {
   if( currentRow != -1 )
     accountList[currentRow].location = text;
