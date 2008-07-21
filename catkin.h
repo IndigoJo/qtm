@@ -77,7 +77,7 @@ class Catkin : public QMainWindow
   Catkin( bool noRefreshBlogs = false, QWidget *widget = 0 );
   /*  Catkin( QList<QString>, QList<QString>, int,
       QWidget *parent = 0 );*/
-  Catkin( QDomDocument &, QWidget *parent = 0 );
+  Catkin( QDomDocument &, QString &, QWidget *parent = 0 );
   Catkin( QString, QWidget *parent = 0 );
   ~Catkin();
 #if QT_VERSION >= 0x040200
@@ -129,17 +129,18 @@ class Catkin : public QMainWindow
   void updateRecentFileMenu();
   void saveAccountsDom();
 
-  int currentBlog, loadedEntryBlog;
+  int currentAccount, currentBlog, loadedEntryBlog;
   QString loadedAccountId;
   QString applicationVersion;
   QString server;
   QString location;
   QString login;
   QString password;
-  int port;
+  QString port;
   QString localStorageDirectory;
   QString localStorageFileExtn;
   QString remoteFileLocation;
+  QString lastAccountID;
   bool categoriesEnabled, entryBlogged, useNewWindows, savePassword,
       postAsSave, noPassword, initialChangeBlog, allowComments, allowTB, postDateTime,
     copyTitle, allowRegexSearch, useTwoNewlines;
@@ -169,7 +170,7 @@ class Catkin : public QMainWindow
   QDomDocument accountsDom;
   QDomElement accountsElement, currentAccountElement,
     currentBlogElement, currentCategoryElement;
-  QString currentBlogid;
+  QString currentAccountId, currentBlogid;
   QString userAgentString;
   Application *qtm;
   /*  typedef struct _RF {
@@ -306,6 +307,7 @@ class Catkin : public QMainWindow
 signals:
   void httpBusinessFinished();
   void categoryRefreshFinished();
+  void blogRefreshFinished();
   //void loadingDone( QWidget *, bool );
 };
 

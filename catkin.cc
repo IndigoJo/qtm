@@ -195,7 +195,7 @@ Catkin::Catkin( bool noRefreshBlogs, QWidget *parent )
   //qDebug() << "Starting window";
   QFont f, g, h;
 
-  QDomElement detailElem, serverElem, locElem, loginElem, pwdElem, attribElem;
+  QDomElement detailElem, nameElem, serverElem, locElem, loginElem, pwdElem, attribElem;
   QSettings settings;
 
   setAttribute( Qt::WA_QuitOnClose );
@@ -271,7 +271,7 @@ Catkin::Catkin( bool noRefreshBlogs, QWidget *parent )
 	settings.remove( "location" );
 	settings.remove( "login" );
 	settings.remove( "password" );
-	settings.endGroup( "account" );
+	settings.endGroup();
 
 	// Now transfer the attributes to the default accounts
 	QStringList attribs( accountAttribs.keys() );
@@ -296,7 +296,7 @@ Catkin::Catkin( bool noRefreshBlogs, QWidget *parent )
       lastAccountID = settings.value( "lastAccountID", "" ).toString();
       QDomNodeList accountsList = accountsDom.documentElement()
 	.elementsByTagName( "account" );
-      for( i = 0; i < accountsList.count(); i++ ) {
+      for( int i = 0; i < accountsList.count(); i++ ) {
 	if( accountsList.at( i ).toElement().attribute( "id" ) == lastAccountID ) {
 	  currentAccountElement = accountsList.at( i ).toElement();
 	  populateBlogList();
@@ -778,8 +778,8 @@ void Catkin::doUiSetup()
   // Set up hash of entry attributes
   accountAttributes["categoriesEnabled"] = &categoriesEnabled;
   accountAttributes["postDateTime"] = &postDateTime;
-  accountAttributes["comments"] = &comments;
-  accountAttributes["trackback"] = &trackback;
+  accountAttributes["comments"] = &allowComments;
+  accountAttributes["trackback"] = &allowTB;
 
   accountStrings["server"] = &server;
   accountStrings["location"] = &location;
@@ -810,9 +810,8 @@ bool Catkin::handleArguments()
       if( c ) // if there is a current new window
 	d = c;
       //qDebug() << "handling an argument";
-      c = new Catkin( accountsDom, 
-		      currentAccountElement.attribute( "id" ), 
-		      0 );
+      QString curid = currentAccountElement.attribute( "id" );
+      c = new Catkin( accountsDom, curid );
       if( c->load( args.at( i ) ) ) {
 #ifdef USE_SYSTRAYICON
 	c->setSTI( sti );
@@ -864,9 +863,8 @@ void Catkin::about() // slot
 void Catkin::newDoc()
 {
   //Catkin *ed = new Catkin( usersBlogs, categoryList, currentBlog, 0 );
-  Catkin *ed = new Catkin( accountsDom,
-			   currentAccountElement.attribute( "id" ),
-			   0 );
+  QString curid = currentAccountElement.attribute( "id" );
+  Catkin *ed = new Catkin( accountsDom, curid );
   ed->setWindowTitle( tr( "QTM - new entry [*]" ) );
 #ifdef USE_SYSTRAYICON
   ed->setSTI( sti );
@@ -1220,25 +1218,25 @@ void Catkin::getAccounts()
     acct.categoriesEnabled = false;
     acct.postDateTime = false;
     acct.comments = false;
-    acct.trackbacks = false;
+    acct.trackback = false;
 
     thisAccountsAttribs = accountsList.at( i ).firstChildElement( "details" )
-      .firstChildElement( "attributes" );
+      .firstChildElement( "attributes" ).elementsByTagName( "attribute" );
     for( j = 0; j < thisAccountsAttribs.count(); j++ ) {
-      if( thisAccountsAttribs.at( j ).attribute( "name" ) == "categoriesEnabled" ) {
+      if( thisAccountsAttribs.at( j ).toElement().attribute( "name" ) == "categoriesEnabled" ) {
 	acct.categoriesEnabled = true;
 	continue;
       }
-      if( thisAccountsAttribs.at( j ).attribute( "name" ) == "postDateTime" ) {
+      if( thisAccountsAttribs.at( j ).toElement().attribute( "name" ) == "postDateTime" ) {
 	acct.postDateTime = true;
 	continue;
       }
-      if( thisAccountsAttribs.at( j ).attribute( "name" ) == "comments" ) {
+      if( thisAccountsAttribs.at( j ).toElement().attribute( "name" ) == "comments" ) {
 	acct.comments = true;
 	continue;
       }
-      if( thisAccountsAttribs.at( j ).attribute( "name" ) == "trackback" )
-	acct.trackbacks = true;
+      if( thisAccountsAttribs.at( j ).toElement().attribute( "name" ) == "trackback" )
+	acct.trackback = true;
     }
 
     acctsList.append( acct );
@@ -1299,7 +1297,7 @@ void Catkin::getAccounts()
       
       // Check if each account is matched from the old list; if it is, copy the blogs list
       for( j = 0; j < accountsList.count(); ++j ) {
-	if( accountsList.at( j ).toElememnt().hasAttribute( "id" ) ) {
+	if( accountsList.at( j ).toElement().hasAttribute( "id" ) ) {
 	  blogsElement = accountsList.at( j ).firstChildElement( "blogs" );
 	  if( !blogsElement.isNull() )
 	    newAccount.appendChild( newAccountsDom.importNode( blogsElement, true ) );
@@ -1319,13 +1317,13 @@ void Catkin::getAccounts()
     oldCurrentAccountId = cw.cbAccountSelector->itemData( cw.cbAccountSelector->currentIndex() );
     int oldCurrentBlog = cw.cbBlogSelector->currentIndex();
     cw.cbAccountSelector->clear();
-    accountsList = doc.elementsByTagName( "account" );
+    accountsList = accountsDom.elementsByTagName( "account" );
     for( i = 0; i < accountsList.count(); ++i ) {
       currentTitle = accountsList.at( i ).firstChildElement( "details" )
 	.firstChildElement( "title" ).text();
       if( currentTitle.isEmpty() )
 	currentTitle = tr( "(Unnamed account)" );
-      cw.cbAccountSelector->addItem( currentTitle, accountsList.at( i ).attributeNode( "id" ).value() );
+      cw.cbAccountSelector->addItem( currentTitle, accountsList.at( i ).attribute( "id" ) );
     }
     // Check if the old current account is in this list; if so, make it current again
     for( i = 0; i < accountsList.count(); ++i ) {
@@ -1366,13 +1364,13 @@ void Catkin::getPreferences()
   /*if( blogType )
     prefsDialog->cbBlogType->setCurrentIndex( blogType-1 );
   else
-  prefsDialog->cbBlogType->setCurrentIndex( 4 );*/
+  prefsDialog->cbBlogType->setCurrentIndex( 4 );
   prefsDialog.lePort->setEnabled( false );   // This can come later.
   prefsDialog.lPort->setEnabled( false );  //
   prefsDialog.leServer->setText( server );
   prefsDialog.leLocation->setText( location );
   prefsDialog.leLogin->setText( login );
-  prefsDialog.lePassword->setText( password );
+  prefsDialog.lePassword->setText( password ); */
   if( localStorageDirectory.isEmpty() ) {
 #ifdef Q_WS_WIN
     QString lsd = QString( "%1/QTM blog" ).arg( QDir::homePath() )
@@ -1404,7 +1402,7 @@ void Catkin::getPreferences()
   prefsDialog.chCopyTitle->setVisible( false );
 #endif
 #if QT_VERSION >= 0x040200
-  prefsDialog->chAllowRegexSearch->setCheckState( allowRegexSearch ? Qt::Checked : Qt::Unchecked );
+  prefsDialog.chAllowRegexSearch->setCheckState( allowRegexSearch ? Qt::Checked : Qt::Unchecked );
 #endif
   //prefsDialog->cbUseTwoNewlines->setCheckState( useTwoNewlines ? Qt::Checked : Qt::Unchecked );
   //prefsDialog->chUseBloggerTitleFormatting->setCheckState( useBloggerTitleFormatting ? Qt::Checked :
@@ -3220,7 +3218,7 @@ void Catkin::save( const QString &fname )
   out << "Tags:";
   for( count = 0; count < tags; count++ ) {
     out << QString( count ? ";%1" : "%1" )
-      .arg( cw.lwTags->item( count )->text().replace( ' ', '+' );
+      .arg( cw.lwTags->item( count )->text().replace( ' ', '+' ) );
   }
   out << "\n";
 
@@ -3577,7 +3575,7 @@ bool Catkin::load( const QString &fname, bool fromSTI )
 				      "details by choosing Accounts from the File menu." ),
 				  QMessageBox::Ok );
 	QDomElement newDefaultAccount = accountsDom.createElement( "account" );
-	newDefaultAccount.setAttribute( "id", QString( "newAccount_%1" ).arg( ) );
+	newDefaultAccount.setAttribute( "id", QString( "newAccount_%1" ).arg( QDateTime::currentDateTime().toString( Qt::ISODate ) ) );
 	QDomElement newDetailElement = accountsDom.createElement( "details" );
 	QDomElement newNameElement = accountsDom.createElement( );
 	newNameElement.appendChild( QDomText( accountsDom.createTextNode( tr( "New blank element" ) ) ) );
@@ -3588,7 +3586,7 @@ bool Catkin::load( const QString &fname, bool fromSTI )
 	return true;
       }
 
-      if( accts.at( g ).attribute( "id" ) == loadedAccountId ) {
+      if( accts.at( g ).toElement().attribute( "id" ) == loadedAccountId ) {
 	populateAccountList();
 	currentAccountElement = accts.at( g ).toElement();
 
@@ -3710,10 +3708,10 @@ bool Catkin::load( const QString &fname, bool fromSTI )
   newServer.appendChild( QDomText( doc.createTextNode( server ) ) );
   newLocation = accountsDom.createElement( "location" );
   newLocation.appendChild( QDomText( doc.createTextNode( location ) ) );
-  newLogin = accountsDom.createTextNode( "login" );
+  newLogin = accountsDom.createElement( "login" );
   newLogin.appendChild( QDomText( doc.createTextNode( login ) ) );
-  newPwd = accountsDom.createTextNode( "password" );
-  newPwd.appendChild( QDomtext( doc.createTextNode( password ) ) );
+  newPwd = accountsDom.createElement( "password" );
+  newPwd.appendChild( QDomText( doc.createTextNode( password ) ) );
   newDetails.appendChild( newServer );
   newDetails.appendChild( newLocation );
   newDetails.appendChild( newLogin );
