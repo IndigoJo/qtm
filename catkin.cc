@@ -674,7 +674,7 @@ void Catkin::doUiSetup()
 				    "Command and click the mouse, or the left mouse button." ) );
 #endif
 
-  tagValidator = new QRegExpValidator( QRegExp( "([a-zA-Z0-9\\.%]+\\+)*[a-zA-Z0-9\\.%]+" ), this );
+  tagValidator = new QRegExpValidator( QRegExp( "([a-zA-Z0-9\\.%]+[\\+ ])*[a-zA-Z0-9\\.%]+" ), this );
   cw.leAddTag->setValidator( tagValidator );
   cw.cbDoTB->hide();
 
@@ -2737,7 +2737,7 @@ void Catkin::newMTPost()
       for( count = 0; count < tags; count++ ) {
 	techTagString.append( QString( "<a href=\"http://technorati.com/tag/%1\""
 				       " rel=\"tag\">%2</a>%3" )
-			      .arg( cw.lwTags->item( count )->text() )
+			      .arg( cw.lwTags->item( count )->text().replace( ' ', '+' ) )
 			      .arg( cw.lwTags->item( count )->text()
 				    .replace( "+", " " ) )
 			      .arg( (count == tags-1) ? "</p>" : ", " ) );
@@ -3238,7 +3238,7 @@ void Catkin::save( const QString &fname )
   out << "Tags:";
   for( count = 0; count < tags; count++ ) {
     out << QString( count ? ";%1" : "%1" )
-      .arg( cw.lwTags->item( count )->text() );
+      .arg( cw.lwTags->item( count )->text().replace( ' ', '+' );
   }
   out << "\n";
 
@@ -4053,7 +4053,7 @@ void Catkin::addTechTag()
 void Catkin::addClipTag()
 {
   int l;
-  QRegExpValidator tagFormat( QRegExp( "^http:\\/\\/(www\\.)?technorati\\.com\\/tag\\/([a-zA-Z0-9\\.%]+\\+)*[a-zA-Z0-9\\.%]+$" ), this );
+  QRegExpValidator tagFormat( QRegExp( "^http:\\/\\/(www\\.)?technorati\\.com\\/tag\\/([a-zA-Z0-9\\.%]+[\\+ ])*[a-zA-Z0-9\\.%]+$" ), this );
   QString tagText = QApplication::clipboard()->text();
 
   cw.cbPageSelector->setCurrentIndex( 3 );
