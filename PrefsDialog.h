@@ -19,6 +19,8 @@
  *
  *****************************************************************************/
 
+#ifndef PREFSDIALOG_H
+#define PREFSDIALOG_H
 
 #include <QtGlobal>
 
@@ -38,15 +40,16 @@ Q_OBJECT
 
 public:
   PrefsDialog( QWidget *parent = 0 );
- bool noValidHost();
+  // bool noValidHost();
 
 private slots:
   void on_pbBrowse_clicked();
   void on_pbWhatsThis_clicked();
-  void on_okButton_clicked();
-  void on_cbBlogType_currentIndexChanged( int );
-  void handleHostInfo( const QHostInfo & );
-
+  //void on_okButton_clicked();
+  //void handleHostInfo( const QHostInfo & );
+  /*
  private:
-  bool nvh;
+ bool nvh; */
 };
+
+#endif

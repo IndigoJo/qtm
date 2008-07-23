@@ -193,7 +193,7 @@ class Catkin : public QMainWindow
   void stopThisJob();
   void handleDone( bool );
   void handleResponseHeader( const QHttpResponseHeader & );
-  void changeCurrentAccount( int );
+  // void changeCurrentAccount( int );
   void changeCurrentBlog( int );
   void changeAccount( int );
   void changeBlog( int );

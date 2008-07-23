@@ -485,3 +485,24 @@ void AccountsDialog::on_chTB_toggled( bool state )
     accountList[currentRow].trackback = state;
 }
 
+void AccountsDialog::on_cbHostedBlogType_activated( int newIndex )
+{
+  switch( newIndex ) {
+  case 0: // wordpress.com
+    leServer->setText( "yourblog.wordpress.com" );
+    leLocation->setText( "/xmlrpc.php" );
+    break;
+  case 1: // TypePad
+    leServer->setText( "www.typepad.com" );
+    leLocation->setText( "/t/api" );
+    break;
+  case 2: // SquareSpace
+    leServer->setText( "www.squarespace.com" );
+    leLocation->setText( "/do/process/external/PostInterceptor" );
+    break;
+  case 3: // self-hosted
+    leServer->clear();
+    leLocation->clear();
+    break;
+  }
+}

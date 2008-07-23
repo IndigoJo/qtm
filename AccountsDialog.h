@@ -100,7 +100,7 @@ private slots:
   void setDirty();
   void setClean();
   void assignSlug();
-  void on_leBlogURI_returnPressed();
+  void on_leBlogURL_returnPressed();
   // void handleResponseHeader( int, bool );
   void handleHttpDone( bool );
   void on_pbNew_clicked() { doNewAccount(); }
@@ -108,7 +108,6 @@ private slots:
   // void on_pbAccept_clicked() { acceptTemplate(); }
   void on_pbWhatsThis_clicked();
   void on_pbOK_clicked();
-  void on_leBlogURL_returnPressed();
   void on_pbCancel_clicked() { reject(); }
   void on_leName_textEdited( const QString & );
   void on_leServer_textEdited( const QString & );

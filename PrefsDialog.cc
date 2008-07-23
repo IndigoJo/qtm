@@ -34,9 +34,9 @@ PrefsDialog::PrefsDialog( QWidget *parent )
   : QDialog( parent )
 {
   setupUi( this );
-  nvh = false;
+  //nvh = false;
 
-  cbBlogType->setCurrentIndex( cbBlogType->count()-1 );
+  //cbBlogType->setCurrentIndex( cbBlogType->count()-1 );
 
 #ifdef Q_WS_MAC
 #if QT_VERSION >= 0x040200
@@ -58,6 +58,12 @@ void PrefsDialog::on_pbBrowse_clicked()
   if( !dir.isEmpty() )
     leLocalDir->setText( dir );		             
 }
+
+void PrefsDialog::on_pbWhatsThis_clicked() // slot
+{
+  QWhatsThis::enterWhatsThisMode();
+}
+
 /*
 void PrefsDialog::on_pbForget_clicked()
 {
@@ -68,11 +74,11 @@ void PrefsDialog::on_pbForget_clicked()
   lePassword->clear();
   cbBlogType->setCurrentIndex( 4 );
 }
-*/
+
 void PrefsDialog::on_okButton_clicked() // slot
 {
   QHostInfo::lookupHost( leServer->text(), this, SLOT( handleHostInfo( QHostInfo ) ) );
-}
+ }
 
 void PrefsDialog::handleHostInfo( const QHostInfo &hostInfo )
 {
@@ -91,13 +97,10 @@ void PrefsDialog::handleHostInfo( const QHostInfo &hostInfo )
       accept();
     }
   }
-}
+} */
 
-void PrefsDialog::on_pbWhatsThis_clicked() // slot
-{
-  QWhatsThis::enterWhatsThisMode();
-}
 
+/*
 void PrefsDialog::on_cbBlogType_currentIndexChanged( int newIndex )
 {
   switch( newIndex ) {
@@ -123,4 +126,4 @@ void PrefsDialog::on_cbBlogType_currentIndexChanged( int newIndex )
 bool PrefsDialog::noValidHost()
 {
   return nvh;
-}
+  }*/

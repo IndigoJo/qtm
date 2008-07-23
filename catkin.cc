@@ -1573,7 +1573,7 @@ void Catkin::getPreferences()
 #endif
 #endif
 
-    if( server.isEmpty() || location.isEmpty() || login.isEmpty() ||
+    /*    if( server.isEmpty() || location.isEmpty() || login.isEmpty() ||
 	prefsDialog.noValidHost() ) {
       // Adequate network details absent or host not valid, therefore disable
       // all widgets and actions leading to network use.
@@ -1581,12 +1581,12 @@ void Catkin::getPreferences()
     }
     else {
       setNetworkActionsEnabled( true );
-
+    
       if( !blogUnchanged )
 	refreshBlogList();
     }
     connect( this, SIGNAL( httpBusinessFinished() ),
-	     this, SLOT( doInitialChangeBlog() ) );
+    this, SLOT( doInitialChangeBlog() ) ); */
   }
 }
 
