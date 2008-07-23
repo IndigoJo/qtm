@@ -274,9 +274,9 @@ Catkin::Catkin( bool noRefreshBlogs, QWidget *parent )
 	settings.endGroup();
 
 	// Now transfer the attributes to the default accounts
-	QStringList attribs( accountAttribs.keys() );
+	QStringList attribs( accountAttributes.keys() );
 	Q_FOREACH( QString s, attribs ) {
-	  if( *(accountAttribs[s]) ) {
+	  if( *(accountAttributes[s]) ) {
 	    attribElem = accountsDom.createElement( "attribute" );
 	    attribElem.setAttribute( "name", s );
 	    detailElem.appendChild( attribElem );
@@ -1312,9 +1312,10 @@ void Catkin::getAccounts()
     newAccountsDom.appendChild( newAccountsDom.createProcessingInstruction( "xml",
 									    "version='1.0'" ) );
     newAccountsDom.appendChild( newQTMAccounts );
-    accountsDom = newAccountsDom.cloneNode();
+    accountsDom = newAccountsDom.cloneNode( true ).toDocument();
 
-    oldCurrentAccountId = cw.cbAccountSelector->itemData( cw.cbAccountSelector->currentIndex() );
+    oldCurrentAccountId = cw.cbAccountSelector->itemData( cw.cbAccountSelector->currentIndex() )
+      .toString();
     int oldCurrentBlog = cw.cbBlogSelector->currentIndex();
     cw.cbAccountSelector->clear();
     accountsList = accountsDom.elementsByTagName( "account" );
@@ -1323,7 +1324,8 @@ void Catkin::getAccounts()
 	.firstChildElement( "title" ).text();
       if( currentTitle.isEmpty() )
 	currentTitle = tr( "(Unnamed account)" );
-      cw.cbAccountSelector->addItem( currentTitle, accountsList.at( i ).attribute( "id" ) );
+      cw.cbAccountSelector->addItem( currentTitle, accountsList.at( i ).toElement().
+				     attribute( "id" ) );
     }
     // Check if the old current account is in this list; if so, make it current again
     for( i = 0; i < accountsList.count(); ++i ) {
@@ -1433,8 +1435,8 @@ void Catkin::getPreferences()
   prefsDialog.label_10->hide();
 #endif
 #endif
-  prefsDialog.resize( QSize( prefsDialog->width(),
-			      prefsDialog->minimumHeight() ) );
+  prefsDialog.resize( QSize( prefsDialog.width(),
+			     prefsDialog.minimumHeight() ) );
   if( prefsDialog.exec() ) {
     /*if( (server == prefsDialog->leServer->text())
 	&& (location == prefsDialog->leLocation->text() ) )
@@ -1858,7 +1860,7 @@ void Catkin::changeAccount( int a ) // slot
   currentAccountId = currentAccountElement.attribute( "id" );
 
   QStringList accountStringNames( accountStrings.keys() );
-  QStringList accountAttribNames( accountAttribs.keys() );
+  QStringList accountAttribNames( accountAttributes.keys() );
   QDomNodeList attribNodes = currentAccountElement.firstChildElement( "details" )
     .elementsByTagName( "attribute" );
   int c = attribNodes.count();
@@ -1868,10 +1870,10 @@ void Catkin::changeAccount( int a ) // slot
       .firstChildElement( s ).text();
 
   Q_FOREACH( QString t, accountAttribNames ) {
-    *(accountAttribs[t]) = false;
+    *(accountAttributes[t]) = false;
     for( i = 0; i < attribNodes.count(); i++ ) {
-      if( i.attribute( "name" ) == t )
-	*(accountAttribs[t]) = true;
+      if( attribNodes.at( i ).toElement().attribute( "name" ) == t )
+	*(accountAttributes[t]) = true;
     }
   }
     
@@ -2041,7 +2043,7 @@ void Catkin::blogger_getUsersBlogs( QByteArray response )
     qDebug() << "Blogs found";
 #endif
 
-    // importedBlogList = accountsDom.importNode( doc.firstChildElement( "blogs" ), true );
+    // importedBlogList = accountDom.importNode( doc.firstChildElement( "blogs" ), true );
     currentAccountElement.removeChild( currentAccountElement.firstChildElement( "blogs" ) );
     currentAccountElement.appendChild( accountsDom.importNode( importedBlogList.firstChildElement( "blogs" ), true ) );
 
@@ -3214,7 +3216,7 @@ void Catkin::save( const QString &fname )
   out << QString( "AcctBlog:%1@%2 (%3)" ) // Include the blog name so it can be relayed to the user later
     .arg( currentBlogid )
     .arg( currentAccountId )
-    .arg( cw.cbBlogSelector->itemText( cw.cbBlogSelector->currentIndex() );
+    .arg( cw.cbBlogSelector->itemText( cw.cbBlogSelector->currentIndex() ) );
   out << "Tags:";
   for( count = 0; count < tags; count++ ) {
     out << QString( count ? ";%1" : "%1" )
@@ -3385,6 +3387,7 @@ bool Catkin::load( const QString &fname, bool fromSTI )
   addToConsole( "Starting load" );
   QMap<QString, QString> emap;
   QString currentLine, key, value, fetchedText, tags;
+  QStringList otherCatStringList;
   QDomNodeList accts;
   bool getDetailsAgain = false;
   bool isOK;
@@ -3532,6 +3535,7 @@ bool Catkin::load( const QString &fname, bool fromSTI )
 
   if( emap.contains( "Cats" ) ) {
     otherCatsList = emap.value( "Cats" );
+    otherCatStringList = otherCatsList.split( ';' );
     noAlphaCats = true;
     getDetailsAgain = true;
   }
@@ -3577,7 +3581,7 @@ bool Catkin::load( const QString &fname, bool fromSTI )
 	QDomElement newDefaultAccount = accountsDom.createElement( "account" );
 	newDefaultAccount.setAttribute( "id", QString( "newAccount_%1" ).arg( QDateTime::currentDateTime().toString( Qt::ISODate ) ) );
 	QDomElement newDetailElement = accountsDom.createElement( "details" );
-	QDomElement newNameElement = accountsDom.createElement( );
+	QDomElement newNameElement = accountsDom.createElement( "name" );
 	newNameElement.appendChild( QDomText( accountsDom.createTextNode( tr( "New blank element" ) ) ) );
 	newDetailElement.appendChild( newNameElement );
 	newDefaultAccount.appendChild( newDetailElement );
@@ -3593,17 +3597,17 @@ bool Catkin::load( const QString &fname, bool fromSTI )
 	QString st;
 	for( int h = 0; h < cw.cbAccountSelector->count(); h++ ) {
 	  st = cw.cbAccountSelector->itemData( h ).toString();
-	  if( st == id )
+ 	  if( st == loadedAccountId )
 	    cw.cbAccountSelector->setCurrentIndex( h );
 	}
 
 	// Now populate the blog list
 	QDomNodeList blogNodeList = currentAccountElement.elementsByTagName( "blog" );
 	cw.cbBlogSelector->clear();
-	for( h = 0; h < blogNodeList.count(); h++ ) {
-	  cw.cbBlogSelector->addItem( blogNodeList.at( h ).toElement()
+	for( int hh = 0; hh < blogNodeList.count(); hh++ ) {
+	  cw.cbBlogSelector->addItem( blogNodeList.at( hh ).toElement()
 				      .firstChildElement( "blogName" ).text(),
-				      blogNodeList.at( h ).toElement()
+				      blogNodeList.at( hh ).toElement()
 				      .firstChildElement( "blogid" ).text() );
 	  cw.cbBlogSelector->disconnect( SIGNAL( activated( int ) ), this, 0 );
 	  connect( cw.cbBlogSelector, SIGNAL( activated( int ) ),
@@ -3618,22 +3622,22 @@ bool Catkin::load( const QString &fname, bool fromSTI )
 	
 	// Now populate and set the categories
 	cw.cbBlogSelector->setCurrentIndex( currentBlog );
-	catsElement = blogNodeList.at( currentBlog ).firstChildElement( "categories" );
+	QDomElement catsElement = blogNodeList.at( currentBlog ).firstChildElement( "categories" );
 	if( !catsElement.isNull() ) {
 	  QDomNodeList catNodeList = catsElement.elementsByTagName( "category" );
 	  int b = catNodeList.count();
 	  if( b ) {
-	    for( j = 0; j < b; j++ ) {
+	    for( int j = 0; j < b; j++ ) {
 	      cw.cbMainCat->addItem( catNodeList.at( j ).firstChildElement( "categoryName" ).text(),
 				     QVariant( catNodeList.at( j ).firstChildElement( "categoryId" ).text() ) );
 	      cw.lwOtherCats->addItem( catNodeList.at( j ).firstChildElement( "categoryName" ).text() );
 	    }
-	    for( int i = 0; i < catNodes.size(); i++ ) {
-	      cc = catNodes.at( i ).firstChildElement( "categoryId" ).text();
+	    for( int i = 0; i < catNodeList.size(); i++ ) {
+	      QString cc = catNodeList.at( i ).firstChildElement( "categoryId" ).text();
 	      if( cc == QString::number( primaryCat ) )
 		cw.cbMainCat->setCurrentIndex( i );
 	      else {
-		if( catStringList.contains( cc ) )
+		if( otherCatStringList.contains( cc ) )
 		  cw.lwOtherCats->setItemSelected( cw.lwOtherCats->item( i ), true );
 	      }
 	    }
@@ -3657,7 +3661,7 @@ bool Catkin::load( const QString &fname, bool fromSTI )
   QDomNodeList blogs;
 
 
-  accts = accountsDom.documentElement.elementsByTagName( "account" );
+  accts = accountsDom.documentElement().elementsByTagName( "account" );
   for( int e = 0; e <= accts.count(); e++ ) {
     if( e == accts.count() ) {
 
@@ -3666,7 +3670,7 @@ bool Catkin::load( const QString &fname, bool fromSTI )
     if( details.firstChildElement( "server" ).text() == server &&
 	details.firstChildElement( "location" ).text() == location &&
 	details.firstChildElement( "login" ).text() == login ) {
-      currentAccountElement = accts.at( e );
+      currentAccountElement = accts.at( e ).toElement();
       // First check whether the blog still exists
       blogs = currentAccountElement.elementsByTagName( "blogs" );
       if( currentBlog > blogs.count() ) {
@@ -3705,13 +3709,13 @@ bool Catkin::load( const QString &fname, bool fromSTI )
   newAcct.setAttribute( "id", tr( "newAccount_%1" ).arg( QDateTime::currentDateTime().toString( Qt::ISODate ) ) );
   newDetails = accountsDom.createElement( "details" );
   newServer = accountsDom.createElement( "server" );
-  newServer.appendChild( QDomText( doc.createTextNode( server ) ) );
+  newServer.appendChild( QDomText( accountsDom.createTextNode( server ) ) );
   newLocation = accountsDom.createElement( "location" );
-  newLocation.appendChild( QDomText( doc.createTextNode( location ) ) );
+  newLocation.appendChild( QDomText( accountsDom.createTextNode( location ) ) );
   newLogin = accountsDom.createElement( "login" );
-  newLogin.appendChild( QDomText( doc.createTextNode( login ) ) );
+  newLogin.appendChild( QDomText( accountsDom.createTextNode( login ) ) );
   newPwd = accountsDom.createElement( "password" );
-  newPwd.appendChild( QDomText( doc.createTextNode( password ) ) );
+  newPwd.appendChild( QDomText( accountsDom.createTextNode( password ) ) );
   newDetails.appendChild( newServer );
   newDetails.appendChild( newLocation );
   newDetails.appendChild( newLogin );
