@@ -1199,13 +1199,14 @@ void Catkin::getAccounts()
   QDomNodeList accountsList, thisAccountsAttribs;
   QDomDocument newAccountsDom;
   QDomElement newQTMAccounts, newAccount, detailElement, nameElement, serverElement, locationElement, 
-    portElement, loginElement, pwdElement, blogsElement, boolElement;
+    portElement, loginElement, pwdElement, blogsElement, boolElement, attribsElement;
   QString oldCurrentAccountId, currentTitle;
+  QStringList thisAccountsAttribStrings;
   int c, i, j;
 
   // Extract accounts list from account tree
   accountsList = accountsDom.elementsByTagName( "account" );
-  for( i = 0; i < accountsList.count(); ++i ) {
+  for( i = 0; i < accountsList.count(); i++ ) {
     acct = AccountsDialog::Account();
     acct.id = accountsList.at( i ).toElement().attribute( "id" );
     detailElement = accountsList.at( i ).firstChildElement( "details" );
@@ -1221,22 +1222,22 @@ void Catkin::getAccounts()
     acct.comments = false;
     acct.trackback = false;
 
-    thisAccountsAttribs = accountsList.at( i ).firstChildElement( "details" )
+    thisAccountsAttribs = accountsList.at( i ).toElement().firstChildElement( "details" )
       .firstChildElement( "attributes" ).elementsByTagName( "attribute" );
-    for( j = 0; j < thisAccountsAttribs.count(); j++ ) {
-      if( thisAccountsAttribs.at( j ).toElement().attribute( "name" ) == "categoriesEnabled" ) {
+    thisAccountsAttribStrings = QStringList();
+    for( j = 0; j < thisAccountsAttribs.count(); j++ )
+      thisAccountsAttribStrings << thisAccountsAttribs.at( j ).toElement().attribute( "name" );
+
+    if( thisAccountsAttribStrings.contains( "categoriesEnabled" ) ) {
 	acct.categoriesEnabled = true;
-	continue;
-      }
-      if( thisAccountsAttribs.at( j ).toElement().attribute( "name" ) == "postDateTime" ) {
-	acct.postDateTime = true;
-	continue;
-      }
-      if( thisAccountsAttribs.at( j ).toElement().attribute( "name" ) == "comments" ) {
-	acct.comments = true;
-	continue;
-      }
-      if( thisAccountsAttribs.at( j ).toElement().attribute( "name" ) == "trackback" )
+    }
+    if( thisAccountsAttribStrings.contains( "postDateTime" ) ) {
+      acct.postDateTime = true;
+    }
+    if( thisAccountsAttribStrings.contains( "comments" ) ) {
+      acct.comments = true;
+    }
+    if( thisAccountsAttribStrings.contains( "trackback" ) ) {
 	acct.trackback = true;
     }
 
@@ -1273,26 +1274,35 @@ void Catkin::getAccounts()
       detailElement.appendChild( loginElement );
       detailElement.appendChild( pwdElement );
 
+      if( returnedAccountsList.at( i ).categoriesEnabled || returnedAccountsList.at( i ).postDateTime ||
+	  returnedAccountsList.at( i ).comments || returnedAccountsList.at( i ).trackback )
+	attribsElement = newAccountsDom.createElement( "attributes" );
+
       if( returnedAccountsList.at( i ).categoriesEnabled ) {
 	boolElement = newAccountsDom.createElement( "attribute" );
 	boolElement.setAttribute( "name", "categoriesEnabled" );
-	detailElement.appendChild( boolElement );
+	attribsElement.appendChild( boolElement );
       }
       if( returnedAccountsList.at( i ).postDateTime ) {
 	boolElement = newAccountsDom.createElement( "attribute" );
 	boolElement.setAttribute( "name", "postDateTime" );
-	detailElement.appendChild( boolElement );
+	attribsElement.appendChild( boolElement );
       }
       if( returnedAccountsList.at( i ).comments ) {
+	qDebug() << "comments attribute set";
 	boolElement = newAccountsDom.createElement( "attribute" );
-	boolElement.setAttribute( "name", "allowComments" );
-	detailElement.appendChild( boolElement );
+	boolElement.setAttribute( "name", "comments" );
+	attribsElement.appendChild( boolElement );
       }
       if( returnedAccountsList.at( i ).trackback ) {
+	qDebug() << "TB attribute set";
 	boolElement = newAccountsDom.createElement( "attribute" );
-	boolElement.setAttribute( "name", "allowTB" );
-	detailElement.appendChild( boolElement );
+	boolElement.setAttribute( "name", "trackback" );
+	attribsElement.appendChild( boolElement );
       }
+
+      if( !attribsElement.isNull() )
+	detailElement.appendChild( attribsElement );
 
       newAccount.appendChild( detailElement );
       

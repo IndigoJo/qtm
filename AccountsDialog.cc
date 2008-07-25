@@ -468,28 +468,30 @@ void AccountsDialog::on_lePassword_textEdited( const QString &text )
     accountList[currentRow].password = text;
 }
 
-void AccountsDialog::on_chCategories_toggled( bool state )
+void AccountsDialog::on_chCategoriesEnabled_toggled( bool )
 {
   if( currentRow != -1 )
-    accountList[currentRow].categoriesEnabled = state;
+    accountList[currentRow].categoriesEnabled = chCategoriesEnabled->isChecked();
 }
 
-void AccountsDialog::on_chPostDateTime_toggled( bool state )
+void AccountsDialog::on_chPostDateTime_toggled( bool )
 {
   if( currentRow != -1 )
-    accountList[currentRow].postDateTime = state;
+    accountList[currentRow].postDateTime = chPostDateTime->isChecked();
 }
 
-void AccountsDialog::on_chComments_toggled( bool state )
+void AccountsDialog::on_chComments_toggled( bool )
 {
+  qDebug() << "comments toggled";
   if( currentRow != 1 )
-    accountList[currentRow].comments = state;
+    accountList[currentRow].comments = chComments->isChecked();
 }
 
-void AccountsDialog::on_chTB_toggled( bool state )
+void AccountsDialog::on_chTB_toggled( bool )
 {
+  qDebug() << "TB toggled";
   if( currentRow != 1 )
-    accountList[currentRow].trackback = state;
+    accountList[currentRow].trackback = chTB->isChecked();
 }
 
 void AccountsDialog::on_cbHostedBlogType_activated( int newIndex )
