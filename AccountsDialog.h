@@ -38,6 +38,7 @@ class QDialog;
 class QWidget;
 class QAction;
 class QHttp;
+class QEvent;
 
 class AccountsDialog : public QDialog, public Ui::AccountsForm
 {
@@ -100,7 +101,7 @@ private slots:
   void setDirty();
   void setClean();
   void assignSlug();
-  void on_leBlogURL_returnPressed();
+  void on_leBlogURI_returnPressed();
   // void handleResponseHeader( int, bool );
   void handleHttpDone( bool );
   void on_pbNew_clicked() { doNewAccount(); }
@@ -120,7 +121,10 @@ private slots:
   void on_chPostDateTime_toggled( bool );
   void on_chComments_toggled( bool );
   void on_chTB_toggled( bool );
-  void requestFinished( int, bool );
+  void handleRequestFinished( int, bool );
+
+ protected:
+  virtual bool eventFilter( QObject *, QEvent * );
 };
 
 #endif

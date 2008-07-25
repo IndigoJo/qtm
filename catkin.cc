@@ -1207,13 +1207,14 @@ void Catkin::getAccounts()
   accountsList = accountsDom.elementsByTagName( "account" );
   for( i = 0; i < accountsList.count(); ++i ) {
     acct = AccountsDialog::Account();
-    acct.id = accountsList.at( i ).firstChildElement( "id" ).text();
-    acct.name = accountsList.at( i ).firstChildElement( "name" ).text();
-    acct.server = accountsList.at( i ).firstChildElement( "server" ).text();
-    acct.location = accountsList.at( i ).firstChildElement( "location" ).text();
-    acct.port = accountsList.at( i ).firstChildElement( "port" ).text();
-    acct.login = accountsList.at( i ).firstChildElement( "login" ).text();
-    acct.password = accountsList.at( i ).firstChildElement( "password" ).text();
+    acct.id = accountsList.at( i ).toElement().attribute( "id" );
+    detailElement = accountsList.at( i ).firstChildElement( "details" );
+    acct.name = detailElement.firstChildElement( "name" ).text();
+    acct.server = detailElement.firstChildElement( "server" ).text();
+    acct.location = detailElement.firstChildElement( "location" ).text();
+    acct.port = detailElement.firstChildElement( "port" ).text();
+    acct.login = detailElement.firstChildElement( "login" ).text();
+    acct.password = detailElement.firstChildElement( "password" ).text();
 
     acct.categoriesEnabled = false;
     acct.postDateTime = false;
@@ -2738,7 +2739,7 @@ void Catkin::newMTPost()
 			      .arg( cw.lwTags->item( count )->text().replace( ' ', '+' ) )
 			      .arg( cw.lwTags->item( count )->text()
 				    .replace( "+", " " ) )
-			      .arg( (count == tags-1) ? "</p>" : ", " ) );
+			      .arg( (count == tags-1) ? "</p>\n\n" : ", " ) );
       }
 
       if( cw.rbStartOfMainEntry->isChecked() )

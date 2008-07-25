@@ -38,6 +38,7 @@
 #include <QHttp>
 #include <QHttpRequestHeader>
 #include <QHttpResponseHeader>
+#include <QFocusEvent>
 #if QT_VERSION <= 0x040300
 #include <QTextDocument>
 #endif
@@ -46,14 +47,21 @@
 
 #include "AccountsDialog.h"
 #include "ui_AccountsForm.h"
+#include "return.xpm"
 
 AccountsDialog::AccountsDialog( QList<AccountsDialog::Account> &acctList, QWidget *parent )
   : QDialog( parent )
 {
   QString a;
   networkBiz = NoBusiness;
+  http = new QHttp;
 
   setupUi( this );
+  tbURIReturn->setIcon( QIcon( QPixmap( return_xpm ) ) );
+  connect( tbURIReturn, SIGNAL( clicked() ),
+	   this, SLOT( on_leBlogURI_returnPressed() ) );
+  //leBlogURI->installEventFilter( this );
+  pbNew->setDefault( false );
 
   // Set up internal account lists; one for the current contents of the accounts,
   // one for backup
@@ -62,8 +70,6 @@ AccountsDialog::AccountsDialog( QList<AccountsDialog::Account> &acctList, QWidge
 
   hboxLayout->setStretchFactor( hboxLayout->itemAt( 0 )->layout(), 2 );
   hboxLayout->setStretchFactor( hboxLayout->itemAt( 1 )->layout(), 3 );
-
-
 
   for( int i = 0; i < accountList.count(); i++ ) {
     a = accountList.at( i ).name;
@@ -262,7 +268,7 @@ void AccountsDialog::on_pbOK_clicked()
   accept();
 }
 
-void AccountsDialog::on_leBlogURL_returnPressed()
+void AccountsDialog::on_leBlogURI_returnPressed()
 {
   int i;
 
@@ -323,14 +329,15 @@ void AccountsDialog::on_leBlogURL_returnPressed()
   else
     http->get( loc.append( loc.endsWith( '/' ) ? "index.php" : "/index.php" ) );
 
+  qDebug() << "now connecting the signal";
   connect( http, SIGNAL( requestFinished( int, bool ) ),
-	   this, SLOT( handleResponseHeader() ) );
+	   this, SLOT( handleRequestFinished( int, bool ) ) );
   connect( http, SIGNAL( done( bool ) ),
 	   this, SLOT( handleHttpDone( bool ) ) );
 
 }
 
-void AccountsDialog::requestFinished( int /* id */,
+void AccountsDialog::handleRequestFinished( int /* id */,
 				      bool error )
 {
   if( !error )
@@ -504,5 +511,12 @@ void AccountsDialog::on_cbHostedBlogType_activated( int newIndex )
     leServer->clear();
     leLocation->clear();
     break;
+  }
+}
+
+bool AccountsDialog::eventFilter( QObject *obj, QEvent *event )
+{
+  if( event->type() == QEvent::FocusIn ) {
+
   }
 }
