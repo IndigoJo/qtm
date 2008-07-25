@@ -1209,7 +1209,7 @@ void Catkin::getAccounts()
     acct = AccountsDialog::Account();
     acct.id = accountsList.at( i ).toElement().attribute( "id" );
     detailElement = accountsList.at( i ).firstChildElement( "details" );
-    acct.name = detailElement.firstChildElement( "name" ).text();
+    acct.name = detailElement.firstChildElement( "title" ).text();
     acct.server = detailElement.firstChildElement( "server" ).text();
     acct.location = detailElement.firstChildElement( "location" ).text();
     acct.port = detailElement.firstChildElement( "port" ).text();
@@ -1251,7 +1251,7 @@ void Catkin::getAccounts()
 
     for( i = 0; i < returnedAccountsList.count(); ++i ) {
       newAccount = newAccountsDom.createElement( "account" );
-      newAccount.setAttribute( "id", returnedAccountsList.at( i ).name );
+      newAccount.setAttribute( "id", returnedAccountsList.at( i ).id );
       detailElement = newAccountsDom.createElement( "details" );
       nameElement = newAccountsDom.createElement( "title" );
       nameElement.appendChild( newAccountsDom.createTextNode( returnedAccountsList.at( i ).name ) );
