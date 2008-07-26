@@ -312,8 +312,8 @@ void AccountsDialog::on_leBlogURI_returnPressed()
   for( i = 0; i <= wpmuHosts.count(); i++ ) {
     if( i < wpmuHosts.count() ) {
       if( uris.contains( wpmuHosts.at( i ) ) ) {
-	leLocation->setText( uris );
-	leServer->setText( "/xmlrpc.php" );
+	leServer->setText( uris );
+	leLocation->setText( "/xmlrpc.php" );
 	return;
       }
     }
