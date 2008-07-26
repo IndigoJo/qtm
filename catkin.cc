@@ -296,8 +296,7 @@ Catkin::Catkin( bool noRefreshBlogs, QWidget *parent )
 
       qDebug() << "server is empty";
       QSettings settings;
-      settings.beginGroup( "account" );
-      lastAccountID = settings.value( "lastAccountID", "" ).toString();
+      lastAccountID = settings.value( "account/lastAccountID", "" ).toString();
       QDomNodeList accountsList = accountsDom.documentElement()
 	.elementsByTagName( "account" );
       QDomElement thisTitleElem;
@@ -321,6 +320,8 @@ Catkin::Catkin( bool noRefreshBlogs, QWidget *parent )
 	if( accountsList.at( i ).toElement().attribute( "id" ) == lastAccountID ) {
 	  qDebug() << "found it";
 	  currentAccountElement = accountsList.at( i ).toElement();
+	  currentAccountId = currentAccountElement.attribute( "id" );
+	  cw.cbAccountSelector->setCurrentIndex( i );
 	  populateBlogList();
 	  connect( cw.cbAccountSelector, SIGNAL( activated( int ) ),
 		   this, SLOT( changeAccount( int ) ) );
@@ -925,6 +926,8 @@ void Catkin::changeCaptionAfterTitleChanged()
 
 void Catkin::closeEvent( QCloseEvent *event )
 {
+  QSettings settings;
+
 #ifndef NO_DEBUG_OUTPUT
   qDebug( "close event" );
 #endif
@@ -934,10 +937,13 @@ void Catkin::closeEvent( QCloseEvent *event )
       event->ignore();
       qApp->setQuitOnLastWindowClosed( false );
     }
-    else
+    else {
+      settings.setValue( "account/lastAccountId", currentAccountId );
       event->accept();
+    }
   } else {
     writeSettings();
+    settings.setValue( "account/lastAccountId", currentAccountId );
     event->accept();
   }
 }
@@ -1709,7 +1715,7 @@ void Catkin::populateBlogList() // slot
 
   if( a ) {
     cw.cbBlogSelector->clear();
-   for( i = 0; i < a; i++ ) {
+    for( i = 0; i < a; i++ ) {
       ct = blogNodeList.at( i ).firstChildElement( "blogName" );
       cw.cbBlogSelector->addItem( blogNodeList.at( i ).firstChildElement( "blogName" ).text(),
 				  QVariant( blogNodeList.at( i ).firstChildElement( "blogid" ).text() ));
