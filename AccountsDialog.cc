@@ -300,13 +300,17 @@ void AccountsDialog::on_leBlogURI_returnPressed()
   // First check for TypePad and SquareSpace
   if( uris.contains( "squarespace.com" ) ) {
     leServer->setText( "www.squarespace.com" );
+    accountList[currentRow].server = "www.squarespace.com";
     leLocation->setText( "/do/process/external/PostInterceptor" );
+    accountList[currentRow].location = "/do/process/external/PostInterceptor";
     return;
   }
 
   if( uris.contains( "typepad.com" ) ) {
     leServer->setText( "www.typepad.com" );
+    accountList[currentRow].server = "www.typepad.com";
     leLocation->setText( "/t/api" );
+    accountList[currentRow].location = "/t/api";
     return;
   }
 
@@ -315,7 +319,9 @@ void AccountsDialog::on_leBlogURI_returnPressed()
     if( i < wpmuHosts.count() ) {
       if( uris.contains( wpmuHosts.at( i ) ) ) {
 	leServer->setText( uris );
+	accountList[currentRow].server = uris;
 	leLocation->setText( "/xmlrpc.php" );
+	accountList[currentRow].location = "/xmlrpc.php";
 	return;
       }
     }
