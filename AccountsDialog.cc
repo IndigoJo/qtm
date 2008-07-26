@@ -112,6 +112,8 @@ AccountsDialog::AccountsDialog( QList<AccountsDialog::Account> &acctList, QWidge
 
 void AccountsDialog::changeListIndex( int index )
 {
+  leBlogURI->clear();
+
   if( doingNewAccount ) {
     if( dirty )
       lwAccountList->item( (lwAccountList->count())-1 )->setText( leName->text().isEmpty() ?
@@ -522,3 +524,4 @@ bool AccountsDialog::eventFilter( QObject *obj, QEvent *event )
 
   }
 }
+
