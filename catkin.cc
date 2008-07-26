@@ -315,17 +315,25 @@ Catkin::Catkin( bool noRefreshBlogs, QWidget *parent )
 					 QString( "noid_%1" ).arg( i ) :
 					 accountsList.at( i ).toElement().attribute( "id" ) );
       }
+
+      qDebug() << "checking for last account ID";
       for( i = 0; i < accountsList.count(); i++ ) {
 	if( accountsList.at( i ).toElement().attribute( "id" ) == lastAccountID ) {
+	  qDebug() << "found it";
 	  currentAccountElement = accountsList.at( i ).toElement();
 	  populateBlogList();
+	  connect( cw.cbAccountSelector, SIGNAL( activated( int ) ),
+		   this, SLOT( changeAccount( int ) ) );
 	  break;
 	}
 	// If it reaches the end of the loop with no joy
 	if( i == accountsList.count()-1 ) {
+ 	  qDebug() << "using first account";
 	  currentAccountElement = accountsDom.documentElement()
 	    .firstChildElement( "account" );
 	  populateBlogList();
+	  connect( cw.cbAccountSelector, SIGNAL( activated( int ) ),
+		   this, SLOT( changeAccount( int ) ) );
 	}
       }
       accountsXmlFile.close();
@@ -1885,9 +1893,11 @@ void Catkin::changeAccount( int a ) // slot
 
   currentAccount = a;
 
-  currentAccountElement = accountsDom.firstChildElement( "QTMAccounts" )
+  currentAccountElement = accountsDom.documentElement()
     .elementsByTagName( "account" ).at( a ).toElement();
-  currentAccountId = currentAccountElement.attribute( "id" );
+  currentAccountId = currentAccountElement.toElement().attribute( "id" );
+  qDebug() << "Current account: " << currentAccountElement.firstChildElement( "details" )
+    .firstChildElement( "title" ).text();
 
   QStringList accountStringNames( accountStrings.keys() );
   QStringList accountAttribNames( accountAttributes.keys() );
@@ -1912,9 +1922,7 @@ void Catkin::changeAccount( int a ) // slot
     QDomNodeList blogsList = blogsElement.elementsByTagName( "blog" );
     int b = blogsList.count();
     if( b ) {
-#ifndef NO_DEBUG_OUTPUT
       qDebug() << "Blogs: " << b;
-#endif
       cw.cbBlogSelector->clear();
       for( int i = 0; i < b; i++ )
 	cw.cbBlogSelector->addItem( blogsList.at( i ).firstChildElement( "blogName" ).text(),
