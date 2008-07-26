@@ -247,6 +247,7 @@ Catkin::Catkin( bool noRefreshBlogs, QWidget *parent )
       currentAccountElement.setAttribute( "id", "default" );
 
       if( !server.isEmpty() ) {
+	qDebug() << "copying details to new default element";
 	detailElem = accountsDom.createElement( "details" );
 	nameElem = accountsDom.createElement( "title" );
 	nameElem.appendChild( accountsDom.createTextNode( tr( "Default account" ) ) );
@@ -291,12 +292,30 @@ Catkin::Catkin( bool noRefreshBlogs, QWidget *parent )
       QHostInfo::lookupHost( server, this, SLOT( handleInitialLookup( QHostInfo ) ) );
     }
     else {
+      int i;
+
+      qDebug() << "server is empty";
       QSettings settings;
       settings.beginGroup( "account" );
       lastAccountID = settings.value( "lastAccountID", "" ).toString();
       QDomNodeList accountsList = accountsDom.documentElement()
 	.elementsByTagName( "account" );
-      for( int i = 0; i < accountsList.count(); i++ ) {
+      QDomElement thisTitleElem;
+      cw.cbAccountSelector->clear();
+
+      for( i = 0; i < accountsList.count(); i++ ) {
+	thisTitleElem = accountsList.at( i ).toElement().firstChildElement( "details" )
+	  .firstChildElement( "title" );
+	if( !thisTitleElem.isNull() )
+	  cw.cbAccountSelector->addItem( thisTitleElem.text(),
+					 accountsList.at( i ).toElement().attribute( "id" ) );
+	else
+	  cw.cbAccountSelector->addItem( tr( "Unnamed account" ),
+					 accountsList.at( i ).toElement().attribute( "id" ).isEmpty() ?
+					 QString( "noid_%1" ).arg( i ) :
+					 accountsList.at( i ).toElement().attribute( "id" ) );
+      }
+      for( i = 0; i < accountsList.count(); i++ ) {
 	if( accountsList.at( i ).toElement().attribute( "id" ) == lastAccountID ) {
 	  currentAccountElement = accountsList.at( i ).toElement();
 	  populateBlogList();
