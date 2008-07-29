@@ -403,6 +403,7 @@
   <tabstop>leName</tabstop>
   <tabstop>cbHostedBlogType</tabstop>
   <tabstop>leBlogURI</tabstop>
+  <tabstop>tbURIReturn</tabstop>
   <tabstop>leServer</tabstop>
   <tabstop>leLocation</tabstop>
   <tabstop>lePort</tabstop>

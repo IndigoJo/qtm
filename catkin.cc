@@ -1342,10 +1342,12 @@ void Catkin::getAccounts()
       // Check if each account is matched from the old list; if it is, copy the blogs list
       for( j = 0; j < accountsList.count(); ++j ) {
 	if( accountsList.at( j ).toElement().hasAttribute( "id" ) ) {
-	  blogsElement = accountsList.at( j ).firstChildElement( "blogs" );
-	  if( !blogsElement.isNull() )
-	    newAccount.appendChild( newAccountsDom.importNode( blogsElement, true ) );
-	  break;
+	  if( accountsList.at( j ).toElement().attribute( "id " ) == returnedAccountsList.at( i ).id ) {
+	    blogsElement = accountsList.at( j ).firstChildElement( "blogs" );
+	    if( !blogsElement.isNull() )
+	      newAccount.appendChild( newAccountsDom.importNode( blogsElement, true ) );
+	    break;
+	  }
 	}
       }
       newQTMAccounts.appendChild( newAccount );
