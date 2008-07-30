@@ -59,7 +59,8 @@ public:
     bool trackback;
   } Account;
 
-  AccountsDialog( QList<AccountsDialog::Account> &, QWidget *parent = 0 );
+  AccountsDialog( QList<AccountsDialog::Account> &, int,
+		  QWidget *parent = 0 );
   QList<Account> accounts() { return accountList; }
   /*QStringList templateTitles() { return _templateTitles; }
   QStringList templateStrings() { return _templateStrings; }

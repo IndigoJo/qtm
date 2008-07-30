@@ -49,7 +49,9 @@
 #include "ui_AccountsForm.h"
 #include "return.xpm"
 
-AccountsDialog::AccountsDialog( QList<AccountsDialog::Account> &acctList, QWidget *parent )
+AccountsDialog::AccountsDialog( QList<AccountsDialog::Account> &acctList,
+				int acctIndex,
+				QWidget *parent )
   : QDialog( parent )
 {
   QString a;
@@ -108,10 +110,13 @@ AccountsDialog::AccountsDialog( QList<AccountsDialog::Account> &acctList, QWidge
     this, SLOT( changeListIndex( int ) ) );
 
   entryDateTime = QDateTime();
+  currentRow = acctIndex;
+  lwAccountList->setCurrentRow( acctIndex );
 }
 
 void AccountsDialog::changeListIndex( int index )
 {
+  qDebug() << "index:" << index;
   leBlogURI->clear();
 
   if( doingNewAccount ) {

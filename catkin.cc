@@ -1274,10 +1274,10 @@ void Catkin::getAccounts()
 
   oldCurrentAccountId = cw.cbAccountSelector->itemData( cw.cbAccountSelector->currentIndex() )
     .toString();
-  int oldCurrentBlog = cw.cbBlogSelector->currentIndex();
+  int oldCurrentBlog = cw.cbAccountSelector->currentIndex();
   //accountsList = accountsDom.documentElement().elementsByTagName( "account" );
 
-  AccountsDialog acctsDialog( acctsList, this );
+  AccountsDialog acctsDialog( acctsList, oldCurrentBlog, this );
 
   if( acctsDialog.exec() ) {
     returnedAccountsList = acctsDialog.accounts();
