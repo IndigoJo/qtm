@@ -521,15 +521,10 @@ void Catkin::doUiSetup()
   ui.actionStop_this_job->setShortcut( QKeySequence::fromString( "Ctrl+A" ) );
   ui.action_Bold->setShortcut( QKeySequence::fromString( "Ctrl+B" ) );
   ui.action_Italic->setShortcut( QKeySequence::fromString( "Ctrl+I" ) );
-  /*ui.action_Cut->setShortcut( QKeySequence::fromString( "Ctrl+X" ) );
-  ui.actionC_opy->setShortcut( QKeySequence::fromString( "Ctrl+C" ) );
-  ui.actionPaste->setShortcut( QKeySequence::fromString( "Ctrl+V" ) ); */
   ui.actionI_mage->setShortcut( QKeySequence::fromString( "Ctrl+J" ) );
   ui.action_Link->setShortcut( QKeySequence::fromString( "Ctrl+L" ) );
   ui.action_Auto_link->setShortcut( QKeySequence::fromString( "Shift+Ctrl+L" ) );
   ui.actionLink_from_C_lipboard->setShortcut( QKeySequence::fromString( "Ctrl+U" ) );
-  /*ui.action_Undo->setShortcut( QKeySequence::fromString( "Ctrl+Z" ) );
-    ui.action_Redo->setShortcut( QKeySequence::fromString( "Ctrl+Y" ) ); */
   ui.action_View_Console->setShortcut( QKeySequence::fromString( "Shift+Ctrl+V" ) );
   ui.action_BES->setShortcut( QKeySequence( "Ctrl+1" ) );
   ui.actionC_ategories->setShortcut( QKeySequence( "Ctrl+2" ) );
@@ -1277,13 +1272,20 @@ void Catkin::getAccounts()
     acctsList.append( acct );
   }
 
+  oldCurrentAccountId = cw.cbAccountSelector->itemData( cw.cbAccountSelector->currentIndex() )
+    .toString();
+  int oldCurrentBlog = cw.cbBlogSelector->currentIndex();
+  //accountsList = accountsDom.documentElement().elementsByTagName( "account" );
+
   AccountsDialog acctsDialog( acctsList, this );
 
   if( acctsDialog.exec() ) {
     returnedAccountsList = acctsDialog.accounts();
     newQTMAccounts = newAccountsDom.createElement( "QTMAccounts" );
 
-    for( i = 0; i < returnedAccountsList.count(); ++i ) {
+    for( i = 0; i < returnedAccountsList.count(); i++ ) {
+      qDebug() << "Blog: " << returnedAccountsList.at( i ).name;
+
       newAccount = newAccountsDom.createElement( "account" );
       newAccount.setAttribute( "id", returnedAccountsList.at( i ).id );
       detailElement = newAccountsDom.createElement( "details" );
@@ -1340,14 +1342,18 @@ void Catkin::getAccounts()
       newAccount.appendChild( detailElement );
       
       // Check if each account is matched from the old list; if it is, copy the blogs list
-      for( j = 0; j < accountsList.count(); ++j ) {
-	if( accountsList.at( j ).toElement().hasAttribute( "id" ) ) {
-	  if( accountsList.at( j ).toElement().attribute( "id " ) == returnedAccountsList.at( i ).id ) {
-	    blogsElement = accountsList.at( j ).firstChildElement( "blogs" );
-	    if( !blogsElement.isNull() )
-	      newAccount.appendChild( newAccountsDom.importNode( blogsElement, true ) );
-	    break;
+      for( j = 0; j < accountsList.count(); j++ ) {
+	qDebug() << "checking" << accountsList.at( j ).toElement().attribute( "id" )
+		 << "against" << returnedAccountsList.at( i ).id;
+	if( accountsList.at( j ).toElement().attribute( "id" ) == returnedAccountsList.at( i ).id ) {
+	  qDebug() << "match found";
+	  blogsElement = accountsList.at( j ).toElement().firstChildElement( "blogs" );
+	  if( !blogsElement.isNull() ) {
+	    newAccount.appendChild( newAccountsDom.importNode( blogsElement, true ) );
+	    qDebug() << blogsElement.elementsByTagName( "blog" ).count() << "blogs found under "
+		     << returnedAccountsList.at( i ).name;
 	  }
+	  break;
 	}
       }
       newQTMAccounts.appendChild( newAccount );
@@ -1360,11 +1366,8 @@ void Catkin::getAccounts()
     newAccountsDom.appendChild( newQTMAccounts );
     accountsDom = newAccountsDom.cloneNode( true ).toDocument();
 
-    oldCurrentAccountId = cw.cbAccountSelector->itemData( cw.cbAccountSelector->currentIndex() )
-      .toString();
-    int oldCurrentBlog = cw.cbBlogSelector->currentIndex();
     cw.cbAccountSelector->clear();
-    accountsList = accountsDom.elementsByTagName( "account" );
+    accountsList = accountsDom.documentElement().elementsByTagName( "account" );
     for( i = 0; i < accountsList.count(); ++i ) {
       currentTitle = accountsList.at( i ).firstChildElement( "details" )
 	.firstChildElement( "title" ).text();
@@ -1386,10 +1389,14 @@ void Catkin::getAccounts()
 	}
 
 	// Now check if the current account has any blogs
-	if( !currentAccountElement.firstChildElement( "blogs" ).isNull() )
+	if( !currentAccountElement.firstChildElement( "blogs" ).isNull() ) {
+	  qDebug() << "blogs found";
 	  populateBlogList();
-	else
+	}
+	else {
+	  qDebug() << "no blogs found";
 	  refreshBlogList();
+	}
 	break;
       }
       if( i == accountsList.count()-1 ) {
