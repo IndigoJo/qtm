@@ -1284,8 +1284,6 @@ void Catkin::getAccounts()
     newQTMAccounts = newAccountsDom.createElement( "QTMAccounts" );
 
     for( i = 0; i < returnedAccountsList.count(); i++ ) {
-      qDebug() << "Blog: " << returnedAccountsList.at( i ).name;
-
       newAccount = newAccountsDom.createElement( "account" );
       newAccount.setAttribute( "id", returnedAccountsList.at( i ).id );
       detailElement = newAccountsDom.createElement( "details" );
@@ -1343,16 +1341,10 @@ void Catkin::getAccounts()
       
       // Check if each account is matched from the old list; if it is, copy the blogs list
       for( j = 0; j < accountsList.count(); j++ ) {
-	qDebug() << "checking" << accountsList.at( j ).toElement().attribute( "id" )
-		 << "against" << returnedAccountsList.at( i ).id;
 	if( accountsList.at( j ).toElement().attribute( "id" ) == returnedAccountsList.at( i ).id ) {
-	  qDebug() << "match found";
 	  blogsElement = accountsList.at( j ).toElement().firstChildElement( "blogs" );
-	  if( !blogsElement.isNull() ) {
+	  if( !blogsElement.isNull() )
 	    newAccount.appendChild( newAccountsDom.importNode( blogsElement, true ) );
-	    qDebug() << blogsElement.elementsByTagName( "blog" ).count() << "blogs found under "
-		     << returnedAccountsList.at( i ).name;
-	  }
 	  break;
 	}
       }
