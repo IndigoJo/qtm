@@ -3258,7 +3258,7 @@ void Catkin::save( const QString &fname )
     out << QString( "Password:%1\n" ).arg( password );
   if( cw.lwTags->count() ) {
   tags = cw.lwTags->count(); */
-  out << QString( "AcctBlog:%1@%2 (%3)" ) // Include the blog name so it can be relayed to the user later
+  out << QString( "AcctBlog:%1@%2 (%3)\n" ) // Include the blog name so it can be relayed to the user later
     .arg( currentBlogid )
     .arg( currentAccountId )
     .arg( cw.cbBlogSelector->itemText( cw.cbBlogSelector->currentIndex() ) );
@@ -3269,6 +3269,7 @@ void Catkin::save( const QString &fname )
   }
   out << "\n";
 
+  qDebug() << "now sending categories";
   QDomNodeList catNodeList = currentBlogElement.firstChildElement( "categories" ).elementsByTagName( "category" );
   out << QString( "Blog:%1\n" ).arg( cw.cbBlogSelector->currentIndex() );
   out << QString( "PrimaryID:%1\n" ).arg( cw.cbMainCat->itemData( cw.cbMainCat->currentIndex() ).toString() );
@@ -3701,7 +3702,7 @@ bool Catkin::load( const QString &fname, bool fromSTI )
   // Now we know this isn't an account entry, check whether the saved details actually
   // belong to an account; if it does, there is no need to check for the password
 
-
+  qDebug() << "this is an old-style account";
   QDomElement details; 
   QDomNodeList blogs;
 
@@ -3715,6 +3716,7 @@ bool Catkin::load( const QString &fname, bool fromSTI )
     if( details.firstChildElement( "server" ).text() == server &&
 	details.firstChildElement( "location" ).text() == location &&
 	details.firstChildElement( "login" ).text() == login ) {
+      qDebug() << "match found";
       currentAccountElement = accts.at( e ).toElement();
       // First check whether the blog still exists
       blogs = currentAccountElement.elementsByTagName( "blogs" );
