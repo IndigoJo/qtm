@@ -3435,7 +3435,7 @@ bool Catkin::load( const QString &fname, bool fromSTI )
   QDomNodeList accts;
   bool getDetailsAgain = false;
   bool isOK;
-  int b, c, d;
+  int b, c, d, hh;
   noAutoSave = true;
   QFile f( fname );
 
@@ -3546,6 +3546,7 @@ bool Catkin::load( const QString &fname, bool fromSTI )
   }
 
   if( emap.contains( "AcctBlog" ) ) {
+    currentBlogid = emap.value( "AcctBlog" ).section( "@", 0, 0 );
     loadedAccountId = emap.value( "AcctBlog" ).section( "@", 1, 1 ).section( " (", 0, 0 );
     b = emap.value( "AcctBlog" ).section( "@", 0, 0 ).toInt( &isOK );
     if( isOK ) {
@@ -3649,7 +3650,7 @@ bool Catkin::load( const QString &fname, bool fromSTI )
 	// Now populate the blog list
 	QDomNodeList blogNodeList = currentAccountElement.elementsByTagName( "blog" );
 	cw.cbBlogSelector->clear();
-	for( int hh = 0; hh < blogNodeList.count(); hh++ ) {
+	for( hh = 0; hh < blogNodeList.count(); hh++ ) {
 	  cw.cbBlogSelector->addItem( blogNodeList.at( hh ).toElement()
 				      .firstChildElement( "blogName" ).text(),
 				      blogNodeList.at( hh ).toElement()
@@ -3665,8 +3666,14 @@ bool Catkin::load( const QString &fname, bool fromSTI )
 	  return true;
 	}
 	
+	for( hh = 0; hh < cw.cbBlogSelector->count(); hh++ ) {
+	  if( cw.cbBlogSelector->itemData( hh ) == currentBlogid ) {
+	    cw.cbBlogSelector->setCurrentIndex( hh );
+	    break;
+	  }
+	}
+
 	// Now populate and set the categories
-	cw.cbBlogSelector->setCurrentIndex( currentBlog );
 	QDomElement catsElement = blogNodeList.at( currentBlog ).firstChildElement( "categories" );
 	if( !catsElement.isNull() ) {
 	  QDomNodeList catNodeList = catsElement.elementsByTagName( "category" );
@@ -3692,9 +3699,11 @@ bool Catkin::load( const QString &fname, bool fromSTI )
 	    cw.lwOtherCats->setEnabled( false );
 	  }
 	}
+	filename = fname;
 	return true;
       }
     }
+    filename = fname;
     return true;
   }
 
