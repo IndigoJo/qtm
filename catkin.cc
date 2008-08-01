@@ -234,111 +234,108 @@ Catkin::Catkin( bool noRefreshBlogs, QWidget *parent )
 
   handleEnableCategories();
 
-  if( !location.isEmpty() && !noRefreshBlogs ) {
-    //qDebug() << "Reading in XML";
-    QFile accountsXmlFile( PROPERSEPS( QString( "%1/qtmaccounts.xml" ).arg( localStorageDirectory ) ) );
-    if( !accountsDom.setContent( &accountsXmlFile ) ) {
+  QFile accountsXmlFile( PROPERSEPS( QString( "%1/qtmaccounts.xml" ).arg( localStorageDirectory ) ) );
+  if( !accountsDom.setContent( &accountsXmlFile ) ) {
 #ifndef NO_DEBUG_OUTPUT
-      qDebug() << "Can't read the XML";
+    qDebug() << "Can't read the XML";
 #endif
-      accountsXmlFile.close();
-      accountsElement = accountsDom.createElement( "QTMAccounts" );
-      currentAccountElement = accountsDom.createElement( "account" );
-      currentAccountElement.setAttribute( "id", "default" );
+    accountsXmlFile.close();
+    accountsElement = accountsDom.createElement( "QTMAccounts" );
+    currentAccountElement = accountsDom.createElement( "account" );
+    currentAccountElement.setAttribute( "id", "default" );
 
-      if( !server.isEmpty() ) {
-	qDebug() << "copying details to new default element";
-	detailElem = accountsDom.createElement( "details" );
-	nameElem = accountsDom.createElement( "title" );
-	nameElem.appendChild( accountsDom.createTextNode( tr( "Default account" ) ) );
-	serverElem = accountsDom.createElement( "server" );
-	serverElem.appendChild( accountsDom.createTextNode( server ) );
-	locElem = accountsDom.createElement( "location" );
-	locElem.appendChild( accountsDom.createTextNode( location ) );
-	loginElem = accountsDom.createElement( "login" );
-	loginElem.appendChild( accountsDom.createTextNode( login ) );
-	pwdElem = accountsDom.createElement( "password" );
-	pwdElem.appendChild( accountsDom.createTextNode( password ) );
-	detailElem.appendChild( nameElem );
-	detailElem.appendChild( serverElem );
-	detailElem.appendChild( locElem );
-	detailElem.appendChild( loginElem );
-	detailElem.appendChild( pwdElem );
-	currentAccountElement.appendChild( detailElem );
+    if( !server.isEmpty() ) {
+      qDebug() << "copying details to new default element";
+      detailElem = accountsDom.createElement( "details" );
+      nameElem = accountsDom.createElement( "title" );
+      nameElem.appendChild( accountsDom.createTextNode( tr( "Default account" ) ) );
+      serverElem = accountsDom.createElement( "server" );
+      serverElem.appendChild( accountsDom.createTextNode( server ) );
+      locElem = accountsDom.createElement( "location" );
+      locElem.appendChild( accountsDom.createTextNode( location ) );
+      loginElem = accountsDom.createElement( "login" );
+      loginElem.appendChild( accountsDom.createTextNode( login ) );
+      pwdElem = accountsDom.createElement( "password" );
+      pwdElem.appendChild( accountsDom.createTextNode( password ) );
+      detailElem.appendChild( nameElem );
+      detailElem.appendChild( serverElem );
+      detailElem.appendChild( locElem );
+      detailElem.appendChild( loginElem );
+      detailElem.appendChild( pwdElem );
+      currentAccountElement.appendChild( detailElem );
 
-	// Delete the old account from the settings
-	settings.beginGroup( "account" );
-	settings.remove( "server" );
-	settings.remove( "location" );
-	settings.remove( "login" );
-	settings.remove( "password" );
-	settings.endGroup();
+      // Delete the old account from the settings
+      settings.beginGroup( "account" );
+      settings.remove( "server" );
+      settings.remove( "location" );
+      settings.remove( "login" );
+      settings.remove( "password" );
+      settings.endGroup();
 
-	// Now transfer the attributes to the default accounts
-	QStringList attribs( accountAttributes.keys() );
-	Q_FOREACH( QString s, attribs ) {
-	  if( *(accountAttributes[s]) ) {
-	    attribElem = accountsDom.createElement( "attribute" );
-	    attribElem.setAttribute( "name", s );
-	    detailElem.appendChild( attribElem );
-	  }
+      // Now transfer the attributes to the default accounts
+      QStringList attribs( accountAttributes.keys() );
+      Q_FOREACH( QString s, attribs ) {
+	if( *(accountAttributes[s]) ) {
+	  attribElem = accountsDom.createElement( "attribute" );
+	  attribElem.setAttribute( "name", s );
+	  detailElem.appendChild( attribElem );
 	}
       }
-
-      accountsElement.appendChild( currentAccountElement );
-      accountsDom.appendChild( accountsElement );
-      accountsDom.insertBefore( accountsDom.createProcessingInstruction( "xml", "version=\"1.0\"" ),
-				accountsDom.firstChild() );
-      QHostInfo::lookupHost( server, this, SLOT( handleInitialLookup( QHostInfo ) ) );
     }
-    else {
-      int i;
 
-      qDebug() << "server is empty";
-      QSettings settings;
-      lastAccountID = settings.value( "account/lastAccountID", "" ).toString();
-      QDomNodeList accountsList = accountsDom.documentElement()
-	.elementsByTagName( "account" );
-      QDomElement thisTitleElem;
-      cw.cbAccountSelector->clear();
+    accountsElement.appendChild( currentAccountElement );
+    accountsDom.appendChild( accountsElement );
+    accountsDom.insertBefore( accountsDom.createProcessingInstruction( "xml", "version=\"1.0\"" ),
+			      accountsDom.firstChild() );
+    QHostInfo::lookupHost( server, this, SLOT( handleInitialLookup( QHostInfo ) ) );
+  }
+  else {
+    int i;
 
-      for( i = 0; i < accountsList.count(); i++ ) {
-	thisTitleElem = accountsList.at( i ).toElement().firstChildElement( "details" )
-	  .firstChildElement( "title" );
-	if( !thisTitleElem.isNull() )
-	  cw.cbAccountSelector->addItem( thisTitleElem.text(),
-					 accountsList.at( i ).toElement().attribute( "id" ) );
-	else
-	  cw.cbAccountSelector->addItem( tr( "Unnamed account" ),
-					 accountsList.at( i ).toElement().attribute( "id" ).isEmpty() ?
-					 QString( "noid_%1" ).arg( i ) :
-					 accountsList.at( i ).toElement().attribute( "id" ) );
-      }
+    qDebug() << "server is empty";
+    QSettings settings;
+    lastAccountID = settings.value( "account/lastAccountID", "" ).toString();
+    QDomNodeList accountsList = accountsDom.documentElement()
+      .elementsByTagName( "account" );
+    QDomElement thisTitleElem;
+    cw.cbAccountSelector->clear();
 
-      qDebug() << "checking for last account ID";
-      for( i = 0; i < accountsList.count(); i++ ) {
-	if( accountsList.at( i ).toElement().attribute( "id" ) == lastAccountID ) {
-	  qDebug() << "found it";
-	  currentAccountElement = accountsList.at( i ).toElement();
-	  currentAccountId = currentAccountElement.attribute( "id" );
-	  cw.cbAccountSelector->setCurrentIndex( i );
-	  populateBlogList();
-	  connect( cw.cbAccountSelector, SIGNAL( activated( int ) ),
-		   this, SLOT( changeAccount( int ) ) );
-	  break;
-	}
-	// If it reaches the end of the loop with no joy
-	if( i == accountsList.count()-1 ) {
- 	  qDebug() << "using first account";
-	  currentAccountElement = accountsDom.documentElement()
-	    .firstChildElement( "account" );
-	  populateBlogList();
-	  connect( cw.cbAccountSelector, SIGNAL( activated( int ) ),
-		   this, SLOT( changeAccount( int ) ) );
-	}
-      }
-      accountsXmlFile.close();
+    for( i = 0; i < accountsList.count(); i++ ) {
+      thisTitleElem = accountsList.at( i ).toElement().firstChildElement( "details" )
+	.firstChildElement( "title" );
+      if( !thisTitleElem.isNull() )
+	cw.cbAccountSelector->addItem( thisTitleElem.text(),
+				       accountsList.at( i ).toElement().attribute( "id" ) );
+      else
+	cw.cbAccountSelector->addItem( tr( "Unnamed account" ),
+				       accountsList.at( i ).toElement().attribute( "id" ).isEmpty() ?
+				       QString( "noid_%1" ).arg( i ) :
+				       accountsList.at( i ).toElement().attribute( "id" ) );
     }
+
+    qDebug() << "checking for last account ID";
+    for( i = 0; i < accountsList.count(); i++ ) {
+      if( accountsList.at( i ).toElement().attribute( "id" ) == lastAccountID ) {
+	qDebug() << "found it";
+	currentAccountElement = accountsList.at( i ).toElement();
+	currentAccountId = currentAccountElement.attribute( "id" );
+	cw.cbAccountSelector->setCurrentIndex( i );
+	populateBlogList();
+	connect( cw.cbAccountSelector, SIGNAL( activated( int ) ),
+		 this, SLOT( changeAccount( int ) ) );
+	break;
+      }
+      // If it reaches the end of the loop with no joy
+      if( i == accountsList.count()-1 ) {
+	qDebug() << "using first account";
+	currentAccountElement = accountsDom.documentElement()
+	  .firstChildElement( "account" );
+	populateBlogList();
+	connect( cw.cbAccountSelector, SIGNAL( activated( int ) ),
+		 this, SLOT( changeAccount( int ) ) );
+      }
+    }
+    accountsXmlFile.close();
   }
 
   mainStack->setCurrentIndex( edID );
@@ -1681,6 +1678,7 @@ void Catkin::populateAccountList() // slot
   int a = accountNodeList.count();
 
   if( a ) {
+    qDebug () << "populating:" << a << "accounts";
     cw.cbAccountSelector->clear();
 
     for( i = 0; i < a; i++ ) {
@@ -1692,7 +1690,7 @@ void Catkin::populateAccountList() // slot
 	cname = detail.firstChildElement( "title" ).text();
 	if( cname.isEmpty() )
 	  cname = tr( "Unnamed account %1" ).arg( i + 1 );
-	cw.cbBlogSelector->addItem( cname, cid );
+	cw.cbAccountSelector->addItem( cname, cid );
       }
     }
   
@@ -3637,6 +3635,7 @@ bool Catkin::load( const QString &fname, bool fromSTI )
       }
 
       if( accts.at( g ).toElement().attribute( "id" ) == loadedAccountId ) {
+	qDebug() << "found the account:" << loadedAccountId;
 	populateAccountList();
 	currentAccountElement = accts.at( g ).toElement();
 
