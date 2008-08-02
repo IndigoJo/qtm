@@ -234,61 +234,74 @@ Catkin::Catkin( bool noRefreshBlogs, QWidget *parent )
 
   handleEnableCategories();
 
-  QFile accountsXmlFile( PROPERSEPS( QString( "%1/qtmaccounts.xml" ).arg( localStorageDirectory ) ) );
-  if( !accountsDom.setContent( &accountsXmlFile ) ) {
-#ifndef NO_DEBUG_OUTPUT
-    qDebug() << "Can't read the XML";
-#endif
+  QFile accountsXmlFile( PROPERSEPS( QString( "%1/qtmaccounts2.xml" ).arg( localStorageDirectory ) ) );
+  if( accountsDom.setContent( &accountsXmlFile ) ) {
     accountsXmlFile.close();
-    accountsElement = accountsDom.createElement( "QTMAccounts" );
-    currentAccountElement = accountsDom.createElement( "account" );
-    currentAccountElement.setAttribute( "id", "default" );
+    setInitialAccount();
+  }
+  else {
+    accountsXmlFile.close();
+    accountsXmlFile.setFileName( PROPERSEPS( QString( "%1/qtmaccounts.xml" ).arg( localStorageDirectory ) ) );
+    accountsXmlFile.open( QIODevice::ReadOnly | QIODevice::Text );
+    if( accountsDom.setContent( &accountsXmlFile ) ) {
+      accountsXmlFile.close();
+      setInitialAccount();
+    }
+    else {
+#ifndef NO_DEBUG_OUTPUT
+      qDebug() << "Can't read the XML";
+#endif
+      accountsXmlFile.close();
+      accountsElement = accountsDom.createElement( "QTMAccounts" );
+      currentAccountElement = accountsDom.createElement( "account" );
+      currentAccountElement.setAttribute( "id", "default" );
 
-    if( !server.isEmpty() ) {
-      qDebug() << "copying details to new default element";
-      detailElem = accountsDom.createElement( "details" );
-      nameElem = accountsDom.createElement( "title" );
-      nameElem.appendChild( accountsDom.createTextNode( tr( "Default account" ) ) );
-      serverElem = accountsDom.createElement( "server" );
-      serverElem.appendChild( accountsDom.createTextNode( server ) );
-      locElem = accountsDom.createElement( "location" );
-      locElem.appendChild( accountsDom.createTextNode( location ) );
-      loginElem = accountsDom.createElement( "login" );
-      loginElem.appendChild( accountsDom.createTextNode( login ) );
-      pwdElem = accountsDom.createElement( "password" );
-      pwdElem.appendChild( accountsDom.createTextNode( password ) );
-      detailElem.appendChild( nameElem );
-      detailElem.appendChild( serverElem );
-      detailElem.appendChild( locElem );
-      detailElem.appendChild( loginElem );
-      detailElem.appendChild( pwdElem );
-      currentAccountElement.appendChild( detailElem );
+      if( !server.isEmpty() ) {
+	qDebug() << "copying details to new default element";
+	detailElem = accountsDom.createElement( "details" );
+	nameElem = accountsDom.createElement( "title" );
+	nameElem.appendChild( accountsDom.createTextNode( tr( "Default account" ) ) );
+	serverElem = accountsDom.createElement( "server" );
+	serverElem.appendChild( accountsDom.createTextNode( server ) );
+	locElem = accountsDom.createElement( "location" );
+	locElem.appendChild( accountsDom.createTextNode( location ) );
+	loginElem = accountsDom.createElement( "login" );
+	loginElem.appendChild( accountsDom.createTextNode( login ) );
+	pwdElem = accountsDom.createElement( "password" );
+	pwdElem.appendChild( accountsDom.createTextNode( password ) );
+	detailElem.appendChild( nameElem );
+	detailElem.appendChild( serverElem );
+	detailElem.appendChild( locElem );
+	detailElem.appendChild( loginElem );
+	detailElem.appendChild( pwdElem );
+	currentAccountElement.appendChild( detailElem );
 
-      // Delete the old account from the settings
-      settings.beginGroup( "account" );
-      settings.remove( "server" );
-      settings.remove( "location" );
-      settings.remove( "login" );
-      settings.remove( "password" );
-      settings.endGroup();
+	// Delete the old account from the settings
+	settings.beginGroup( "account" );
+	settings.remove( "server" );
+	settings.remove( "location" );
+	settings.remove( "login" );
+	settings.remove( "password" );
+	settings.endGroup();
 
-      // Now transfer the attributes to the default accounts
-      QStringList attribs( accountAttributes.keys() );
-      Q_FOREACH( QString s, attribs ) {
-	if( *(accountAttributes[s]) ) {
-	  attribElem = accountsDom.createElement( "attribute" );
-	  attribElem.setAttribute( "name", s );
-	  detailElem.appendChild( attribElem );
+	// Now transfer the attributes to the default accounts
+	QStringList attribs( accountAttributes.keys() );
+	Q_FOREACH( QString s, attribs ) {
+	  if( *(accountAttributes[s]) ) {
+	    attribElem = accountsDom.createElement( "attribute" );
+	    attribElem.setAttribute( "name", s );
+	    detailElem.appendChild( attribElem );
+	  }
 	}
       }
-    }
 
-    accountsElement.appendChild( currentAccountElement );
-    accountsDom.appendChild( accountsElement );
-    accountsDom.insertBefore( accountsDom.createProcessingInstruction( "xml", "version=\"1.0\"" ),
-			      accountsDom.firstChild() );
-    QHostInfo::lookupHost( server, this, SLOT( handleInitialLookup( QHostInfo ) ) );
-  }
+      accountsElement.appendChild( currentAccountElement );
+      accountsDom.appendChild( accountsElement );
+      accountsDom.insertBefore( accountsDom.createProcessingInstruction( "xml", "version=\"1.0\"" ),
+				accountsDom.firstChild() );
+      QHostInfo::lookupHost( server, this, SLOT( handleInitialLookup( QHostInfo ) ) );
+    }
+  } /*
   else {
     int i;
 
@@ -335,8 +348,7 @@ Catkin::Catkin( bool noRefreshBlogs, QWidget *parent )
 		 this, SLOT( changeAccount( int ) ) );
       }
     }
-    accountsXmlFile.close();
-  }
+    accountsXmlFile.close(); */
 
   mainStack->setCurrentIndex( edID );
 }
@@ -383,25 +395,37 @@ Catkin::Catkin( QString newPost, QWidget *parent )
   handleEnableCategories();
 
   if( !location.isEmpty() ) {
-    QFile accountsXmlFile( PROPERSEPS( QString( "%1/qtmaccounts.xml" ).arg( localStorageDirectory ) ) );
-    if( !accountsDom.setContent( &accountsXmlFile ) ) {
-#ifndef NO_DEBUG_OUTPUT
-      qDebug() << "Can't read the XML";
-#endif
-      accountsXmlFile.close();
-      accountsElement = accountsDom.createElement( "QTMAccounts" );
-      currentAccountElement = accountsDom.createElement( "account" );
-      accountsElement.appendChild( currentAccountElement );
-      accountsDom.appendChild( accountsElement );
-      accountsDom.insertBefore( accountsDom.createProcessingInstruction( "xml", "version=\"1.0\"" ),
-				accountsDom.firstChild() );
-      QHostInfo::lookupHost( server, this, SLOT( handleInitialLookup( QHostInfo ) ) );
+    QFile accountsXmlFile( PROPERSEPS( QString( "%1/qtmaccounts2.xml" ).arg( localStorageDirectory ) ) );
+    if( accountsDom.setContent( &accountsXmlFile ) ) {
+	accountsXmlFile.close();
+	currentAccountElement = accountsDom.firstChildElement( "QTMAccounts" )
+	  .firstChildElement( "account" );
+	populateBlogList();
     }
     else {
       accountsXmlFile.close();
-      currentAccountElement = accountsDom.firstChildElement( "QTMAccounts" )
+      accountsXmlFile.setFileName( PROPERSEPS( QString( "%1/qtmaccounts.xml" ).arg( localStorageDirectory ) ) );
+      accountsXmlFile.open( QIODevice::ReadOnly | QIODevice::Text );
+      if( accountsDom.setContent( &accountsXmlFile ) ) {
+	accountsXmlFile.close();
+	currentAccountElement = accountsDom.firstChildElement( "QTMAccounts" )
 	  .firstChildElement( "account" );
-      populateBlogList();
+	populateBlogList();
+      }
+      else {
+#ifndef NO_DEBUG_OUTPUT
+	qDebug() << "Can't read the XML";
+#endif
+	accountsXmlFile.close();
+	accountsElement = accountsDom.createElement( "QTMAccounts" );
+	currentAccountElement = accountsDom.createElement( "account" );
+	accountsElement.appendChild( currentAccountElement );
+	accountsDom.appendChild( accountsElement );
+	accountsDom.insertBefore( accountsDom.createProcessingInstruction( "xml", "version=\"1.0\"" ),
+				  accountsDom.firstChild() );
+	QHostInfo::lookupHost( server, this, SLOT( handleInitialLookup( QHostInfo ) ) );
+      }
+      
     }
   }
     //    QHostInfo::lookupHost( server, this, SLOT( handleInitialLookup( QHostInfo ) ) );
@@ -450,6 +474,8 @@ void Catkin::doUiSetup()
 
   //bloggerTitleFormatStrings << "[none]" << "h1" << "h2" << "h3" << "h4" << "h5" << "h6"
   //			    << "strong" << "em";
+
+  qtmaccounts_xml << "qtmaccounts2.xml" << "qtmaccounts.xml";
 
   ui.setupUi( this );
   //ui.dwExcerpt->setVisible( false );
@@ -979,6 +1005,55 @@ void Catkin::checkForEmptySettings()
   }
 }
 
+void Catkin::setInitialAccount()
+{
+    int i;
+
+    qDebug() << "server is empty";
+    QSettings settings;
+    lastAccountID = settings.value( "account/lastAccountID", "" ).toString();
+    QDomNodeList accountsList = accountsDom.documentElement()
+      .elementsByTagName( "account" );
+    QDomElement thisTitleElem;
+    cw.cbAccountSelector->clear();
+
+    for( i = 0; i < accountsList.count(); i++ ) {
+      thisTitleElem = accountsList.at( i ).toElement().firstChildElement( "details" )
+	.firstChildElement( "title" );
+      if( !thisTitleElem.isNull() )
+	cw.cbAccountSelector->addItem( thisTitleElem.text(),
+				       accountsList.at( i ).toElement().attribute( "id" ) );
+      else
+	cw.cbAccountSelector->addItem( tr( "Unnamed account" ),
+				       accountsList.at( i ).toElement().attribute( "id" ).isEmpty() ?
+				       QString( "noid_%1" ).arg( i ) :
+				       accountsList.at( i ).toElement().attribute( "id" ) );
+    }
+
+    qDebug() << "checking for last account ID";
+    for( i = 0; i < accountsList.count(); i++ ) {
+      if( accountsList.at( i ).toElement().attribute( "id" ) == lastAccountID ) {
+	qDebug() << "found it";
+	currentAccountElement = accountsList.at( i ).toElement();
+	currentAccountId = currentAccountElement.attribute( "id" );
+	cw.cbAccountSelector->setCurrentIndex( i );
+	populateBlogList();
+	connect( cw.cbAccountSelector, SIGNAL( activated( int ) ),
+		 this, SLOT( changeAccount( int ) ) );
+	break;
+      }
+      // If it reaches the end of the loop with no joy
+      if( i == accountsList.count()-1 ) {
+	qDebug() << "using first account";
+	currentAccountElement = accountsDom.documentElement()
+	  .firstChildElement( "account" );
+	populateBlogList();
+	connect( cw.cbAccountSelector, SIGNAL( activated( int ) ),
+		 this, SLOT( changeAccount( int ) ) );
+      }
+    }
+}
+
 void Catkin::readSettings()
 {
   //int i;
@@ -1225,7 +1300,7 @@ void Catkin::getAccounts()
   QDomDocument newAccountsDom;
   QDomElement newQTMAccounts, newAccount, detailElement, nameElement, serverElement, locationElement, 
     portElement, loginElement, pwdElement, blogsElement, boolElement, attribsElement;
-  QString oldCurrentAccountId, currentTitle;
+  QString oldCurrentAccountId, oldBlogid, currentTitle;
   QStringList thisAccountsAttribStrings;
   int c, i, j;
 
@@ -1271,6 +1346,7 @@ void Catkin::getAccounts()
 
   oldCurrentAccountId = cw.cbAccountSelector->itemData( cw.cbAccountSelector->currentIndex() )
     .toString();
+  oldBlogid = cw.cbBlogSelector->itemData( cw.cbBlogSelector->currentIndex() ).toString();
   int oldCurrentBlog = cw.cbAccountSelector->currentIndex();
   //accountsList = accountsDom.documentElement().elementsByTagName( "account" );
 
@@ -1634,7 +1710,7 @@ void Catkin::getPreferences()
 
 void Catkin::saveAccountsDom()
 {
-  QFile domOut( PROPERSEPS( QString( "%1/qtmaccounts.xml" ).arg( localStorageDirectory ) ) );
+  QFile domOut( PROPERSEPS( QString( "%1/qtmaccounts2.xml" ).arg( localStorageDirectory ) ) );
   if( domOut.open( QIODevice::WriteOnly ) ) {
     QTextStream domFileStream( &domOut );
     accountsDom.save( domFileStream, 2 );
@@ -1650,7 +1726,7 @@ void Catkin::saveAccountsDom()
 				 QMessageBox::Yes | QMessageBox::Default,
 				 QMessageBox::No ) == QMessageBox::Yes ) {
 	if( dir.mkpath( localStorageDirectory ) ) {
-	  domOut.setFileName( PROPERSEPS( QString( "%1/qtmaccounts.xml" ).arg( localStorageDirectory ) ) );
+	  domOut.setFileName( PROPERSEPS( QString( "%1/qtmaccounts2.xml" ).arg( localStorageDirectory ) ) );
 	  if( domOut.open( QIODevice::WriteOnly ) ) {
 	    QTextStream dfs( &domOut );
 	    accountsDom.save( dfs, 2 );
@@ -2311,7 +2387,7 @@ void Catkin::mt_getCategoryList( QByteArray response )
       cw.cbMainCat->setEnabled( true );
       cw.lwOtherCats->setEnabled( true );
       if( !noAutoSave ) {
-	QFile domOut( PROPERSEPS( QString( "%1/qtmaccounts.xml" ).arg( localStorageDirectory ) ) );
+	QFile domOut( PROPERSEPS( QString( "%1/qtmaccounts2.xml" ).arg( localStorageDirectory ) ) );
 	if( domOut.open( QIODevice::WriteOnly ) ) {
 	  QTextStream domFileStream( &domOut );
 	  accountsDom.save( domFileStream, 2 );
@@ -3929,7 +4005,7 @@ void Catkin::setLoadedPostCategories() // slot
 
 void Catkin::saveBlogs()
 {
-  QFile domOut( PROPERSEPS( QString( "%1/qtmaccounts.xml" ).arg( localStorageDirectory ) ) );
+  QFile domOut( PROPERSEPS( QString( "%1/qtmaccounts2.xml" ).arg( localStorageDirectory ) ) );
   if( domOut.open( QIODevice::WriteOnly ) ) {
     QTextStream domFileStream( &domOut );
     accountsDom.save( domFileStream, 2 );

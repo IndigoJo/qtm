@@ -94,6 +94,7 @@ class Catkin : public QMainWindow
   Ui::CategoryWidget cw;
   void doUiSetup();
   void checkForEmptySettings();
+  void setInitialAccount();
   void positionWidget( QWidget *, QWidget * );
   void readSettings();
   void writeSettings();
@@ -151,6 +152,7 @@ class Catkin : public QMainWindow
   QList<QString> categoryList;
   QStringList usersBlogURIs, usersBlogNames, usersBlogIDs;
   QStringList categoryNames, categoryIDs;
+  QStringList qtmaccounts_xml;
   // QHash<QString, QString> catList;
   QHash<QString, QString> autoLinkDictionary;
   QHash<QString, QString> autoLinkTitleDictionary;
