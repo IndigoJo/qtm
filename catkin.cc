@@ -1017,6 +1017,36 @@ void Catkin::setInitialAccount()
     QDomElement thisTitleElem;
     cw.cbAccountSelector->clear();
 
+    if( accountsList.count() == 1 ) {
+      // This is if there is just one legacy account
+      QDomElement detailElem, titleElem, serverElem, portElem, locElem,
+	loginElem, pwdElem;
+      detailElem = accountsDom.createElement( "details" );
+      titleElem = accountsDom.createElement( "title" );
+      titleElem.appendChild( accountsDom.createTextNode( tr( "Default account" ) ) );
+      serverElem = accountsDom.createElement( "server" );
+      serverElem.appendChild( accountsDom.createTextNode( server ) );
+      locElem = accountsDom.createElement( "location" );
+      locElem.appendChild( accountsDom.createTextNode( location ) );
+      if( !port.isEmpty() ) {
+	portElem = accountsDom.createElement( "port" );
+	portElem.appendChild( accountsDom.createTextNode( port ) );
+      }
+      loginElem = accountsDom.createElement( "login" );
+      loginElem.appendChild( accountsDom.createTextNode( login ) );
+      pwdElem = accountsDom.createElement( "password" );
+      pwdElem.appendChild( accountsDom.createTextNode( password ) );
+      detailElem.appendChild( titleElem );
+      detailElem.appendChild( serverElem );
+      if( !portElem.isNull() )
+	detailElem.appendChild( portElem );
+      detailElem.appendChild( locElem );
+      detailElem.appendChild( loginElem );
+      detailElem.appendChild( pwdElem );
+      accountsList.at( 0 ).insertBefore( detailElem, QDomNode() ); // i.e. insert it at the start
+      accountsList.at( 0 ).toElement().setAttribute( "id", "default" );
+    }
+
     for( i = 0; i < accountsList.count(); i++ ) {
       thisTitleElem = accountsList.at( i ).toElement().firstChildElement( "details" )
 	.firstChildElement( "title" );
