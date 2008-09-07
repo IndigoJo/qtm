@@ -30,7 +30,9 @@ if( DONT_USE_DBUS OR WIN32 ) # Because you don't get D-Bus on Windows
     set( USE_DBUS FALSE )
   endif( NOT USE_DBUS )
 else( DONT_USE_DBUS )
-  set( USE_DBUS TRUE )
+  if( NOT APPLE )		# This doesn't preclude the user from specifying D-Bus
+    set( USE_DBUS TRUE )	# on the command line.
+  endif( NOT APPLE )
 endif( DONT_USE_DBUS OR WIN32 )
 
 if( DONT_USE_STI )
