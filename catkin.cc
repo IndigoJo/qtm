@@ -3869,7 +3869,8 @@ bool Catkin::load( const QString &fname, bool fromSTI )
 
   QDomElement newAcct, newDetails, newServer, newLocation, newLogin, newPwd;
   newAcct = accountsDom.createElement( "account" );
-  newAcct.setAttribute( "id", tr( "newAccount_%1" ).arg( QDateTime::currentDateTime().toString( Qt::ISODate ) ) );
+  currentAccountId = tr( "newAccount_%1" ).arg( QDateTime::currentDateTime().toString( Qt::ISODate ) );
+  newAcct.setAttribute( "id", currentAccountId );
   newDetails = accountsDom.createElement( "details" );
   newServer = accountsDom.createElement( "server" );
   newServer.appendChild( QDomText( accountsDom.createTextNode( server ) ) );
