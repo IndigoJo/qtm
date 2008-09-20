@@ -2014,7 +2014,7 @@ void Catkin::changeAccount( int a ) // slot
   QStringList accountAttribNames( accountAttributes.keys() );
   QDomNodeList attribNodes = currentAccountElement.firstChildElement( "details" )
     .elementsByTagName( "attribute" );
-  int c = attribNodes.count();
+  //int c = attribNodes.count();
 
   Q_FOREACH( QString s, accountStringNames )
     *(accountStrings[s]) = currentAccountElement.firstChildElement( "details" )
@@ -3835,7 +3835,9 @@ bool Catkin::load( const QString &fname, bool fromSTI )
       // First check whether the blog still exists
       blogs = currentAccountElement.elementsByTagName( "blogs" );
       if( currentBlog > blogs.count() ) {
-	// Message box telling the user to set the blog and category himself cos the blog is gone
+	connect( this, SIGNAL( categoryRefreshFinished() ),
+		 this, SLOT( setLoadedPostCategories() ) );
+	refreshBlogList();
 	return true;
       }
       else {
