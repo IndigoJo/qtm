@@ -3702,8 +3702,10 @@ bool Catkin::load( const QString &fname, bool fromSTI )
     }
   }
 
-  if( emap.contains( "CatIDs" ) )
+  if( emap.contains( "CatIDs" ) ) {
     otherCatsList = emap.value( "CatIDs" );
+    otherCatStringList = otherCatsList.split( ';' );
+  }
 
   if( emap.contains( "Excerpt" ) )
     cw.teExcerpt->setPlainText( QString( emap.value( "Excerpt" ) ).replace( "\\n", "\n" ) );
@@ -3764,6 +3766,9 @@ bool Catkin::load( const QString &fname, bool fromSTI )
 	  cw.cbBlogSelector->disconnect( SIGNAL( activated( int ) ), this, 0 );
 	  connect( cw.cbBlogSelector, SIGNAL( activated( int ) ),
 		   this, SLOT( changeBlog( int ) ) );
+
+          if( blogNodeList.at( hh ).firstChildElement( "blogid" ).text() == currentBlogid )
+            currentBlogElement = blogNodeList.at( hh ).toElement();
 	}
 	if( !isOK ) {
 	  QMessageBox::information( 0, tr( "QTM - Invalid blog" ),
@@ -3779,9 +3784,14 @@ bool Catkin::load( const QString &fname, bool fromSTI )
 	  }
 	}
 
+        
+
 	// Now populate and set the categories
-	QDomElement catsElement = blogNodeList.at( currentBlog ).firstChildElement( "categories" );
+	QDomElement catsElement = currentBlogElement.firstChildElement( "categories" );
 	if( !catsElement.isNull() ) {
+          cw.cbMainCat->clear();
+          cw.lwOtherCats->clear();
+
 	  QDomNodeList catNodeList = catsElement.elementsByTagName( "category" );
 	  int b = catNodeList.count();
 	  if( b ) {
