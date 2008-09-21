@@ -3830,12 +3830,11 @@ bool Catkin::load( const QString &fname, bool fromSTI )
   QDomElement details; 
   QDomNodeList blogs;
 
-
   accts = accountsDom.documentElement().elementsByTagName( "account" );
   for( int e = 0; e <= accts.count(); e++ ) {
-    if( e == accts.count() ) {
+    if( e == accts.count() )
+       break;
 
-    }
     details = accts.at( e ).toElement().firstChildElement( "details" );
     if( details.firstChildElement( "server" ).text() == server &&
 	details.firstChildElement( "location" ).text() == location &&
@@ -3855,10 +3854,7 @@ bool Catkin::load( const QString &fname, bool fromSTI )
 	setLoadedPostCategories();
 	return true;
       }
-
     }
-
-   
   }
 
   if( noPassword ) {
@@ -3877,11 +3873,16 @@ bool Catkin::load( const QString &fname, bool fromSTI )
       
   }
 
-  QDomElement newAcct, newDetails, newServer, newLocation, newLogin, newPwd;
+  // This is an old-style account which isn't in the database
+  qDebug() << "old-style, not found";
+
+  QDomElement newAcct, newDetails, newTitle, newServer, newLocation, newLogin, newPwd;
   newAcct = accountsDom.createElement( "account" );
   currentAccountId = tr( "newAccount_%1" ).arg( QDateTime::currentDateTime().toString( Qt::ISODate ) );
   newAcct.setAttribute( "id", currentAccountId );
   newDetails = accountsDom.createElement( "details" );
+  newTitle = accountsDom.createElement( "title" );
+  newTitle.appendChild( QDomText( accountsDom.createTextNode( tr( "New un-named account" ) ) ) );
   newServer = accountsDom.createElement( "server" );
   newServer.appendChild( QDomText( accountsDom.createTextNode( server ) ) );
   newLocation = accountsDom.createElement( "location" );
@@ -3890,13 +3891,16 @@ bool Catkin::load( const QString &fname, bool fromSTI )
   newLogin.appendChild( QDomText( accountsDom.createTextNode( login ) ) );
   newPwd = accountsDom.createElement( "password" );
   newPwd.appendChild( QDomText( accountsDom.createTextNode( password ) ) );
+  newDetails.appendChild( newTitle );
   newDetails.appendChild( newServer );
   newDetails.appendChild( newLocation );
   newDetails.appendChild( newLogin );
   newDetails.appendChild( newPwd );
   newAcct.appendChild( newDetails );
   accountsDom.documentElement().appendChild( newAcct );
-  currentBlogElement = newAcct;
+  currentAccountElement = newAcct;
+  cw.cbAccountSelector->addItem( newTitle.text(), newAcct.attribute( "id" ) );
+  cw.cbAccountSelector->setCurrentIndex( cw.cbAccountSelector->count()-1 );
 
   connect( this, SIGNAL( categoryRefreshFinished() ),
 	   this, SLOT( setLoadedPostCategories() ) );
