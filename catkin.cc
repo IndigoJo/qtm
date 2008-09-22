@@ -398,9 +398,13 @@ Catkin::Catkin( QString newPost, QWidget *parent )
     QFile accountsXmlFile( PROPERSEPS( QString( "%1/qtmaccounts2.xml" ).arg( localStorageDirectory ) ) );
     if( accountsDom.setContent( &accountsXmlFile ) ) {
 	accountsXmlFile.close();
+        populateAccountList();
+        cw.cbAccountSelector->setCurrentIndex( 0 );
 	currentAccountElement = accountsDom.firstChildElement( "QTMAccounts" )
 	  .firstChildElement( "account" );
 	populateBlogList();
+        connect( cw.cbAccountSelector, SIGNAL( activated( int ) ),
+                 this, SLOT( changeAccount( int ) ) );
     }
     else {
       accountsXmlFile.close();
@@ -408,9 +412,14 @@ Catkin::Catkin( QString newPost, QWidget *parent )
       accountsXmlFile.open( QIODevice::ReadOnly | QIODevice::Text );
       if( accountsDom.setContent( &accountsXmlFile ) ) {
 	accountsXmlFile.close();
+        populateAccountList();
+        cw.cbAccountSelector->setCurrentIndex( 0 );
 	currentAccountElement = accountsDom.firstChildElement( "QTMAccounts" )
 	  .firstChildElement( "account" );
 	populateBlogList();
+        connect( cw.cbAccountSelector, SIGNAL( activated( int ) ),
+                 this, SLOT( changeAccount( int ) ) );
+ 
       }
       else {
 #ifndef NO_DEBUG_OUTPUT
@@ -3905,6 +3914,7 @@ bool Catkin::load( const QString &fname, bool fromSTI )
   connect( this, SIGNAL( categoryRefreshFinished() ),
 	   this, SLOT( setLoadedPostCategories() ) );
   refreshBlogList();
+  saveBlogs();
 
   filename = fname;
   entryEverSaved = true;
