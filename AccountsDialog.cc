@@ -278,6 +278,8 @@ void AccountsDialog::on_pbOK_clicked()
 void AccountsDialog::on_leBlogURI_returnPressed()
 {
   int i;
+  QString uriServer, uriLoc;
+  QRegExp re( "/.*\\.[shtml|dhtml|phtml|html|htm|php|cgi|pl|py]$" );
 
   QUrl uri = QUrl( leBlogURI->text(), QUrl::TolerantMode );
   QString uris = uri.toString();
@@ -332,16 +334,39 @@ void AccountsDialog::on_leBlogURI_returnPressed()
     }
   }
 
+  // Is this a self-hosted Wordpress, Textpattern or Drupal site?
+  if( cbHostedBlogType->currentIndex() >= 4 ||
+      cbHostedBlogType->currentindex() <= 6 ) {
+    QString endpoint;
+    if( cbHostedBlogType->currentIndex() == 6 ) // i.e. Textpattern
+      endpoint = "rpc/index.php";
+    else
+      endpoint = "xmlrpc.php";
+
+    accountList[currentRow].server = uris.section( "//", 1, 1 ).section( "/", 0, 0 ) );
+    leServer->setText( accountList[currentRow].server ); 
+
+    urisLocation = uri.path();
+    if( re.exactMatch( urisLocation ) )
+      urisLocation = urisLocation.section( "/", 0, -2 ).append( endpoint );
+    else
+      urisLocation.append( urisLocation.endsWith( '/' ) ? endpoint : 
+                           QString( "/%1" ).arg( endpoint ) );
+    leLocation->setText( urisLocation );
+    accountList[currentRow].location = urisLocation;
+    return;
+  }
+
   // Now test for a xmlrpc.php file
   http->setHost( uri.host() );
   QString loc( uri.path() );
-  QRegExp re( "/.*\\.[shtml|dhtml|phtml|html|htm|php|cgi|pl|py]$" );
-  if( re.exactMatch( loc ) )
+    if( re.exactMatch( loc ) )
     http->get( loc.section( "/", -2, 0, QString::SectionIncludeTrailingSep )
 	       .append( "index.php" ) );
   else
     http->get( loc.append( loc.endsWith( '/' ) ? "index.php" : "/index.php" ) );
 
+  qDebug() << loc;
   qDebug() << "now connecting the signal";
   connect( http, SIGNAL( requestFinished( int, bool ) ),
 	   this, SLOT( handleRequestFinished( int, bool ) ) );
@@ -372,6 +397,7 @@ void AccountsDialog::handleHttpDone( bool error )
     switch( networkBiz ) {
     case FindingRsdXml:
       if( responseHeader.statusCode() == 200 ) { /* 200 means success */
+        qDebug() << "found the rsd.xml file";
 	rsdXml = QDomDocument( QString( httpByteArray ) );
 	httpByteArray = QByteArray();
  	if( rsdXml.documentElement().tagName() == "rsd" ) {
@@ -522,11 +548,12 @@ void AccountsDialog::on_cbHostedBlogType_activated( int newIndex )
     leServer->setText( "www.squarespace.com" );
     leLocation->setText( "/do/process/external/PostInterceptor" );
     break;
-  case 3: // self-hosted
+  case 3: // Movable type
+  case 4: // Self-hosted Wordpress
+  case 5: // TextPattern  
     leServer->clear();
     leLocation->clear();
     break;
-  }
 }
 
 bool AccountsDialog::eventFilter( QObject *obj, QEvent *event )
