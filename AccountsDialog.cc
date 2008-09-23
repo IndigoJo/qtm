@@ -278,7 +278,7 @@ void AccountsDialog::on_pbOK_clicked()
 void AccountsDialog::on_leBlogURI_returnPressed()
 {
   int i;
-  QString uriServer, uriLoc;
+  QString uriServer, urisLocation;
   QRegExp re( "/.*\\.[shtml|dhtml|phtml|html|htm|php|cgi|pl|py]$" );
 
   QUrl uri = QUrl( leBlogURI->text(), QUrl::TolerantMode );
@@ -336,14 +336,14 @@ void AccountsDialog::on_leBlogURI_returnPressed()
 
   // Is this a self-hosted Wordpress, Textpattern or Drupal site?
   if( cbHostedBlogType->currentIndex() >= 4 ||
-      cbHostedBlogType->currentindex() <= 6 ) {
+      cbHostedBlogType->currentIndex() <= 6 ) {
     QString endpoint;
     if( cbHostedBlogType->currentIndex() == 6 ) // i.e. Textpattern
       endpoint = "rpc/index.php";
     else
       endpoint = "xmlrpc.php";
 
-    accountList[currentRow].server = uris.section( "//", 1, 1 ).section( "/", 0, 0 ) );
+    accountList[currentRow].server = uris.section( "//", 1, 1 ).section( "/", 0, 0 );
     leServer->setText( accountList[currentRow].server ); 
 
     urisLocation = uri.path();
@@ -554,6 +554,7 @@ void AccountsDialog::on_cbHostedBlogType_activated( int newIndex )
     leServer->clear();
     leLocation->clear();
     break;
+  }
 }
 
 bool AccountsDialog::eventFilter( QObject *obj, QEvent *event )
