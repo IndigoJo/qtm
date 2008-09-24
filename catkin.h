@@ -62,7 +62,7 @@ class QMenu;
 
 using namespace Ui;
 
-#if QT_VERSION >= 0x040400
+#if QT_VERSION >= 0x040400 && !defined DONT_USE_PTE
 class QPlainTextEdit;
 #define TEXTEDIT QPlainTextEdit
 #else

@@ -74,7 +74,7 @@
 #include <QHostInfo>
 #include <QProgressDialog>
 #include <QTextEdit>
-#if QT_VERSION >= 0x040400
+#if QT_VERSION >= 0x040400 && !defined DONT_USE_PTE
 #include <QPlainTextEdit>
 #endif
 
@@ -749,7 +749,7 @@ void Catkin::doUiSetup()
 
   // Set up editor widget
   ed = new TEXTEDIT( mainStack );
-#if QT_VERSION < 0x040400
+#if QT_VERSION < 0x040400 || defined DONT_USE_PTE
   EDITOR->setAcceptRichText( false );
 #endif
   edID = mainStack->addWidget( ed );

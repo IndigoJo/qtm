@@ -335,7 +335,7 @@ void AccountsDialog::on_leBlogURI_returnPressed()
   }
 
   // Is this a self-hosted Wordpress, Textpattern or Drupal site?
-  if( cbHostedBlogType->currentIndex() >= 4 ||
+  if( cbHostedBlogType->currentIndex() >= 4 &&
       cbHostedBlogType->currentIndex() <= 6 ) {
     QString endpoint;
     if( cbHostedBlogType->currentIndex() == 6 ) // i.e. Textpattern
@@ -354,17 +354,19 @@ void AccountsDialog::on_leBlogURI_returnPressed()
                            QString( "/%1" ).arg( endpoint ) );
     leLocation->setText( urisLocation );
     accountList[currentRow].location = urisLocation;
+    qDebug() << "blog type:" << cbHostedBlogType->currentIndex();
     return;
   }
 
-  // Now test for a xmlrpc.php file
+  // Now test for an rsd.xml file 
   http->setHost( uri.host() );
   QString loc( uri.path() );
     if( re.exactMatch( loc ) )
     http->get( loc.section( "/", -2, 0, QString::SectionIncludeTrailingSep )
-	       .append( "index.php" ) );
+	       .append( "rsd.xml" ) );
   else
-    http->get( loc.append( loc.endsWith( '/' ) ? "index.php" : "/index.php" ) );
+    http->get( loc.append( loc.endsWith( '/' ) ? "rsd.xml" : "/rsd.xml" ) );
+  networkBiz = FindingRsdXml;
 
   qDebug() << loc;
   qDebug() << "now connecting the signal";
@@ -403,6 +405,7 @@ void AccountsDialog::handleHttpDone( bool error )
  	if( rsdXml.documentElement().tagName() == "rsd" ) {
 	  attributes = rsdXml.documentElement().firstChildElement( "apis" )
 	    .elementsByTagName( "api" );
+          qDebug() << "found" << attributes.count() << "apis";
 	  for( i = 0; i < attributes.count(); i++ ) {
 	    if( attributes.at( i ).toElement().attribute( "name" ) == "MetaWeblog" ) {
 	      url = QUrl( attributes.at( i ).toElement().attribute( "apiLink" ) );
@@ -433,6 +436,7 @@ void AccountsDialog::handleHttpDone( bool error )
       disconnect( http, SIGNAL( done( bool ) ), this, 0 );
       break;
     case FindingXmlrpcPhp:
+/*
       // If it finds xmlrpc.php, it returns a short string with a successful (200) status code
       if( responseHeader.statusCode() == 200 ) {
 	leServer->setText( currentHost );
@@ -451,7 +455,8 @@ void AccountsDialog::handleHttpDone( bool error )
 	http->get( QUrl( currentReq.path() ).path().replace( "xmlrpc.php", "rsd.xml" ) );
 	currentReq = QHttpRequestHeader();
 	networkBiz = FindingRsdXml;
-      }
+      }  */
+        break;
     }
   }
   else {

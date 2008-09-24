@@ -66,6 +66,13 @@ if( USE_STI )
   endif( APPLE )
 endif( USE_STI )
 
+# Packager can specify not to use QPlainTextEdit, even if Qt 4.4.0 is present
+# Note, the author has found that it does not scroll in between going below the
+# bottom of the widget and pressing Enter.
+if( DONT_USE_PTE )
+  add_definitions( -DDONT_USE_PTE )
+endif( DONT_USE_PTE )
+
 if( UNIX AND NOT APPLE )
 
 #Generate desktop entry file
