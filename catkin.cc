@@ -3361,7 +3361,6 @@ void Catkin::save( const QString &fname )
     return;
   }
 
-  qDebug() << "Starting to write to" << fname;
   QTextStream out( &f );
   out << "QTM saved blog entry v3.0\n";
   out << QString( "Title:%1\n" ).arg( cw.leTitle->text() );
@@ -3381,7 +3380,6 @@ void Catkin::save( const QString &fname )
     .arg( currentBlogid )
     .arg( currentAccountId )
     .arg( cw.cbBlogSelector->itemText( cw.cbBlogSelector->currentIndex() ) );
-  qDebug() << "wrote account/blog info";
   out << "Tags:";
   tags = cw.lwTags->selectedItems().count();
   for( count = 0; count < tags; count++ ) {
@@ -3390,7 +3388,6 @@ void Catkin::save( const QString &fname )
   }
   out << "\n";
 
-  qDebug() << "now sending categories";
   QDomNodeList catNodeList = currentBlogElement.firstChildElement( "categories" ).elementsByTagName( "category" );
   out << QString( "Blog:%1\n" ).arg( cw.cbBlogSelector->currentIndex() );
   out << QString( "PrimaryID:%1\n" ).arg( cw.cbMainCat->itemData( cw.cbMainCat->currentIndex() ).toString() );
@@ -3410,7 +3407,6 @@ void Catkin::save( const QString &fname )
     out << QString( "Excerpt:%1\n" )
       .arg( cw.teExcerpt->toPlainText().replace( QChar( '\n' ), "\\n" ) );
   out << QString( "Text:\n%1" ).arg( text );
-  qDebug() << "finished writing";
   f.close();
 
   dirtyIndicator->hide();
