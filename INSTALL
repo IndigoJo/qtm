@@ -63,6 +63,11 @@ specify /usr, so that QTM goes to /usr/bin.  Leave this out if installing
 it for your own use.  Default: /usr/local (so that qtm will be in 
 /usr/local/bin)
 
+DONT_USE_PTE:BOOL - This disables the use of QPlainTextEdit when Qt 4.4 is
+present (the class was only introduced with that version of Qt), forcing the
+use of QTextEdit for the main editing widget.  This is recommended, as
+QPlainTextEdit is buggy.
+
 If building on Windows, you will likely need to set the Makefile generator.
 This requires the -G option, followed by the generator name, and if you are
 using the standard MinGW compiler kit, this becomes -G "MinGW Makefiles"
