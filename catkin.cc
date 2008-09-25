@@ -3381,7 +3381,7 @@ void Catkin::save( const QString &fname )
     .arg( currentAccountId )
     .arg( cw.cbBlogSelector->itemText( cw.cbBlogSelector->currentIndex() ) );
   out << "Tags:";
-  tags = cw.lwTags->selectedItems().count();
+  tags = cw.lwTags->count();
   for( count = 0; count < tags; count++ ) {
     out << QString( count ? ";%1" : "%1" )
       .arg( cw.lwTags->item( count )->text().replace( ' ', '+' ) );
