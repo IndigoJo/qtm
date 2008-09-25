@@ -3348,6 +3348,11 @@ void Catkin::save( const QString &fname )
 {
   int count, tags;
   QString text = EDITOR->document()->toPlainText();
+
+  // Rename the old file to a back-up file
+  if( QFile::exists( fname ) )
+    QFile::rename( fname, QString( "%1~" ).arg( fname ) );
+
   QFile f( fname );
 
   if( !f.open( QIODevice::WriteOnly ) ) {
@@ -3376,13 +3381,13 @@ void Catkin::save( const QString &fname )
     .arg( currentAccountId )
     .arg( cw.cbBlogSelector->itemText( cw.cbBlogSelector->currentIndex() ) );
   out << "Tags:";
+  tags = cw.lwTags->selectedItems().count();
   for( count = 0; count < tags; count++ ) {
     out << QString( count ? ";%1" : "%1" )
       .arg( cw.lwTags->item( count )->text().replace( ' ', '+' ) );
   }
   out << "\n";
 
-  qDebug() << "now sending categories";
   QDomNodeList catNodeList = currentBlogElement.firstChildElement( "categories" ).elementsByTagName( "category" );
   out << QString( "Blog:%1\n" ).arg( cw.cbBlogSelector->currentIndex() );
   out << QString( "PrimaryID:%1\n" ).arg( cw.cbMainCat->itemData( cw.cbMainCat->currentIndex() ).toString() );
@@ -3402,6 +3407,7 @@ void Catkin::save( const QString &fname )
     out << QString( "Excerpt:%1\n" )
       .arg( cw.teExcerpt->toPlainText().replace( QChar( '\n' ), "\\n" ) );
   out << QString( "Text:\n%1" ).arg( text );
+  f.close();
 
   dirtyIndicator->hide();
   setWindowModified( false );
