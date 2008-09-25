@@ -3348,6 +3348,11 @@ void Catkin::save( const QString &fname )
 {
   int count, tags;
   QString text = EDITOR->document()->toPlainText();
+
+  // Rename the old file to a back-up file
+  if( QFile::exists( fname ) )
+    QFile::rename( fname, QString( "%1~" ).arg( fname ) );
+
   QFile f( fname );
 
   if( !f.open( QIODevice::WriteOnly ) ) {
@@ -3356,6 +3361,7 @@ void Catkin::save( const QString &fname )
     return;
   }
 
+  qDebug() << "Starting to write to" << fname;
   QTextStream out( &f );
   out << "QTM saved blog entry v3.0\n";
   out << QString( "Title:%1\n" ).arg( cw.leTitle->text() );
@@ -3375,7 +3381,9 @@ void Catkin::save( const QString &fname )
     .arg( currentBlogid )
     .arg( currentAccountId )
     .arg( cw.cbBlogSelector->itemText( cw.cbBlogSelector->currentIndex() ) );
+  qDebug() << "wrote account/blog info";
   out << "Tags:";
+  tags = cw.lwTags->selectedItems().count();
   for( count = 0; count < tags; count++ ) {
     out << QString( count ? ";%1" : "%1" )
       .arg( cw.lwTags->item( count )->text().replace( ' ', '+' ) );
@@ -3402,6 +3410,8 @@ void Catkin::save( const QString &fname )
     out << QString( "Excerpt:%1\n" )
       .arg( cw.teExcerpt->toPlainText().replace( QChar( '\n' ), "\\n" ) );
   out << QString( "Text:\n%1" ).arg( text );
+  qDebug() << "finished writing";
+  f.close();
 
   dirtyIndicator->hide();
   setWindowModified( false );
