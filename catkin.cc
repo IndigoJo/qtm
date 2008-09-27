@@ -361,6 +361,8 @@ Catkin::Catkin( QString newPost, QWidget *parent )
   : QMainWindow( parent )
 {
   QFont f, g, h;
+  QDomElement detailElem, attribElem, nameElem, serverElem, locElem, loginElem, pwdElem;
+  QSettings settings;
 
   setAttribute( Qt::WA_DeleteOnClose );
   doUiSetup();
@@ -398,6 +400,75 @@ Catkin::Catkin( QString newPost, QWidget *parent )
 
   handleEnableCategories();
 
+  QFile accountsXmlFile( PROPERSEPS( QString( "%1/qtmaccounts2.xml" ).arg( localStorageDirectory ) ) );
+  if( accountsDom.setContent( &accountsXmlFile ) ) {
+    accountsXmlFile.close();
+    setInitialAccount();
+  }
+  else {
+    accountsXmlFile.close();
+    accountsXmlFile.setFileName( PROPERSEPS( QString( "%1/qtmaccounts.xml" ).arg( localStorageDirectory ) ) );
+    accountsXmlFile.open( QIODevice::ReadOnly | QIODevice::Text );
+    if( accountsDom.setContent( &accountsXmlFile ) ) {
+      accountsXmlFile.close();
+      setInitialAccount();
+    }
+    else {
+#ifndef NO_DEBUG_OUTPUT
+      qDebug() << "Can't read the XML";
+#endif
+      accountsXmlFile.close();
+      accountsElement = accountsDom.createElement( "QTMAccounts" );
+      currentAccountElement = accountsDom.createElement( "account" );
+      currentAccountElement.setAttribute( "id", "default" );
+
+      if( !server.isEmpty() ) {
+	qDebug() << "copying details to new default element";
+	detailElem = accountsDom.createElement( "details" );
+	nameElem = accountsDom.createElement( "title" );
+	nameElem.appendChild( accountsDom.createTextNode( tr( "Default account" ) ) );
+	serverElem = accountsDom.createElement( "server" );
+	serverElem.appendChild( accountsDom.createTextNode( server ) );
+	locElem = accountsDom.createElement( "location" );
+	locElem.appendChild( accountsDom.createTextNode( location ) );
+	loginElem = accountsDom.createElement( "login" );
+	loginElem.appendChild( accountsDom.createTextNode( login ) );
+	pwdElem = accountsDom.createElement( "password" );
+	pwdElem.appendChild( accountsDom.createTextNode( password ) );
+	detailElem.appendChild( nameElem );
+	detailElem.appendChild( serverElem );
+	detailElem.appendChild( locElem );
+	detailElem.appendChild( loginElem );
+	detailElem.appendChild( pwdElem );
+	currentAccountElement.appendChild( detailElem );
+
+	// Delete the old account from the settings
+	settings.beginGroup( "account" );
+	settings.remove( "server" );
+	settings.remove( "location" );
+	settings.remove( "login" );
+	settings.remove( "password" );
+	settings.endGroup();
+
+	// Now transfer the attributes to the default accounts
+	QStringList attribs( accountAttributes.keys() );
+	Q_FOREACH( QString s, attribs ) {
+	  if( *(accountAttributes[s]) ) {
+	    attribElem = accountsDom.createElement( "attribute" );
+	    attribElem.setAttribute( "name", s );
+	    detailElem.appendChild( attribElem );
+	  }
+	}
+      }
+      extractAccountDetails();
+
+      accountsElement.appendChild( currentAccountElement );
+      accountsDom.appendChild( accountsElement );
+      accountsDom.insertBefore( accountsDom.createProcessingInstruction( "xml", "version=\"1.0\"" ),
+				accountsDom.firstChild() );
+      QHostInfo::lookupHost( server, this, SLOT( handleInitialLookup( QHostInfo ) ) );
+    }
+  } /*
   if( !location.isEmpty() ) {
     QFile accountsXmlFile( PROPERSEPS( QString( "%1/qtmaccounts2.xml" ).arg( localStorageDirectory ) ) );
     if( accountsDom.setContent( &accountsXmlFile ) ) {
@@ -442,7 +513,7 @@ Catkin::Catkin( QString newPost, QWidget *parent )
       }
       
     }
-  }
+  } */
     //    QHostInfo::lookupHost( server, this, SLOT( handleInitialLookup( QHostInfo ) ) );
 
   EDITOR->setPlainText( newPost );
