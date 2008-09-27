@@ -1,4 +1,4 @@
-QTM, version 0.6.3
+QTM, version 0.7-m2
 Copyright 2008, Matthew J Smith
 This program is released under the terms of the GNU General Public License,
 version 2.  This applies to all files written by me, or produced by me by
@@ -15,8 +15,8 @@ Although the interfaces used for connecting to the blog server are XML-RPC
 based, it does not require any special libraries for this; it uses Qt's 
 own network classes.
 
-QTM is in an early stage of development.  It is possible to compose,
-format, preview and submit blog entries in either one category or several -
+As for QTM's present capabilities, it is possible to compose, format, 
+preview and submit blog entries in either one category or several -
 as with Movable Type's QuickPost feature.  Entries may be saved to disk,
 with or without a password.
 
@@ -27,7 +27,10 @@ Issues:
 (1) There are known to be problems with some versions of Qt's text 
 editor widget; in the case of early 4.1.* versions, the problem is 
 slowness, and on version 4.2 the problem is not displaying the bottom of 
-the widget's text when a scrollbar is added.
+the widget's text when a scrollbar is added.  This problem is replicated
+in the QPlainTextEdit widget in Qt 4.4 at the time of this writing; I
+recommend using QTextEdit (by configuring with the option DONT_USE_PTE
+set to TRUE).
 
 (2) When using QuickPost to copy multiple paragraphs of text from a web 
 page into a new entry, you may find that there is no blank line between
@@ -39,10 +42,10 @@ it may update the blog's category list rather than post those you chose for
 the entry to hand.  If you find your post has not been categorised, use the
 "Update this post's categories" entry in the File menu.
 
-(4) When compiling on some distributions, notably OpenSUSE 10.3, you will
-notice dozens of warnings relating to "deprecated conversions" of one string
-type to another.  You should ignore these, although I intend to fix it in a
-future release.
+(4) When compiling on some distributions, notably OpenSUSE 10.3 and 11, you 
+will notice dozens of warnings relating to "deprecated conversions" of one 
+string type to another.  You should ignore these, although I intend to fix 
+it in a future release.
 
 (5) When using a version of QTM compiled with Qt 4.4 on Windows Vista, you
 may find that the system-tray icon menu does not display properly when you
@@ -51,14 +54,14 @@ widget bar.  You may find it preferable to move the widget bar, or to use Qt
 4.3 instead.  For the time being, installers for Windows will come with Qt
 4.3.
 
-Any enquiries and suggestions to me at indigojo_uk@yahoo.co.uk.  Please, no
+Any enquiries and suggestions to me at indigojo@blogistan.co.uk.  Please, no
 requests for the normal features of blog managers like ecto - most of these
 are on my wish list anyway.
 
 
 Matthew J Smith
 New Malden, Surrey, England
-23rd Jan, 2006 - 7th June 2008
+23rd Jan, 2006 - 29th June 2008
 
 
 
