@@ -170,14 +170,17 @@ Catkin::Catkin( QDomDocument &dd, QString &cid, QWidget *parent )
   for( int i = 0; i < a; i++ ) {
     if( accts.at( i ).toElement().attribute( "id" ) == cid ) {
       currentAccountElement = accts.at( i ).toElement();
+      extractAccountDetails();
       break;
     }
 
     // If it doesn't find the ID
     if( i == a-1 ) {
-      if( a )
+      if( a ) {
 	currentAccountElement = accountsDom.firstChildElement( "QTMAccounts" )
 	  .firstChildElement( "account" );
+        extractAccountDetails();
+      }
     }
   }
 
@@ -294,6 +297,7 @@ Catkin::Catkin( bool noRefreshBlogs, QWidget *parent )
 	  }
 	}
       }
+      extractAccountDetails();
 
       accountsElement.appendChild( currentAccountElement );
       accountsDom.appendChild( accountsElement );
@@ -402,6 +406,7 @@ Catkin::Catkin( QString newPost, QWidget *parent )
         cw.cbAccountSelector->setCurrentIndex( 0 );
 	currentAccountElement = accountsDom.firstChildElement( "QTMAccounts" )
 	  .firstChildElement( "account" );
+        extractAccountDetails();
 	populateBlogList();
         connect( cw.cbAccountSelector, SIGNAL( activated( int ) ),
                  this, SLOT( changeAccount( int ) ) );
@@ -416,6 +421,7 @@ Catkin::Catkin( QString newPost, QWidget *parent )
         cw.cbAccountSelector->setCurrentIndex( 0 );
 	currentAccountElement = accountsDom.firstChildElement( "QTMAccounts" )
 	  .firstChildElement( "account" );
+        extractAccountDetails();
 	populateBlogList();
         connect( cw.cbAccountSelector, SIGNAL( activated( int ) ),
                  this, SLOT( changeAccount( int ) ) );
@@ -1076,6 +1082,7 @@ void Catkin::setInitialAccount()
 	currentAccountElement = accountsList.at( i ).toElement();
 	currentAccountId = currentAccountElement.attribute( "id" );
 	cw.cbAccountSelector->setCurrentIndex( i );
+        extractAccountDetails();
 	populateBlogList();
 	connect( cw.cbAccountSelector, SIGNAL( activated( int ) ),
 		 this, SLOT( changeAccount( int ) ) );
@@ -1086,6 +1093,7 @@ void Catkin::setInitialAccount()
 	qDebug() << "using first account";
 	currentAccountElement = accountsDom.documentElement()
 	  .firstChildElement( "account" );
+        extractAccountDetails();
 	populateBlogList();
 	connect( cw.cbAccountSelector, SIGNAL( activated( int ) ),
 		 this, SLOT( changeAccount( int ) ) );
@@ -1290,8 +1298,10 @@ void Catkin::refreshCategories()
 				  usersBlogs[currentBlog].section( "blogid:", 1, 1 ).
 				  section( ";", 0, 0 ) ) ); */
     params.appendChild( XmlValue( doc, "string", cw.cbBlogSelector->itemData( cw.cbBlogSelector->currentIndex() ).toString() ) );
-    params.appendChild( XmlValue( doc, "string", login ) );
-    params.appendChild( XmlValue( doc, "string", password ) );
+    params.appendChild( XmlValue( doc, "string", currentAccountElement.firstChildElement( "details" )
+                                                 .firstChildElement( "login" ).text() ) );
+    params.appendChild( XmlValue( doc, "string", currentAccountElement.firstChildElement( "details" )
+                                                 .firstChildElement( "password" ).text() ) );
 
     methodCall.appendChild( params );
     doc.appendChild( methodCall );
@@ -1485,6 +1495,7 @@ void Catkin::getAccounts()
       if( accountsList.at( i ).toElement().attribute( "id" ) == oldCurrentAccountId ) {
 	cw.cbAccountSelector->setCurrentIndex( i );
 	currentAccountElement = accountsList.at( i ).toElement();
+        extractAccountDetails();
 
 	QStringList accountStringNames( accountStrings.keys() );
 	Q_FOREACH( QString s, accountStringNames ) {
@@ -2016,6 +2027,7 @@ void Catkin::changeAccount( int a ) // slot
   currentAccountElement = accountsDom.documentElement()
     .elementsByTagName( "account" ).at( a ).toElement();
   currentAccountId = currentAccountElement.toElement().attribute( "id" );
+  extractAccountDetails();
   qDebug() << "Current account: " << currentAccountElement.firstChildElement( "details" )
     .firstChildElement( "title" ).text();
 
@@ -2058,6 +2070,16 @@ void Catkin::changeAccount( int a ) // slot
   else
     refreshBlogList();
 
+}
+
+void Catkin::extractAccountDetails() // slot
+{
+  QDomElement caDetails = currentAccountElement.firstChildElement( "details" ).toElement();
+  server = caDetails.firstChildElement( "server" ).text();
+  location = caDetails.firstChildElement( "location" ).text();
+  port = caDetails.firstChildElement( "port" ).text();
+  login = caDetails.firstChildElement( "login" ).text();
+  password = caDetails.firstChildElement( "password" ).text();
 }
 
 void Catkin::changeBlog( int b ) // slot
@@ -3755,6 +3777,7 @@ bool Catkin::load( const QString &fname, bool fromSTI )
 	newDefaultAccount.appendChild( newDetailElement );
 	accountsDom.documentElement().appendChild( newDefaultAccount );
 	currentAccountElement = newDefaultAccount;
+        extractAccountDetails();
 	return true;
       }
 
@@ -3762,6 +3785,7 @@ bool Catkin::load( const QString &fname, bool fromSTI )
 	qDebug() << "found the account:" << loadedAccountId;
 	populateAccountList();
 	currentAccountElement = accts.at( g ).toElement();
+        extractAccountDetails();
 
 	QString st;
 	for( int h = 0; h < cw.cbAccountSelector->count(); h++ ) {
@@ -3856,6 +3880,7 @@ bool Catkin::load( const QString &fname, bool fromSTI )
 	details.firstChildElement( "login" ).text() == login ) {
       qDebug() << "match found";
       currentAccountElement = accts.at( e ).toElement();
+      extractAccountDetails();
       // First check whether the blog still exists
       blogs = currentAccountElement.elementsByTagName( "blogs" );
       if( currentBlog > blogs.count() ) {

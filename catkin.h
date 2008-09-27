@@ -198,6 +198,7 @@ class Catkin : public QMainWindow
   // void changeCurrentAccount( int );
   void changeCurrentBlog( int );
   void changeAccount( int );
+  void extractAccountDetails();
   void changeBlog( int );
   void handleConsole( bool );
   void makeBold();
