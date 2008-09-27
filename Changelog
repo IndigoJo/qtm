@@ -1,5 +1,13 @@
 Changelog:
 
+0.7-m2 (28th Sept 2008):
+
+New feature: Multiple accounts
+New feature: Assistance to user in filling out account details based on what
+CMS or blogging system is being used (in progress)
+Build system: Ability to block the use of the QPlainTextEdit widget even if
+it is present (as it is buggy)
+
 0.6.3 (7th June 2008):
 
 New feature: recent files menu in both the system tray icon and each window
