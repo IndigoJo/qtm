@@ -384,11 +384,14 @@ void AccountsDialog::handleRequestFinished( int /* id */,
 void AccountsDialog::handleHttpDone( bool error )
 {
   QDomDocument rsdXml;
-  QDomNodeList attributes;
+  QDomNodeList apis;
   QDomElement thisApi;
   QHttpResponseHeader responseHeader;
   int i;
   QUrl url;
+  QString failure = tr( "QTM failed to auto-configure access to your account. "
+                        "Please consult the documentation for your conent management system "
+                        "or service." );
 
   responseHeader = http->lastResponse();
 
@@ -396,16 +399,13 @@ void AccountsDialog::handleHttpDone( bool error )
     switch( networkBiz ) {
     case FindingRsdXml:
       if( responseHeader.statusCode() == 200 ) { /* 200 means success */
-        qDebug() << "found the rsd.xml file";
-	rsdXml = QDomDocument( QString( httpByteArray ) );
+	rsdXml.setContent( httpByteArray );
 	httpByteArray = QByteArray();
  	if( rsdXml.documentElement().tagName() == "rsd" ) {
-	  attributes = rsdXml.documentElement().firstChildElement( "apis" )
-	    .elementsByTagName( "api" );
-          qDebug() << "found" << attributes.count() << "apis";
-	  for( i = 0; i < attributes.count(); i++ ) {
-	    if( attributes.at( i ).toElement().attribute( "name" ) == "MetaWeblog" ) {
-	      url = QUrl( attributes.at( i ).toElement().attribute( "apiLink" ) );
+	  apis = rsdXml.elementsByTagName( "api" );
+	  for( i = 0; i < apis.count(); i++ ) {
+	    if( apis.at( i ).toElement().attribute( "name" ) == "MetaWeblog" ) {
+	      url = QUrl( apis.at( i ).toElement().attribute( "apiLink" ) );
 	      if( url.isValid() ) {
 		leServer->setText( url.host() );
 		leLocation->setText( url.path() );
@@ -414,22 +414,15 @@ void AccountsDialog::handleHttpDone( bool error )
 	    }
 	  }
 	}
-	else {
-	  // Now that it's established that it's not an MT blog, see if it's a Wordpress one.
-
-	}
+	else 
+          QMessageBox::information( this, tr( "QTM: Failure" ), failure, QMessageBox::Cancel );
       }
-      else {
+      else 
 	// Attempt to find tell-tale files has failed
-	QMessageBox::information( this, tr( "QTM: Failure" ),
-				  tr( "QTM failed to auto-configure access to your account. "
-				      "Please consult the documentation for your content management system "
-				      "or service." ),
-				  QMessageBox::Cancel );
-      }
+	QMessageBox::information( this, tr( "QTM: Failure" ), failure, QMessageBox::Cancel );
       http->close();
       currentReq = QHttpRequestHeader();
-      disconnect( http, SIGNAL( requestFinished() ), this, 0 );
+      disconnect( http, SIGNAL( requestFinished( int, bool ) ), this, 0 );
       disconnect( http, SIGNAL( done( bool ) ), this, 0 );
       break;
     case FindingXmlrpcPhp:
