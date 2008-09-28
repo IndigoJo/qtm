@@ -1276,10 +1276,15 @@ void Catkin::updateRecentFileMenu()
       t = recentFiles.value( j ).title.section( ' ', 0, 5 );
       if( t != recentFiles.value( j ).title )
 	t.append( tr( " ..." ) );
-      text = tr( "&%1 %2" )
-	.arg( j + 1 )
-	.arg( recentFiles.value( j ).title.isEmpty() ?
+      if( j == 9 )
+        text = tr( "1&0 %1" )
+ 	.arg( recentFiles.value( j ).title.isEmpty() ?
 	      recentFiles.value( j ).filename.section( "/", -1, -1 ) : t );
+      else
+        text  = tr("&%1 %2" )
+	  .arg( j + 1 )
+	  .arg( recentFiles.value( j ).title.isEmpty() ?
+	        recentFiles.value( j ).filename.section( "/", -1, -1 ) : t );
       recentFileActions[j]->setText( text );
       recentFileActions[j]->setData( recentFiles.value( j ).filename );
       recentFileActions[j]->setVisible( true );
