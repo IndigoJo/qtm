@@ -60,8 +60,6 @@ AccountsDialog::AccountsDialog( QList<AccountsDialog::Account> &acctList,
 
   setupUi( this );
   tbURIReturn->setIcon( QIcon( QPixmap( return_xpm ) ) );
-  connect( tbURIReturn, SIGNAL( clicked() ),
-	   this, SLOT( on_leBlogURI_returnPressed() ) );
   //leBlogURI->installEventFilter( this );
   pbNew->setDefault( false );
 

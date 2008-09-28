@@ -120,20 +120,6 @@
            </property>
           </widget>
          </item>
-         <item row="2" column="1" colspan="2" >
-          <widget class="QLineEdit" name="leBlogURI" >
-           <property name="whatsThis" >
-            <string>An URI (also known as a URL) is the identifier for a place on the Internet, as in http://www.google.com/ .  You can enter either the location of your blog, or its admin page, here and QTM will attempt to find the file it needs.</string>
-           </property>
-          </widget>
-         </item>
-         <item row="2" column="3" >
-          <widget class="QToolButton" name="tbURIReturn" >
-           <property name="text" >
-            <string/>
-           </property>
-          </widget>
-         </item>
          <item row="0" column="0" >
           <widget class="QLabel" name="lName" >
            <property name="text" >
@@ -197,6 +183,13 @@
              <string>Textpattern</string>
             </property>
            </item>
+          </widget>
+         </item>
+         <item row="2" column="1" colspan="3" >
+          <widget class="QLineEdit" name="leBlogURI" >
+           <property name="whatsThis" >
+            <string>An URI (also known as a URL) is the identifier for a place on the Internet, as in http://www.google.com/ .  You can enter either the location of your blog, or its admin page, here and QTM will attempt to find the file it needs.</string>
+           </property>
           </widget>
          </item>
         </layout>
@@ -435,7 +428,6 @@
   <tabstop>leName</tabstop>
   <tabstop>cbHostedBlogType</tabstop>
   <tabstop>leBlogURI</tabstop>
-  <tabstop>tbURIReturn</tabstop>
   <tabstop>leServer</tabstop>
   <tabstop>leLocation</tabstop>
   <tabstop>lePort</tabstop>
