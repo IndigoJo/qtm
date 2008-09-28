@@ -2181,6 +2181,9 @@ void Catkin::changeBlog( int b ) // slot
         cw.cbMainCat->addItem( currentCategoryText,
 			       QVariant( catsList.at( i ).firstChildElement( "categoryId" ).text() ) );
         cw.lwOtherCats->addItem( currentCategoryText );
+	cw.cbMainCat->setEnabled( true );
+	cw.lwOtherCats->setEnabled( true );
+	statusBar()->clearMessage(); // as otherwise, "there are no categories" would still show
       }
       //      qDebug() << "refresh finished";
       emit categoryRefreshFinished();
