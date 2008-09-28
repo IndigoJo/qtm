@@ -77,7 +77,6 @@ class Catkin : public QMainWindow
   Catkin( bool noRefreshBlogs = false, QWidget *widget = 0 );
   /*  Catkin( QList<QString>, QList<QString>, int,
       QWidget *parent = 0 );*/
-  Catkin( QDomDocument &, QString &, QWidget *parent = 0 );
   Catkin( QString, QWidget *parent = 0 );
   ~Catkin();
 #if QT_VERSION >= 0x040200
