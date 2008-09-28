@@ -59,10 +59,7 @@ AccountsDialog::AccountsDialog( QList<AccountsDialog::Account> &acctList,
   http = new QHttp;
 
   setupUi( this );
-  tbURIReturn->setIcon( QIcon( QPixmap( return_xpm ) ) );
-  connect( tbURIReturn, SIGNAL( clicked() ),
-	   this, SLOT( on_leBlogURI_returnPressed() ) );
-  //leBlogURI->installEventFilter( this );
+  leBlogURI->installEventFilter( this );
   pbNew->setDefault( false );
 
   // Set up internal account lists; one for the current contents of the accounts,
@@ -564,8 +561,16 @@ void AccountsDialog::on_cbHostedBlogType_activated( int newIndex )
 
 bool AccountsDialog::eventFilter( QObject *obj, QEvent *event )
 {
-  if( event->type() == QEvent::FocusIn ) {
-
-  }
+   if( obj == leBlogURI ) {
+       switch( event->type() ) {
+         case QEvent::FocusOut:
+            if( !leBlogURI->text().isEmpty() )
+              on_leBlogURI_returnPressed();
+         default:
+            return QObject::eventFilter( obj, event );
+       }
+   }
+   
+   return QObject::eventFilter( obj, event );
 }
 
