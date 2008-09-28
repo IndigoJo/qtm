@@ -942,8 +942,7 @@ bool Catkin::handleArguments()
       if( c ) // if there is a current new window
 	d = c;
       //qDebug() << "handling an argument";
-      QString curid = currentAccountElement.attribute( "id" );
-      c = new Catkin( accountsDom, curid );
+      c = new Catkin;
       if( c->load( args.at( i ) ) ) {
 #ifdef USE_SYSTRAYICON
 	c->setSTI( sti );
@@ -995,8 +994,7 @@ void Catkin::about() // slot
 void Catkin::newDoc()
 {
   //Catkin *ed = new Catkin( usersBlogs, categoryList, currentBlog, 0 );
-  QString curid = currentAccountElement.attribute( "id" );
-  Catkin *ed = new Catkin( accountsDom, curid );
+  Catkin *ed = new Catkin;
   ed->setWindowTitle( tr( "QTM - new entry [*]" ) );
 #ifdef USE_SYSTRAYICON
   ed->setSTI( sti );
