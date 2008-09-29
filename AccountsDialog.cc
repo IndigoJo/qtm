@@ -322,10 +322,13 @@ void AccountsDialog::on_leBlogURI_returnPressed()
   for( i = 0; i <= wpmuHosts.count(); i++ ) {
     if( i < wpmuHosts.count() ) {
       if( uris.contains( wpmuHosts.at( i ) ) ) {
-	leServer->setText( uris );
-	accountList[currentRow].server = uris;
+	leServer->setText( uris.remove( "http://" ) );
+	accountList[currentRow].server = uris.remove( "http://" );
 	leLocation->setText( "/xmlrpc.php" );
 	accountList[currentRow].location = "/xmlrpc.php";
+        lePort->clear();
+        accountList[currentRow].port = "";
+        leLogin->setFocus( Qt::TabFocusReason );
 	return;
       }
     }
