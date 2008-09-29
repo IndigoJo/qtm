@@ -1,5 +1,12 @@
 Changelog:
 
+0.7-b1 (29th Sept 2008):
+
+Bug fixes to account dialog; fills in wordpress.com details correctly
+Bug fix: parses rsd.xml properly so that server/login details for MT blogs
+can be filled in automatically
+Bug fix: tenth entry in "Recent files" now has hotkey 0, not 1
+
 0.7-m2 (28th Sept 2008):
 
 New feature: Multiple accounts
