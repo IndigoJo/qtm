@@ -69,6 +69,11 @@ endif( USE_STI )
 # Packager can specify not to use QPlainTextEdit, even if Qt 4.4.0 is present
 # Note, the author has found that it does not scroll in between going below the
 # bottom of the widget and pressing Enter.
+
+if( NOT USE_PTE )
+  set( DONT_USE_PTE TRUE )
+endif( NOT USE_PTE )
+
 if( DONT_USE_PTE )
   add_definitions( -DDONT_USE_PTE )
 endif( DONT_USE_PTE )
