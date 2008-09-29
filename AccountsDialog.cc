@@ -113,7 +113,6 @@ AccountsDialog::AccountsDialog( QList<AccountsDialog::Account> &acctList,
 
 void AccountsDialog::changeListIndex( int index )
 {
-  qDebug() << "index:" << index;
   leBlogURI->clear();
 
   if( doingNewAccount ) {
@@ -322,10 +321,13 @@ void AccountsDialog::on_leBlogURI_returnPressed()
   for( i = 0; i <= wpmuHosts.count(); i++ ) {
     if( i < wpmuHosts.count() ) {
       if( uris.contains( wpmuHosts.at( i ) ) ) {
-	leServer->setText( uris );
-	accountList[currentRow].server = uris;
+	leServer->setText( uris.remove( "http://" ) );
+	accountList[currentRow].server = uris.remove( "http://" );
 	leLocation->setText( "/xmlrpc.php" );
 	accountList[currentRow].location = "/xmlrpc.php";
+        lePort->clear();
+        accountList[currentRow].port = "";
+        leLogin->setFocus( Qt::TabFocusReason );
 	return;
       }
     }
@@ -351,7 +353,6 @@ void AccountsDialog::on_leBlogURI_returnPressed()
                            QString( "/%1" ).arg( endpoint ) );
     leLocation->setText( urisLocation );
     accountList[currentRow].location = urisLocation;
-    qDebug() << "blog type:" << cbHostedBlogType->currentIndex();
     return;
   }
 
@@ -365,8 +366,6 @@ void AccountsDialog::on_leBlogURI_returnPressed()
     http->get( loc.append( loc.endsWith( '/' ) ? "rsd.xml" : "/rsd.xml" ) );
   networkBiz = FindingRsdXml;
 
-  qDebug() << loc;
-  qDebug() << "now connecting the signal";
   connect( http, SIGNAL( requestFinished( int, bool ) ),
 	   this, SLOT( handleRequestFinished( int, bool ) ) );
   connect( http, SIGNAL( done( bool ) ),
@@ -516,14 +515,12 @@ void AccountsDialog::on_chPostDateTime_toggled( bool )
 
 void AccountsDialog::on_chComments_toggled( bool )
 {
-  qDebug() << "comments toggled";
   if( currentRow != 1 )
     accountList[currentRow].comments = chComments->isChecked();
 }
 
 void AccountsDialog::on_chTB_toggled( bool )
 {
-  qDebug() << "TB toggled";
   if( currentRow != 1 )
     accountList[currentRow].trackback = chTB->isChecked();
 }
