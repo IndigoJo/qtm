@@ -541,10 +541,12 @@
  <tabstops>
   <tabstop>cbPageSelector</tabstop>
   <tabstop>leTitle</tabstop>
+  <tabstop>cbAccountSelector</tabstop>
   <tabstop>cbBlogSelector</tabstop>
   <tabstop>cbStatus</tabstop>
   <tabstop>chComments</tabstop>
   <tabstop>chTB</tabstop>
+  <tabstop>cbDoTB</tabstop>
   <tabstop>cbMainCat</tabstop>
   <tabstop>lwOtherCats</tabstop>
   <tabstop>pbRefresh</tabstop>
@@ -554,6 +556,9 @@
   <tabstop>tbAddTag</tabstop>
   <tabstop>rbStartOfMainEntry</tabstop>
   <tabstop>rbEndOfMainEntry</tabstop>
+  <tabstop>lwTBPings</tabstop>
+  <tabstop>leTBPingURL</tabstop>
+  <tabstop>tbTBAdd</tabstop>
  </tabstops>
  <resources/>
  <connections>
