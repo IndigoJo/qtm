@@ -4250,7 +4250,8 @@ void Catkin::addClipTag()
     statusBar()->showMessage( tr( "This tag validates OK." ), 2000 );
     tagText.remove( QRegExp( "(http:\\/\\/)?(www\\.)?technorati\\.com\\/tag\\/" ) );
     cw.lwTags->addItem( tagText );
-    dirtify();
+    if( !isWindowModified() )
+      dirtify();
   }
 }
 
@@ -4259,7 +4260,8 @@ void Catkin::addTechTagFromLineEdit()
   if( !cw.leAddTag->text().isEmpty() ) {
     cw.lwTags->addItem( cw.leAddTag->text() );
     cw.leAddTag->clear();
-    dirtify();
+    if( !isWindowModified() )
+      dirtify();
   }
 }
 
@@ -4273,7 +4275,8 @@ void Catkin::addTechTagFromAddButton()
       statusBar()->showMessage( tr( "This tag validates." ), 2000 );
       cw.lwTags->addItem( cw.leAddTag->text() );
       cw.leAddTag->clear();
-      dirtify();
+      if( !isWindowModified() )
+	dirtify();
     } else {
       statusBar()->showMessage( tr( "This is not a valid tag." ), 2000 );
     }
@@ -4295,7 +4298,8 @@ void Catkin::addClipTBPing()
     if( QUrl( clipboardText ).isValid() ) {
       statusBar()->showMessage( tr( "This URL validates." ) );
       cw.lwTBPings->addItem( clipboardText );
-      dirtify();
+      if( !isWindowModified() )
+	dirtify();
     } else
       statusBar()->showMessage( tr( "This is not a valid URL." ), 2000 );
   }
@@ -4310,7 +4314,8 @@ void Catkin::addTBPingFromLineEdit()
       statusBar()->showMessage( tr( "This URL validates." ), 2000 );
       cw.lwTBPings->addItem( lineEditText );
       cw.leTBPingURL->clear();
-      dirtify();
+      if( !isWindowModified() )
+	dirtify();
     } else
       statusBar()->showMessage( tr( "This is not a valid URL." ), 2000 );
   }
@@ -4320,7 +4325,8 @@ void Catkin::removeTechTag()
 {
   int c = cw.lwTags->currentRow();
   cw.lwTags->takeItem( c );
-  dirtify();
+  if( !isWindowModified() )
+    dirtify();
 }
 
 void Catkin::addTBPingFromAddButton()
@@ -4332,7 +4338,8 @@ void Catkin::addTBPingFromAddButton()
       statusBar()->showMessage( tr( "This URL validates." ), 2000 );
       cw.lwTBPings->addItem( cw.leTBPingURL->text() );
       cw.leTBPingURL->clear();
-      dirtify();
+      if( !isWindowModified() )
+	dirtify();
     } else
       statusBar()->showMessage( tr( "This is not a valid URL." ), 2000 );
   }
@@ -4342,7 +4349,8 @@ void Catkin::removeTBPing()
 {
   int c = cw.lwTBPings->currentRow();
   cw.lwTBPings->takeItem( c );
-  dirtify();
+  if( !isWindowModified() )
+    dirtify();
 }
 
 void Catkin::doFont()
@@ -4391,7 +4399,7 @@ void Catkin::dirtify()
 {
   dirtyIndicator->show();
   setWindowModified( true );
-  disconnect( EDITOR, 0, dirtyIndicator, 0 );
+  setDirtySignals( false );
   cleanSave = false;
 }
 
