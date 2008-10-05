@@ -2078,6 +2078,7 @@ void Catkin::extractAccountDetails() // slot
   port = caDetails.firstChildElement( "port" ).text();
   login = caDetails.firstChildElement( "login" ).text();
   password = caDetails.firstChildElement( "password" ).text();
+  currentAccountId = currentAccountElement.attribute( "id" );
 }
 
 void Catkin::changeBlog( int b ) // slot
@@ -3779,6 +3780,7 @@ bool Catkin::load( const QString &fname, bool fromSTI )
 	accountsDom.documentElement().appendChild( newDefaultAccount );
 	currentAccountElement = newDefaultAccount;
         extractAccountDetails();
+	setPostClean();
 	return true;
       }
 
@@ -3856,10 +3858,12 @@ bool Catkin::load( const QString &fname, bool fromSTI )
 	  }
 	}
 	filename = fname;
+	setPostClean();
 	return true;
       }
     }
     filename = fname;
+    setPostClean();
     return true;
   }
 
@@ -3888,11 +3892,13 @@ bool Catkin::load( const QString &fname, bool fromSTI )
 	connect( this, SIGNAL( categoryRefreshFinished() ),
 		 this, SLOT( setLoadedPostCategories() ) );
 	refreshBlogList();
+	setPostClean();
 	return true;
       }
       else {
 	// currentBlogAccount = blogs.at( currentBlog );
 	setLoadedPostCategories();
+	setPostClean();
 	return true;
       }
     }
@@ -3950,7 +3956,7 @@ bool Catkin::load( const QString &fname, bool fromSTI )
 
   filename = fname;
   entryEverSaved = true;
-
+  setPostClean();
   return true;
 
   // This is the old routine, commented-out
