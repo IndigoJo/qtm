@@ -828,7 +828,7 @@ void Catkin::doUiSetup()
   dirtyIndicator = new QLabel( this );
   dirtyIndicator->setPixmap( QPixmap( filesave ) );
   statusBar()->addPermanentWidget( dirtyIndicator );
-  connect( EDITOR, SIGNAL( textChanged() ), this, SLOT( dirtify() ) );
+  setCleanSignals( true );
   dirtyIndicator->hide();
 
   // Set up hash of entry attributes
@@ -2272,7 +2272,7 @@ void Catkin::metaWeblog_newPost( QByteArray response )
       if( postAsSave && cleanSave ) {
 	setWindowModified( false );
 	dirtyIndicator->hide();
-	connect( EDITOR, SIGNAL( textChanged() ), this, SLOT( dirtify() ) );
+	setCleanSignals( true );
       }
     }
   }
@@ -2295,7 +2295,7 @@ void Catkin::metaWeblog_editPost( QByteArray response )
       if( postAsSave && cleanSave ) {
 	setWindowModified( false );
 	dirtyIndicator->hide();
-	connect( EDITOR, SIGNAL( textChanged() ), this, SLOT( dirtify() ) );
+	setCleanSignals( true );
       }
     }
   }
@@ -2995,7 +2995,7 @@ void Catkin::newMTPost()
       QApplication::setOverrideCursor( QCursor( Qt::BusyCursor ) );
     if( postAsSave && !entryEverSaved ) {
       cleanSave = true;
-      connect( EDITOR, SIGNAL( textChanged() ), this, SLOT( dirtify() ) );
+      setCleanSignals( true );
     }
     currentHttpBusiness = 7; // Processing metaWeblog.newPost request
     disconnect( this, SIGNAL( httpBusinessFinished() ) );
@@ -3122,7 +3122,7 @@ void Catkin::submitMTEdit()
     QApplication::setOverrideCursor( QCursor( Qt::BusyCursor ) );
   if( postAsSave && !entryEverSaved ) {
     cleanSave = true;
-    connect( EDITOR, SIGNAL( textChanged() ), this, SLOT( dirtify() ) );
+    setCleanSignals( true );
   }
 
   currentHttpBusiness = 8; // Processing metaWeblog.editPost request
@@ -3434,7 +3434,7 @@ void Catkin::save( const QString &fname )
 
   dirtyIndicator->hide();
   setWindowModified( false );
-  connect( EDITOR, SIGNAL( textChanged() ), this, SLOT( dirtify() ) );
+  setCleanSignals( true );
 
   entryEverSaved = true;
 }
@@ -3477,7 +3477,7 @@ void Catkin::choose( QString fname )
 
 	  dirtyIndicator->hide();
 	  setWindowModified( false );
-	  connect( EDITOR, SIGNAL( textChanged() ), this, SLOT( dirtify() ) );
+	  setCleanSignals( true );
 	}
       }
     }
@@ -3753,7 +3753,7 @@ bool Catkin::load( const QString &fname, bool fromSTI )
 
   EDITOR->setPlainText( fetchedText );
   f.close();
-  connect( EDITOR, SIGNAL( textChanged() ), this, SLOT( dirtify() ) );
+  setCleanSignals( true );
   dirtyIndicator->hide();
   setWindowModified( false );
 
@@ -4250,6 +4250,7 @@ void Catkin::addClipTag()
     statusBar()->showMessage( tr( "This tag validates OK." ), 2000 );
     tagText.remove( QRegExp( "(http:\\/\\/)?(www\\.)?technorati\\.com\\/tag\\/" ) );
     cw.lwTags->addItem( tagText );
+    dirtify();
   }
 }
 
@@ -4258,6 +4259,7 @@ void Catkin::addTechTagFromLineEdit()
   if( !cw.leAddTag->text().isEmpty() ) {
     cw.lwTags->addItem( cw.leAddTag->text() );
     cw.leAddTag->clear();
+    dirtify();
   }
 }
 
@@ -4271,6 +4273,7 @@ void Catkin::addTechTagFromAddButton()
       statusBar()->showMessage( tr( "This tag validates." ), 2000 );
       cw.lwTags->addItem( cw.leAddTag->text() );
       cw.leAddTag->clear();
+      dirtify();
     } else {
       statusBar()->showMessage( tr( "This is not a valid tag." ), 2000 );
     }
@@ -4292,6 +4295,7 @@ void Catkin::addClipTBPing()
     if( QUrl( clipboardText ).isValid() ) {
       statusBar()->showMessage( tr( "This URL validates." ) );
       cw.lwTBPings->addItem( clipboardText );
+      dirtify();
     } else
       statusBar()->showMessage( tr( "This is not a valid URL." ), 2000 );
   }
@@ -4306,6 +4310,7 @@ void Catkin::addTBPingFromLineEdit()
       statusBar()->showMessage( tr( "This URL validates." ), 2000 );
       cw.lwTBPings->addItem( lineEditText );
       cw.leTBPingURL->clear();
+      dirtify();
     } else
       statusBar()->showMessage( tr( "This is not a valid URL." ), 2000 );
   }
@@ -4315,6 +4320,7 @@ void Catkin::removeTechTag()
 {
   int c = cw.lwTags->currentRow();
   cw.lwTags->takeItem( c );
+  dirtify();
 }
 
 void Catkin::addTBPingFromAddButton()
@@ -4326,6 +4332,7 @@ void Catkin::addTBPingFromAddButton()
       statusBar()->showMessage( tr( "This URL validates." ), 2000 );
       cw.lwTBPings->addItem( cw.leTBPingURL->text() );
       cw.leTBPingURL->clear();
+      dirtify();
     } else
       statusBar()->showMessage( tr( "This is not a valid URL." ), 2000 );
   }
@@ -4335,6 +4342,7 @@ void Catkin::removeTBPing()
 {
   int c = cw.lwTBPings->currentRow();
   cw.lwTBPings->takeItem( c );
+  dirtify();
 }
 
 void Catkin::doFont()
@@ -4387,11 +4395,34 @@ void Catkin::dirtify()
   cleanSave = false;
 }
 
+void Catkin::setCleanSignals( bool d )
+{
+  QList<QWidget *> widgetList;
+  widgetList << EDITOR << cw.cbAccountSelector << cw.cbBlogSelector << cw.cbStatus
+	     << cw.chComments << cw.chTB << cw.cbMainCat << cw.lwOtherCats << cw.teExcerpt;
+
+    if( !d ) {
+      connect( EDITOR, SIGNAL( textChanged() ), this, SLOT( dirtify() ) );
+      connect( cw.cbAccountSelector, SIGNAL( currentIndexChanged( int ) ), this, SLOT( dirtify() ) );
+      connect( cw.cbBlogSelector, SIGNAL( currentIndexChanged( int ) ), this, SLOT( dirtify() ) );
+      connect( cw.cbStatus, SIGNAL( currentIndexChanged( int ) ), this, SLOT( dirtify() ) );
+      connect( cw.chComments, SIGNAL( toggled( bool ) ), this, SLOT( dirtify() ) );
+      connect( cw.chTB, SIGNAL( toggled( bool ) ), this, SLOT( dirtify() ) );
+      connect( cw.cbMainCat, SIGNAL( currentIndexChanged( int ) ), this, SLOT( dirtify() ) );
+      connect( cw.lwOtherCats, SIGNAL( itemSelectionChanged() ), this, SLOT( dirtify() ) );
+      connect( cw.teExcerpt, SIGNAL( textChanged() ), this, SLOT( dirtify() ) );
+    }
+    else {
+      foreach( QWidget *w, widgetList )
+	disconnect( w, 0, this, 0 );
+    }
+}
+
 void Catkin::setPostClean()
 {
   dirtyIndicator->hide();
   setWindowModified( false );
-  connect( EDITOR, SIGNAL( textChanged() ), this, SLOT( dirtify() ) );
+  setCleanSignals( true );
   cleanSave = false;
 }
 

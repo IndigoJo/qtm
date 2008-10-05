@@ -272,6 +272,7 @@ class Catkin : public QMainWindow
   bool load( const QString &, QDomDocument & );
   bool load( const QString &, bool fromSTI = false );
   void dirtify();
+  void setCleanSignals( bool );
   void doInitialChangeBlog();
   void newDoc();
   void doQuit();
