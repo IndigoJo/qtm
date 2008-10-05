@@ -828,7 +828,7 @@ void Catkin::doUiSetup()
   dirtyIndicator = new QLabel( this );
   dirtyIndicator->setPixmap( QPixmap( filesave ) );
   statusBar()->addPermanentWidget( dirtyIndicator );
-  setCleanSignals( true );
+  setDirtySignals( true );
   dirtyIndicator->hide();
 
   // Set up hash of entry attributes
@@ -2272,7 +2272,7 @@ void Catkin::metaWeblog_newPost( QByteArray response )
       if( postAsSave && cleanSave ) {
 	setWindowModified( false );
 	dirtyIndicator->hide();
-	setCleanSignals( true );
+	setDirtySignals( true );
       }
     }
   }
@@ -2295,7 +2295,7 @@ void Catkin::metaWeblog_editPost( QByteArray response )
       if( postAsSave && cleanSave ) {
 	setWindowModified( false );
 	dirtyIndicator->hide();
-	setCleanSignals( true );
+	setDirtySignals( true );
       }
     }
   }
@@ -2995,7 +2995,7 @@ void Catkin::newMTPost()
       QApplication::setOverrideCursor( QCursor( Qt::BusyCursor ) );
     if( postAsSave && !entryEverSaved ) {
       cleanSave = true;
-      setCleanSignals( true );
+      setDirtySignals( true );
     }
     currentHttpBusiness = 7; // Processing metaWeblog.newPost request
     disconnect( this, SIGNAL( httpBusinessFinished() ) );
@@ -3122,7 +3122,7 @@ void Catkin::submitMTEdit()
     QApplication::setOverrideCursor( QCursor( Qt::BusyCursor ) );
   if( postAsSave && !entryEverSaved ) {
     cleanSave = true;
-    setCleanSignals( true );
+    setDirtySignals( true );
   }
 
   currentHttpBusiness = 8; // Processing metaWeblog.editPost request
@@ -3434,7 +3434,7 @@ void Catkin::save( const QString &fname )
 
   dirtyIndicator->hide();
   setWindowModified( false );
-  setCleanSignals( true );
+  setDirtySignals( true );
 
   entryEverSaved = true;
 }
@@ -3477,7 +3477,7 @@ void Catkin::choose( QString fname )
 
 	  dirtyIndicator->hide();
 	  setWindowModified( false );
-	  setCleanSignals( true );
+	  setDirtySignals( true );
 	}
       }
     }
@@ -3753,7 +3753,7 @@ bool Catkin::load( const QString &fname, bool fromSTI )
 
   EDITOR->setPlainText( fetchedText );
   f.close();
-  setCleanSignals( true );
+  setDirtySignals( true );
   dirtyIndicator->hide();
   setWindowModified( false );
 
@@ -4395,13 +4395,13 @@ void Catkin::dirtify()
   cleanSave = false;
 }
 
-void Catkin::setCleanSignals( bool d )
+void Catkin::setDirtySignals( bool d )
 {
   QList<QWidget *> widgetList;
   widgetList << EDITOR << cw.cbAccountSelector << cw.cbBlogSelector << cw.cbStatus
 	     << cw.chComments << cw.chTB << cw.cbMainCat << cw.lwOtherCats << cw.teExcerpt;
 
-    if( !d ) {
+    if( d ) {
       connect( EDITOR, SIGNAL( textChanged() ), this, SLOT( dirtify() ) );
       connect( cw.cbAccountSelector, SIGNAL( currentIndexChanged( int ) ), this, SLOT( dirtify() ) );
       connect( cw.cbBlogSelector, SIGNAL( currentIndexChanged( int ) ), this, SLOT( dirtify() ) );
@@ -4422,7 +4422,7 @@ void Catkin::setPostClean()
 {
   dirtyIndicator->hide();
   setWindowModified( false );
-  setCleanSignals( true );
+  setDirtySignals( true );
   cleanSave = false;
 }
 
