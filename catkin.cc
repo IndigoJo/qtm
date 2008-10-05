@@ -4053,6 +4053,7 @@ void Catkin::setLoadedPostCategories() // slot
   }
 
   currentBlogElement = blogNodes.at( currentBlog ).toElement();
+  cw.cbBlogSelector->setCurrentIndex( currentBlog );
   //qDebug() << "current blog is" << currentBlogElement.firstChildElement( "blogName" ).text();
 
   //qDebug( "Just populated blog selector" );
