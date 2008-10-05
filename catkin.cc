@@ -4033,7 +4033,7 @@ bool Catkin::load( const QString &fname, bool fromSTI )
 
 void Catkin::setLoadedPostCategories() // slot
 {
-  int a, j, z;
+  int a, b, j, z;
   int i = 0;
   QString c, cc, d;
   bool isOK;
@@ -4054,7 +4054,17 @@ void Catkin::setLoadedPostCategories() // slot
 
   currentBlogElement = blogNodes.at( currentBlog ).toElement();
   cw.cbBlogSelector->setCurrentIndex( currentBlog );
-  //qDebug() << "current blog is" << currentBlogElement.firstChildElement( "blogName" ).text();
+  cw.cbMainCat->clear();
+  cw.lwOtherCats->clear();
+  QDomNodeList catNodeList = currentBlogElement.elementsByTagName( "category" );
+  b = catNodeList.count();
+  if( b ) {
+    for( j = 0; j < b; j++ ) {
+      cw.cbMainCat->addItem( catNodeList.at( j ).firstChildElement( "categoryName" ).text(),
+			     QVariant( catNodeList.at( j ).firstChildElement( "categoryId" ).text() ) );
+      cw.lwOtherCats->addItem( catNodeList.at( j ).firstChildElement( "categoryName" ).text() );
+    }
+  }
 
   //qDebug( "Just populated blog selector" );
 
