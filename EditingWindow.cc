@@ -18,7 +18,7 @@
 
 *******************************************************************************/
 
-// catkin.cc - Main window class for QTM applicaiton
+// EditingWindow.cc - Main window class for QTM applicaiton
 
 // #define QTM_DEBUG
 
@@ -81,7 +81,7 @@
 #include "XmlRpcHandler.h"
 #include "SafeHttp.h"
 #include "Application.h"
-#include "catkin.h"
+#include "EditingWindow.h"
 #ifdef USE_SYSTRAYICON
 #include "SysTrayIcon.h"
 #endif
@@ -116,7 +116,7 @@
 #define PROPERSEPS( x ) x
 #endif
 
-Catkin::Catkin( bool noRefreshBlogs, QWidget *parent )
+EditingWindow::EditingWindow( bool noRefreshBlogs, QWidget *parent )
   : QMainWindow( parent )
 {
   //qDebug() << "Starting window";
@@ -281,7 +281,7 @@ Catkin::Catkin( bool noRefreshBlogs, QWidget *parent )
   mainStack->setCurrentIndex( edID );
 }
 
-Catkin::Catkin( QString newPost, QWidget *parent )
+EditingWindow::EditingWindow( QString newPost, QWidget *parent )
   : QMainWindow( parent )
 {
   QFont f, g, h;
@@ -445,19 +445,19 @@ Catkin::Catkin( QString newPost, QWidget *parent )
 
 }
 
-Catkin::~Catkin()
+EditingWindow::~EditingWindow()
 {
   deleteLater();
 }
 
 #ifdef USE_SYSTRAYICON
-void Catkin::setSTI( SysTrayIcon *_sti )
+void EditingWindow::setSTI( SysTrayIcon *_sti )
 {
   sti = _sti;
 }
 #endif
 
-void Catkin::doUiSetup()
+void EditingWindow::doUiSetup()
 {
   qApp->setWindowIcon( QIcon( QPixmap( ":/images/qtm-logo1.png" ) ) );
 
@@ -849,12 +849,12 @@ void Catkin::doUiSetup()
   loadAutoLinkDictionary();
 }
 
-bool Catkin::handleArguments()
+bool EditingWindow::handleArguments()
 {
   bool rv = true;
   int i;
-  Catkin *c = 0;
-  Catkin *d = 0;
+  EditingWindow *c = 0;
+  EditingWindow *d = 0;
   QStringList failedFiles;
   QStringList args = QApplication::arguments();
 
@@ -866,7 +866,7 @@ bool Catkin::handleArguments()
       if( c ) // if there is a current new window
 	d = c;
       //qDebug() << "handling an argument";
-      c = new Catkin;
+      c = new EditingWindow;
       if( c->load( args.at( i ) ) ) {
 #ifdef USE_SYSTRAYICON
 	c->setSTI( sti );
@@ -906,7 +906,7 @@ bool Catkin::handleArguments()
   return rv;
 }
 
-void Catkin::about() // slot
+void EditingWindow::about() // slot
 {
   QDialog about_box( this );
   Ui::AboutBox abui;
@@ -915,10 +915,10 @@ void Catkin::about() // slot
   about_box.exec();
 }
 
-void Catkin::newDoc()
+void EditingWindow::newDoc()
 {
-  //Catkin *ed = new Catkin( usersBlogs, categoryList, currentBlog, 0 );
-  Catkin *ed = new Catkin;
+  //EditingWindow *ed = new EditingWindow( usersBlogs, categoryList, currentBlog, 0 );
+  EditingWindow *ed = new EditingWindow;
   ed->setWindowTitle( tr( "QTM - new entry [*]" ) );
 #ifdef USE_SYSTRAYICON
   ed->setSTI( sti );
@@ -929,7 +929,7 @@ void Catkin::newDoc()
   ed->show();
 }
 
-void Catkin::positionWidget( QWidget *w, QWidget *refWidget )
+void EditingWindow::positionWidget( QWidget *w, QWidget *refWidget )
 {
   QDesktopWidget *dw = QApplication::desktop();
   QRect r = dw->availableGeometry();
@@ -942,7 +942,7 @@ void Catkin::positionWidget( QWidget *w, QWidget *refWidget )
     w->move( refWidget->x() + 30, refWidget->y() + 30 );
 }
 
-void Catkin::changeCaptionAfterTitleChanged()
+void EditingWindow::changeCaptionAfterTitleChanged()
 {
   if( cw.leTitle->text().isEmpty() )
     setWindowTitle( tr( "QTM - new entry [*]" ) );
@@ -950,7 +950,7 @@ void Catkin::changeCaptionAfterTitleChanged()
     setWindowTitle( QString( "%1 - QTM [*]" ).arg( cw.leTitle->text().trimmed() ) );
 }
 
-void Catkin::closeEvent( QCloseEvent *event )
+void EditingWindow::closeEvent( QCloseEvent *event )
 {
   QSettings settings;
 
@@ -974,7 +974,7 @@ void Catkin::closeEvent( QCloseEvent *event )
   }
 }
 
-void Catkin::showEvent( QShowEvent *event )
+void EditingWindow::showEvent( QShowEvent *event )
 {
   // If the document is empty, the window unedited and the entry never saved,
   // chances are it's new
@@ -987,7 +987,7 @@ void Catkin::showEvent( QShowEvent *event )
   QMainWindow::showEvent( event );
 }
 
-void Catkin::doQuit()
+void EditingWindow::doQuit()
 {
 #ifndef NO_DEBUG_OUTPUT
   int i = QApplication::topLevelWidgets().size();
@@ -998,7 +998,7 @@ void Catkin::doQuit()
   qApp->closeAllWindows();
 }
 
-void Catkin::checkForEmptySettings()
+void EditingWindow::checkForEmptySettings()
 {
   //Check if this is a brand new user
   if( localStorageDirectory.isEmpty() || server.isEmpty() ) {
@@ -1013,7 +1013,7 @@ void Catkin::checkForEmptySettings()
   }
 }
 
-void Catkin::setInitialAccount()
+void EditingWindow::setInitialAccount()
 {
     int i;
 
@@ -1094,7 +1094,7 @@ void Catkin::setInitialAccount()
     }
 }
 
-void Catkin::readSettings()
+void EditingWindow::readSettings()
 {
   //int i;
   QString crf;
@@ -1171,20 +1171,20 @@ void Catkin::readSettings()
 #endif
 }
 
-void Catkin::handleEnableCategories()
+void EditingWindow::handleEnableCategories()
 {
   cw.gbCategory->setEnabled( categoriesEnabled );
   ui.actionRefresh_categories->setEnabled( categoriesEnabled );
   ui.actionSend_categories->setEnabled( categoriesEnabled );
 }
 
-void Catkin::setRecentFiles( const QList<Application::recentFile> &rfs )
+void EditingWindow::setRecentFiles( const QList<Application::recentFile> &rfs )
 {
   recentFiles = rfs;
   updateRecentFileMenu();
 }
 
-void Catkin::updateRecentFileMenu()
+void EditingWindow::updateRecentFileMenu()
 {
   QString text, t;
   int j;
@@ -1222,14 +1222,14 @@ void Catkin::updateRecentFileMenu()
   }
 }
 
-void Catkin::openRecentFile()
+void EditingWindow::openRecentFile()
 {
   QAction *action = qobject_cast<QAction *>( sender() );
   if( action )
     choose( action->data().toString() );
 }
 
-void Catkin::writeSettings()
+void EditingWindow::writeSettings()
 {
   // int i;
   QSettings settings;
@@ -1248,7 +1248,7 @@ void Catkin::writeSettings()
 		       }*/
 }
 
-void Catkin::callRefreshCategories()
+void EditingWindow::callRefreshCategories()
 {
   if( !currentHttpBusiness ) {
     cw.cbMainCat->clear();
@@ -1276,7 +1276,7 @@ void Catkin::callRefreshCategories()
 #endif
 }
 
-void Catkin::refreshCategories()
+void EditingWindow::refreshCategories()
 {
   // const int indent = 2;
   QDomElement param, value, integer, string;
@@ -1339,7 +1339,7 @@ void Catkin::refreshCategories()
   }
 }
 
-void Catkin::getAccounts()
+void EditingWindow::getAccounts()
 {
   QList<AccountsDialog::Account> acctsList, returnedAccountsList;
   AccountsDialog::Account acct;
@@ -1523,7 +1523,7 @@ void Catkin::getAccounts()
   }
 }
 
-void Catkin::getPreferences()
+void EditingWindow::getPreferences()
 {
   bool blogUnchanged;
   QSettings settings;
@@ -1756,7 +1756,7 @@ void Catkin::getPreferences()
   }
 }
 
-void Catkin::saveAccountsDom()
+void EditingWindow::saveAccountsDom()
 {
   QFile domOut( PROPERSEPS( QString( "%1/qtmaccounts2.xml" ).arg( localStorageDirectory ) ) );
   if( domOut.open( QIODevice::WriteOnly ) ) {
@@ -1792,7 +1792,7 @@ void Catkin::saveAccountsDom()
   }
 }
 
-void Catkin::populateAccountList() // slot
+void EditingWindow::populateAccountList() // slot
 {
   int i;
   QDomElement ct, detail;
@@ -1821,7 +1821,7 @@ void Catkin::populateAccountList() // slot
   }
 }
 
-void Catkin::populateBlogList() // slot
+void EditingWindow::populateBlogList() // slot
 {
   addToConsole( accountsDom.toString( 2 ) );
 
@@ -1872,7 +1872,7 @@ void Catkin::populateBlogList() // slot
   }
 }
 
-void Catkin::refreshBlogList() // slot
+void EditingWindow::refreshBlogList() // slot
 {
   // http = new SafeHttp;
 
@@ -1915,7 +1915,7 @@ void Catkin::refreshBlogList() // slot
 	   this, SLOT( handleHostLookupFailed() ) );
 }
 
-void Catkin::handleResponseHeader( const QHttpResponseHeader &header ) // slot
+void EditingWindow::handleResponseHeader( const QHttpResponseHeader &header ) // slot
 {
   if( header.statusCode() == 404 ) {
     QMessageBox::warning( this, tr( "Error 404" ),
@@ -1932,7 +1932,7 @@ void Catkin::handleResponseHeader( const QHttpResponseHeader &header ) // slot
     responseData.append( http->readAll() );
 }
 
-void Catkin::stopThisJob()
+void EditingWindow::stopThisJob()
 {
 #ifndef NO_DEBUG_OUTPUT
   qDebug() << "Aborting.";
@@ -1947,7 +1947,7 @@ void Catkin::stopThisJob()
     QApplication::restoreOverrideCursor();
 }
 
-void Catkin::handleDone( bool error ) // slot
+void EditingWindow::handleDone( bool error ) // slot
 {
   if( error )
     statusBar()->showMessage( tr( "The request failed." ), 2000 );
@@ -1978,17 +1978,17 @@ void Catkin::handleDone( bool error ) // slot
   emit httpBusinessFinished();
 }
 
-/*void Catkin::changeCurrentAccount( int a ) // slot
+/*void EditingWindow::changeCurrentAccount( int a ) // slot
 {
   currentAccount = a;
   }*/
 
-void Catkin::changeCurrentBlog( int b ) // slot
+void EditingWindow::changeCurrentBlog( int b ) // slot
 {
   currentBlog = b;
 }
 
-/* void Catkin::changeBlog( int b ) // slot
+/* void EditingWindow::changeBlog( int b ) // slot
 {
   currentBlog = b;
   if( !currentHttpBusiness ) {
@@ -2015,7 +2015,7 @@ void Catkin::changeCurrentBlog( int b ) // slot
   }
 }*/
 
-void Catkin::changeAccount( int a ) // slot
+void EditingWindow::changeAccount( int a ) // slot
 {
   QString currentBlogText;
   int i;
@@ -2070,7 +2070,7 @@ void Catkin::changeAccount( int a ) // slot
 
 }
 
-void Catkin::extractAccountDetails() // slot
+void EditingWindow::extractAccountDetails() // slot
 {
   QDomElement caDetails = currentAccountElement.firstChildElement( "details" ).toElement();
   server = caDetails.firstChildElement( "server" ).text();
@@ -2081,7 +2081,7 @@ void Catkin::extractAccountDetails() // slot
   currentAccountId = currentAccountElement.attribute( "id" );
 }
 
-void Catkin::changeBlog( int b ) // slot
+void EditingWindow::changeBlog( int b ) // slot
 {
   QString currentCategoryText;
 #ifndef NO_DEBUG_OUTPUT
@@ -2128,7 +2128,7 @@ void Catkin::changeBlog( int b ) // slot
     callRefreshCategories();
 }
 
-/*void Catkin::blogger_getUsersBlogs( QByteArray response )
+/*void EditingWindow::blogger_getUsersBlogs( QByteArray response )
 {
   QXmlInputSource xis;
   QXmlSimpleReader reader;
@@ -2173,7 +2173,7 @@ void Catkin::changeBlog( int b ) // slot
   }
 } */
 
-void Catkin::blogger_getUsersBlogs( QByteArray response )
+void EditingWindow::blogger_getUsersBlogs( QByteArray response )
 {
   QXmlInputSource xis;
   QXmlSimpleReader reader;
@@ -2249,7 +2249,7 @@ void Catkin::blogger_getUsersBlogs( QByteArray response )
 #endif
 }
 
-void Catkin::metaWeblog_newPost( QByteArray response )
+void EditingWindow::metaWeblog_newPost( QByteArray response )
 {
   // Returned data should only contain a single string, and no structs. Hence
   // the XmlRpcHandler is not suitable.
@@ -2282,7 +2282,7 @@ void Catkin::metaWeblog_newPost( QByteArray response )
   entryBlogged = true;
 }
 
-void Catkin::metaWeblog_editPost( QByteArray response )
+void EditingWindow::metaWeblog_editPost( QByteArray response )
 {
   addToConsole( QString( response ) );
 
@@ -2304,7 +2304,7 @@ void Catkin::metaWeblog_editPost( QByteArray response )
     QApplication::restoreOverrideCursor();
 }
 
-void Catkin::metaWeblog_newMediaObject( QByteArray response )
+void EditingWindow::metaWeblog_newMediaObject( QByteArray response )
 {
   QXmlInputSource xis;
   QXmlSimpleReader reader;
@@ -2348,7 +2348,7 @@ void Catkin::metaWeblog_newMediaObject( QByteArray response )
     QApplication::restoreOverrideCursor();
 }
 
-void Catkin::mt_publishPost( QByteArray response )
+void EditingWindow::mt_publishPost( QByteArray response )
 {
   disconnect( this, SIGNAL( httpBusinessFinished() ), 0, 0 );
   addToConsole( QString( response ) );
@@ -2362,7 +2362,7 @@ void Catkin::mt_publishPost( QByteArray response )
     QApplication::restoreOverrideCursor();
 }
 
-void Catkin::mt_getCategoryList( QByteArray response )
+void EditingWindow::mt_getCategoryList( QByteArray response )
 {
   QXmlInputSource xis;
   QXmlSimpleReader reader;
@@ -2409,7 +2409,7 @@ void Catkin::mt_getCategoryList( QByteArray response )
       //      qDebug() << catList.last();
   }
   if( !noAlphaCats )
-    qSort( catList.begin(), catList.end(), Catkin::caseInsensitiveLessThan );
+    qSort( catList.begin(), catList.end(), EditingWindow::caseInsensitiveLessThan );
 
   if( xfault ) {
       QMessageBox::critical( this, tr( "Could not connect" ),
@@ -2498,7 +2498,7 @@ void Catkin::mt_getCategoryList( QByteArray response )
 		.section( ";", 0, 0 ) );
 	categoryList[a] = buffer;
       }
-      qSort( categoryList.begin(), categoryList.end(), Catkin::caseInsensitiveLessThan );
+      qSort( categoryList.begin(), categoryList.end(), EditingWindow::caseInsensitiveLessThan );
 
       for( int b = 0; b < categoryList.size(); b++ ) {
 	addToConsole( categoryList[b] );
@@ -2515,12 +2515,12 @@ void Catkin::mt_getCategoryList( QByteArray response )
   }
   }*/
 
-bool Catkin::caseInsensitiveLessThan( const QString &s1, const QString &s2 )
+bool EditingWindow::caseInsensitiveLessThan( const QString &s1, const QString &s2 )
 {
   return s1.toLower() < s2.toLower();
 }
 
-void Catkin::mt_setPostCategories( QByteArray response )
+void EditingWindow::mt_setPostCategories( QByteArray response )
 {
   disconnect( this, SIGNAL( httpBusinessFinished() ), 0, 0 );
 
@@ -2544,7 +2544,7 @@ void Catkin::mt_setPostCategories( QByteArray response )
   QApplication::restoreOverrideCursor();
 }
 
-void Catkin::handleConsole( bool isChecked )
+void EditingWindow::handleConsole( bool isChecked )
 {
   switch( isChecked ) {
     case false:
@@ -2561,22 +2561,22 @@ void Catkin::handleConsole( bool isChecked )
   }
 }
 
-void Catkin::makeBold()
+void EditingWindow::makeBold()
 {
   EDITOR->insertPlainText( QString( "<strong>%1</strong>" ).arg( EDITOR->textCursor().selectedText() ) );
 }
 
-void Catkin::makeItalic()
+void EditingWindow::makeItalic()
 {
   EDITOR->insertPlainText( QString( "<em>%1</em>" ).arg( EDITOR->textCursor().selectedText() ) );
 }
 
-void Catkin::makeUnderline()
+void EditingWindow::makeUnderline()
 {
   EDITOR->insertPlainText( QString( "<u>%1</u>" ).arg( EDITOR->textCursor().selectedText() ) );
 }
 
-void Catkin::insertMore()
+void EditingWindow::insertMore()
 {
   if( !EDITOR->toPlainText().contains( "<!--more-->" ) )
     EDITOR->insertPlainText( "<!--more-->" );
@@ -2584,18 +2584,18 @@ void Catkin::insertMore()
     statusBar()->showMessage( tr( "A 'more' tag already exists." ), 2000 );
 }
 
-void Catkin::makeBlockquote()
+void EditingWindow::makeBlockquote()
 {
   EDITOR->insertPlainText( QString( "<blockquote>%1</blockquote>" )
 			   .arg( EDITOR->textCursor().selectedText() ) );
 }
 
-void Catkin::makePara()
+void EditingWindow::makePara()
 {
   EDITOR->insertPlainText( QString( "<p>%1</p>" ).arg( EDITOR->textCursor().selectedText() ) );
 }
 
-void Catkin::insertLink( bool isAutoLink )
+void EditingWindow::insertLink( bool isAutoLink )
 {
   QString linkString, titleString;
   QString insertionString = "";
@@ -2644,7 +2644,7 @@ void Catkin::insertLink( bool isAutoLink )
   }
 }
 
-void Catkin::insertLinkFromClipboard()
+void EditingWindow::insertLinkFromClipboard()
 {
   QString linkString( QApplication::clipboard()->text() );
   // linkString.replace( QChar( '&' ), "&amp;" );
@@ -2653,7 +2653,7 @@ void Catkin::insertLinkFromClipboard()
                            .arg( EDITOR->textCursor().selectedText() ) );
 }
 
-void Catkin::insertSelfLink()
+void EditingWindow::insertSelfLink()
 {
   QString linkString( EDITOR->textCursor().selectedText() );
 
@@ -2663,7 +2663,7 @@ void Catkin::insertSelfLink()
     statusBar()->showMessage( tr( "The selection is not a valid URL." ), 2000 );
 }
 
-void Catkin::insertAutoLink()
+void EditingWindow::insertAutoLink()
 {
   QString selectedText = EDITOR->textCursor().selectedText();
   QString selectedTextLC = selectedText.toLower().trimmed();
@@ -2688,7 +2688,7 @@ void Catkin::insertAutoLink()
     insertLink( true );
 }
 
-void Catkin::insertImage()
+void EditingWindow::insertImage()
 {
   QString insertionString;
   QDialog image_entry( this );
@@ -2714,7 +2714,7 @@ void Catkin::insertImage()
   }
 }
 
-void Catkin::insertImageFromClipboard()
+void EditingWindow::insertImageFromClipboard()
 {
   QString linkString( QApplication::clipboard()->text() );
   EDITOR->insertPlainText( QString( "<img src=\"%1\">%2</img>" )
@@ -2722,32 +2722,32 @@ void Catkin::insertImageFromClipboard()
                            .arg( EDITOR->textCursor().selectedText() ) );
 }
 
-void Catkin::cut()
+void EditingWindow::cut()
 {
   EDITOR->cut();
 }
 
-void Catkin::copy()
+void EditingWindow::copy()
 {
   EDITOR->copy();
 }
 
-void Catkin::paste()
+void EditingWindow::paste()
 {
   EDITOR->paste();
 }
 
-void Catkin::undo()
+void EditingWindow::undo()
 {
   EDITOR->document()->undo();
 }
 
-void Catkin::redo()
+void EditingWindow::redo()
 {
   EDITOR->document()->redo();
 }
 
-void Catkin::makeUnorderedList()
+void EditingWindow::makeUnorderedList()
 {
   QString listString = EDITOR->textCursor().selection().toPlainText();
 
@@ -2755,7 +2755,7 @@ void Catkin::makeUnorderedList()
     EDITOR->insertPlainText( getHTMLList( QString( "ul" ), listString ) );
 }
 
-void Catkin::makeOrderedList()
+void EditingWindow::makeOrderedList()
 {
   QString listString = EDITOR->textCursor().selection().toPlainText();
 
@@ -2763,7 +2763,7 @@ void Catkin::makeOrderedList()
     EDITOR->insertPlainText( getHTMLList( QString( "ol" ), listString ) );
 }
 
-QString & Catkin::getHTMLList( QString tag, QString & text )
+QString & EditingWindow::getHTMLList( QString tag, QString & text )
 {
   QString return_value, workstring;
   QStringList worklist;
@@ -2780,7 +2780,7 @@ QString & Catkin::getHTMLList( QString tag, QString & text )
   return text;
 }
 
-void Catkin::pasteAsMarkedParagraphs()
+void EditingWindow::pasteAsMarkedParagraphs()
 {
   QString insertion = QApplication::clipboard()->text().trimmed();
 
@@ -2792,7 +2792,7 @@ void Catkin::pasteAsMarkedParagraphs()
   }
 }
 
-void Catkin::pasteAsBlockquote()
+void EditingWindow::pasteAsBlockquote()
 {
   QString insertion = QApplication::clipboard()->text().trimmed();
 
@@ -2803,7 +2803,7 @@ void Catkin::pasteAsBlockquote()
   }
 }
 
-void Catkin::pasteAsMarkdownBlockquote()
+void EditingWindow::pasteAsMarkdownBlockquote()
 {
   QString insertion = QApplication::clipboard()->text().trimmed();
   QString separator = "\n>\n";
@@ -2815,7 +2815,7 @@ void Catkin::pasteAsMarkdownBlockquote()
   }
 }
 
-void Catkin::pasteAsUnorderedList()
+void EditingWindow::pasteAsUnorderedList()
 {
   QString insertion = QApplication::clipboard()->text().trimmed()
     .replace( QRegExp( "\n{2,}" ), "\n" );
@@ -2824,7 +2824,7 @@ void Catkin::pasteAsUnorderedList()
     EDITOR->insertPlainText( getHTMLList( QString( "ul" ), insertion ) );
 }
 
-void Catkin::pasteAsOrderedList()
+void EditingWindow::pasteAsOrderedList()
 {
   QString insertion = QApplication::clipboard()->text().trimmed()
     .replace( QRegExp( "\n{2,}" ), "\n" );
@@ -2833,7 +2833,7 @@ void Catkin::pasteAsOrderedList()
     EDITOR->insertPlainText( getHTMLList( QString( "ol" ), insertion ) );
 }
 
-void Catkin::doPreview( bool isChecked )
+void EditingWindow::doPreview( bool isChecked )
 {
   QString line, techTagString;
   QString conversionString = "", conversionStringB = "";
@@ -2871,17 +2871,17 @@ void Catkin::doPreview( bool isChecked )
   }
 }
 
-void Catkin::showHighlightedURL( const QString &highlightedURL )
+void EditingWindow::showHighlightedURL( const QString &highlightedURL )
 {
   statusBar()->showMessage( highlightedURL, 2000 );
 }
 
-void Catkin::blogThis()
+void EditingWindow::blogThis()
 {
   newMTPost();
 }
 
-void Catkin::newMTPost()
+void EditingWindow::newMTPost()
 {
   // For the time being we are presuming that this is a MT or Wordpress blog.
 
@@ -3021,7 +3021,7 @@ void Catkin::newMTPost()
   }
 }
 
-void Catkin::submitMTEdit()
+void EditingWindow::submitMTEdit()
 {
   QDomDocument doc;
   QDomElement methodCall, params, param, value, rpcstruct, rpcarray;
@@ -3135,7 +3135,7 @@ void Catkin::submitMTEdit()
 	   this, SLOT( handleHostLookupFailed() ) );
 }
 
-void Catkin::updatePostCategories()
+void EditingWindow::updatePostCategories()
 {
   if( entryBlogged )
     setPostCategories();
@@ -3143,7 +3143,7 @@ void Catkin::updatePostCategories()
     statusBar()->showMessage( tr( "This entry has not been posted yet." ), 2000 );
 }
 
-void Catkin::setPostCategories()
+void EditingWindow::setPostCategories()
 {
   QDomDocument doc;
   QString secCatId, secCatName;
@@ -3254,7 +3254,7 @@ void Catkin::setPostCategories()
   }
 }
 
-void Catkin::publishPost() // slot
+void EditingWindow::publishPost() // slot
 {
   QDomDocument doc;
 
@@ -3299,7 +3299,7 @@ void Catkin::publishPost() // slot
     statusBar()->showMessage( tr( "Cannot publish; HTTP is blocked" ), 2000 );
 }
 
-void Catkin::saveAs()
+void EditingWindow::saveAs()
 {
   //int i;
   //recentFile thisFile;
@@ -3358,7 +3358,7 @@ already checks for the existence of a file.  Keeping in code until tested on oth
 }
 
 
-void Catkin::save()
+void EditingWindow::save()
 {
   if ( filename.isEmpty() ) {
     saveAs();
@@ -3368,7 +3368,7 @@ void Catkin::save()
   save( filename );
 }
 
-void Catkin::save( const QString &fname )
+void EditingWindow::save( const QString &fname )
 {
   int count, tags;
   QString text = EDITOR->document()->toPlainText();
@@ -3440,7 +3440,7 @@ void Catkin::save( const QString &fname )
   entryEverSaved = true;
 }
 
-void Catkin::choose( QString fname )
+void EditingWindow::choose( QString fname )
 {
   //int i;
   //recentFile thisFile;
@@ -3483,8 +3483,8 @@ void Catkin::choose( QString fname )
       }
     }
     else {
-      // Catkin *e = new Catkin( usersBlogs, categoryList, currentBlog, 0 );
-      Catkin *e = new Catkin( true );
+      // EditingWindow *e = new EditingWindow( usersBlogs, categoryList, currentBlog, 0 );
+      EditingWindow *e = new EditingWindow( true );
       //if( e->load( fn, usersBlogs, categoryList ) ) {
       //if( e->load( fn, accountsDom ) ) {
       if( e->load( fn, true ) ) {
@@ -3520,7 +3520,7 @@ void Catkin::choose( QString fname )
     statusBar()->showMessage( tr("Loading aborted"), 2000 );
 }
 
-void Catkin::updateRecentFileList( const QString &title, const QString &filename )
+void EditingWindow::updateRecentFileList( const QString &title, const QString &filename )
 {
   Application::recentFile thisFile;
   int i;
@@ -3537,7 +3537,7 @@ void Catkin::updateRecentFileList( const QString &title, const QString &filename
   recentFiles.prepend( thisFile );
 }
 
-/*bool Catkin::load( const QString &fname, QList<QString> uB,
+/*bool EditingWindow::load( const QString &fname, QList<QString> uB,
 		   QList<QString> cl )
 {
   usersBlogs = uB;
@@ -3550,10 +3550,10 @@ void Catkin::updateRecentFileList( const QString &title, const QString &filename
   return load( fname );
   }*/
 
-/* bool Catkin::load( const QString &fname,
+/* bool EditingWindow::load( const QString &fname,
 		   QStringList uBids, QStringList uBnames, QStringList uBuris,
 		   QStringList clids, QStringList clnames ) */
-bool Catkin::load( const QString &fname, QDomDocument &dd )
+bool EditingWindow::load( const QString &fname, QDomDocument &dd )
 {
   /*  usersBlogIDs = uBids;
   usersBlogNames = uBnames;
@@ -3569,7 +3569,7 @@ bool Catkin::load( const QString &fname, QDomDocument &dd )
 }
 
 
-bool Catkin::load( const QString &fname, bool fromSTI )
+bool EditingWindow::load( const QString &fname, bool fromSTI )
 {
   QDialog *pwd = 0;
   Ui::dPassword pui;
@@ -4037,7 +4037,7 @@ bool Catkin::load( const QString &fname, bool fromSTI )
 
 }
 
-void Catkin::setLoadedPostCategories() // slot
+void EditingWindow::setLoadedPostCategories() // slot
 {
   int a, b, j, z;
   int i = 0;
@@ -4109,7 +4109,7 @@ void Catkin::setLoadedPostCategories() // slot
   }
 }
 
-void Catkin::saveBlogs()
+void EditingWindow::saveBlogs()
 {
   QFile domOut( PROPERSEPS( QString( "%1/qtmaccounts2.xml" ).arg( localStorageDirectory ) ) );
   if( domOut.open( QIODevice::WriteOnly ) ) {
@@ -4121,7 +4121,7 @@ void Catkin::saveBlogs()
     statusBar()->showMessage( tr( "Could not write to accounts file (error %1)" ).arg( (int)domOut.error() ), 2000 );
 }
 
-void Catkin::uploadFile()
+void EditingWindow::uploadFile()
 {
   QString fileInBase64;
   QByteArray conversionBuffer;
@@ -4216,44 +4216,44 @@ void Catkin::uploadFile()
     statusBar()->showMessage( tr( "HTTP requests are blocked." ), 2000 );
 }
 
-void Catkin::doWhatsThis()
+void EditingWindow::doWhatsThis()
 {
   QWhatsThis::enterWhatsThisMode();
 }
 
-void Catkin::doViewBasicSettings()
+void EditingWindow::doViewBasicSettings()
 {
   cw.cbPageSelector->setCurrentIndex( 0 );
 }
 
-void Catkin::doViewCategories()
+void EditingWindow::doViewCategories()
 {
   cw.cbPageSelector->setCurrentIndex( 1 );
 }
 
-void Catkin::doViewExcerpt()
+void EditingWindow::doViewExcerpt()
 {
   cw.cbPageSelector->setCurrentIndex( 2 );
   cw.teExcerpt->setFocus();
 }
 
-void Catkin::doViewTechTags()
+void EditingWindow::doViewTechTags()
 {
   cw.cbPageSelector->setCurrentIndex( 3 );
 }
 
-void Catkin::doViewTBPings()
+void EditingWindow::doViewTBPings()
 {
   cw.cbPageSelector->setCurrentIndex( 4 );
 }
 
-void Catkin::addTechTag()
+void EditingWindow::addTechTag()
 {
   cw.cbPageSelector->setCurrentIndex( 3 );
   cw.leAddTag->setFocus();
 }
 
-void Catkin::addClipTag()
+void EditingWindow::addClipTag()
 {
   int l;
   QRegExpValidator tagFormat( QRegExp( "^http:\\/\\/(www\\.)?technorati\\.com\\/tag\\/([a-zA-Z0-9\\.%]+[\\+ ])*[a-zA-Z0-9\\.%]+$" ), this );
@@ -4272,7 +4272,7 @@ void Catkin::addClipTag()
   }
 }
 
-void Catkin::addTechTagFromLineEdit()
+void EditingWindow::addTechTagFromLineEdit()
 {
   if( !cw.leAddTag->text().isEmpty() ) {
     cw.lwTags->addItem( cw.leAddTag->text() );
@@ -4282,7 +4282,7 @@ void Catkin::addTechTagFromLineEdit()
   }
 }
 
-void Catkin::addTechTagFromAddButton()
+void EditingWindow::addTechTagFromAddButton()
 {
   int i;
   QString lineEditText = cw.leAddTag->text();
@@ -4300,14 +4300,14 @@ void Catkin::addTechTagFromAddButton()
   }
 }
 
-void Catkin::addTBPing()
+void EditingWindow::addTBPing()
 {
   cw.cbPageSelector->setCurrentIndex( 4 );
   cw.leTBPingURL->setFocus();
 }
 
 
-void Catkin::addClipTBPing()
+void EditingWindow::addClipTBPing()
 {
   QString clipboardText = QApplication::clipboard()->text();
 
@@ -4322,7 +4322,7 @@ void Catkin::addClipTBPing()
   }
 }
 
-void Catkin::addTBPingFromLineEdit()
+void EditingWindow::addTBPingFromLineEdit()
 {
   QString lineEditText = cw.leTBPingURL->text();
 
@@ -4338,7 +4338,7 @@ void Catkin::addTBPingFromLineEdit()
   }
 }
 
-void Catkin::removeTechTag()
+void EditingWindow::removeTechTag()
 {
   int c = cw.lwTags->currentRow();
   cw.lwTags->takeItem( c );
@@ -4346,7 +4346,7 @@ void Catkin::removeTechTag()
     dirtify();
 }
 
-void Catkin::addTBPingFromAddButton()
+void EditingWindow::addTBPingFromAddButton()
 {
   QString lineEditText = cw.leTBPingURL->text();
 
@@ -4362,7 +4362,7 @@ void Catkin::addTBPingFromAddButton()
   }
 }
 
-void Catkin::removeTBPing()
+void EditingWindow::removeTBPing()
 {
   int c = cw.lwTBPings->currentRow();
   cw.lwTBPings->takeItem( c );
@@ -4370,7 +4370,7 @@ void Catkin::removeTBPing()
     dirtify();
 }
 
-void Catkin::doFont()
+void EditingWindow::doFont()
 {
 #if QT_VERSION < 0x040200
     bool isOK;
@@ -4384,7 +4384,7 @@ void Catkin::doFont()
 #endif
 }
 
-void Catkin::doPreviewFont()
+void EditingWindow::doPreviewFont()
 {
 #if QT_VERSION < 0x040200
   bool isOK;
@@ -4398,7 +4398,7 @@ void Catkin::doPreviewFont()
 #endif
 }
 
-void Catkin::doConsoleFont()
+void EditingWindow::doConsoleFont()
 {
 #if QT_VERSION < 0x040200
   bool isOK;
@@ -4412,7 +4412,7 @@ void Catkin::doConsoleFont()
 #endif
 }
 
-void Catkin::dirtify()
+void EditingWindow::dirtify()
 {
   dirtyIndicator->show();
   setWindowModified( true );
@@ -4420,7 +4420,7 @@ void Catkin::dirtify()
   cleanSave = false;
 }
 
-void Catkin::setDirtySignals( bool d )
+void EditingWindow::setDirtySignals( bool d )
 {
   QList<QWidget *> widgetList;
   widgetList << EDITOR << cw.cbAccountSelector << cw.cbBlogSelector << cw.cbStatus
@@ -4443,7 +4443,7 @@ void Catkin::setDirtySignals( bool d )
     }
 }
 
-void Catkin::setPostClean()
+void EditingWindow::setPostClean()
 {
   dirtyIndicator->hide();
   setWindowModified( false );
@@ -4451,12 +4451,12 @@ void Catkin::setPostClean()
   cleanSave = false;
 }
 
-void Catkin::showStatusBarMessage( const QString &msg )
+void EditingWindow::showStatusBarMessage( const QString &msg )
 {
   statusBar()->showMessage( msg, 2000 );
 }
 
-bool Catkin::saveCheck( bool )
+bool EditingWindow::saveCheck( bool )
 {
   bool return_value;
 
@@ -4468,7 +4468,7 @@ bool Catkin::saveCheck( bool )
   return return_value;
 }
 
-bool Catkin::saveCheck()
+bool EditingWindow::saveCheck()
 {
   bool return_value;
 
@@ -4491,7 +4491,7 @@ bool Catkin::saveCheck()
   return return_value;
 }
 
-void Catkin::doInitialChangeBlog()
+void EditingWindow::doInitialChangeBlog()
 {
 #ifdef QTM_DEBUG
   addToConsole( QString( "loadedEntryBlog: %1\n" ).arg( loadedEntryBlog ) );
@@ -4515,14 +4515,14 @@ void Catkin::doInitialChangeBlog()
 	   this, SLOT( changeBlog( int ) ) );
 }
 
-void Catkin::copyURL()
+void EditingWindow::copyURL()
 {
   QApplication::clipboard()->setText( remoteFileLocation );
   ui.actionCopy_upload_location->setVisible( false );
   pbCopyURL->hide();
 }
 
-void Catkin::handleFind()
+void EditingWindow::handleFind()
 {
   if( searchWidget->isVisible() ) {
     ui.action_Find->setText( tr( "&Find ..." ) );
@@ -4534,7 +4534,7 @@ void Catkin::handleFind()
   }
 }
 
-QDomElement Catkin::XmlValue( QDomDocument &doc, QString valueType,
+QDomElement EditingWindow::XmlValue( QDomDocument &doc, QString valueType,
 			      QString actualValue, QString memberType )
 {
   QDomElement param = doc.createElement( memberType );
@@ -4547,7 +4547,7 @@ QDomElement Catkin::XmlValue( QDomDocument &doc, QString valueType,
   return param;
 }
 
-QDomElement Catkin::XmlMember( QDomDocument &doc, QString valueName,
+QDomElement EditingWindow::XmlMember( QDomDocument &doc, QString valueName,
 			       QString valueType, QString actualValue )
 {
   QDomElement mem = doc.createElement( "member" );
@@ -4563,7 +4563,7 @@ QDomElement Catkin::XmlMember( QDomDocument &doc, QString valueName,
   return mem;
 }
 
-QDomElement Catkin::XmlMethodName( QDomDocument &doc, QString methodName )
+QDomElement EditingWindow::XmlMethodName( QDomDocument &doc, QString methodName )
 {
   QDomElement methName = doc.createElement( "methodName" );
   methName.appendChild( QDomText( doc.createTextNode( methodName ) ) );
@@ -4571,7 +4571,7 @@ QDomElement Catkin::XmlMethodName( QDomDocument &doc, QString methodName )
   return methName;
 }
 
-QDomElement Catkin::XmlRpcArray( QDomDocument &doc, QString valueName,
+QDomElement EditingWindow::XmlRpcArray( QDomDocument &doc, QString valueName,
 				 QList<QString> text )
 {
   QDomElement arrayValue, arrayValueString;
@@ -4600,7 +4600,7 @@ QDomElement Catkin::XmlRpcArray( QDomDocument &doc, QString valueName,
   return mem;
 }
 
-void Catkin::setNetworkActionsEnabled( bool a )
+void EditingWindow::setNetworkActionsEnabled( bool a )
 {
   ui.actionRefresh_blog_list->setEnabled( a );
   ui.actionRefresh_categories->setEnabled( categoriesEnabled ? a : false );
@@ -4611,7 +4611,7 @@ void Catkin::setNetworkActionsEnabled( bool a )
   cw.pbRefresh->setEnabled( a );
 }
 
-void Catkin::handleInitialLookup( const QHostInfo &hostInfo )
+void EditingWindow::handleInitialLookup( const QHostInfo &hostInfo )
 {
   //qDebug( "Tested for correct hostname\n" );
   if( hostInfo.error() == QHostInfo::NoError ) {
@@ -4622,7 +4622,7 @@ void Catkin::handleInitialLookup( const QHostInfo &hostInfo )
     setNetworkActionsEnabled( false );
 }
 
-void Catkin::handleHostLookupFailed()
+void EditingWindow::handleHostLookupFailed()
 {
   statusBar()->showMessage( tr( "The host specified could not be found." ), 2000 );
 
@@ -4637,7 +4637,7 @@ void Catkin::handleHostLookupFailed()
     QApplication::restoreOverrideCursor();
 }
 
-void Catkin::configureQuickpostTemplates()
+void EditingWindow::configureQuickpostTemplates()
 {
 #if QT_VERSION >= 0x040200
 #if defined USE_SYSTRAYICON
@@ -4647,22 +4647,22 @@ void Catkin::configureQuickpostTemplates()
 #endif
 }
 
-void Catkin::setPublishStatus( int publishStatus )
+void EditingWindow::setPublishStatus( int publishStatus )
 {
   cw.cbStatus->setCurrentIndex( publishStatus );
 }
 
-QString Catkin::postTitle()
+QString EditingWindow::postTitle()
 {
   return cw.leTitle->text();
 }
 
-void Catkin::setPostTitle( const QString &t )
+void EditingWindow::setPostTitle( const QString &t )
 {
   cw.leTitle->setText( t );
 }
 
-void Catkin::saveAutoLinkDictionary()
+void EditingWindow::saveAutoLinkDictionary()
 {
   QDomDocument doc;
   QDomElement currentElement, currentKey, currentValue, currentTitle, currentTarget;
@@ -4718,7 +4718,7 @@ void Catkin::saveAutoLinkDictionary()
 
 }
 
-void Catkin::loadAutoLinkDictionary()
+void EditingWindow::loadAutoLinkDictionary()
 {
   QString dictionaryFileName, errorString, currentKey, currentURL;
   int currentTarget;
@@ -4769,7 +4769,7 @@ void Catkin::loadAutoLinkDictionary()
 
 // This method was adapted from the QByteArray source code in Qt v4.3.1
 
-QByteArray Catkin::toBase64( QByteArray &qbarray )
+QByteArray EditingWindow::toBase64( QByteArray &qbarray )
 {
   QProgressDialog pdialog( tr( "Converting file to Base64" ),
 			   tr( "Cancel" ),
@@ -4828,7 +4828,7 @@ QByteArray Catkin::toBase64( QByteArray &qbarray )
     return tmp;
 }
 
-void Catkin::addToConsole( const QString &t )
+void EditingWindow::addToConsole( const QString &t )
 {
   QString text = t;
 #ifndef NO_DEBUG_OUTPUT

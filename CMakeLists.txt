@@ -143,7 +143,7 @@ endif( USE_DBUS )
 set(QTM_SRCS
     AccountsDialog.cc
     Application.cc
-    catkin.cc
+    EditingWindow.cc
     locationlineedit.cc
     main.cc
     PrefsDialog.cc
@@ -160,7 +160,7 @@ set(QTM_SRCS
 set(QTM_MOC_HDRS
     AccountsDialog.h
     Application.h
-    catkin.h
+    EditingWindow.h
     locationlineedit.h
     PrefsDialog.h
     QijSearchWidget.h
@@ -175,9 +175,9 @@ set(QTM_MOC_HDRS
 set(QTM_UIS
     aboutbox.ui
     AccountsForm.ui
+    EditingWindowBase.ui
     PrefsForm.ui
     PrefsForm41.ui
-    CatkinMainWindow.ui
     ImageEntry.ui
     LinkEntry.ui
     password-form.ui

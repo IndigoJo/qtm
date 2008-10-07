@@ -23,7 +23,7 @@
 //#include <QApplication>
 //#include <QMessageBox>
 #include "Application.h"
-#include "catkin.h"
+#include "EditingWindow.h"
 
 //#include "useSTI.h"
 /*#if QT_VERSION >= 0x040200
@@ -46,7 +46,7 @@
 
 int main( int argc, char *argv[] )
 {
-  Catkin *c;
+  EditingWindow *c;
 #ifdef USE_SYSTRAYICON
   SysTrayIcon *sti;
 #endif
@@ -67,7 +67,7 @@ int main( int argc, char *argv[] )
     }
   }
   else {
-    c = new Catkin;
+    c = new EditingWindow;
     c->setSTI( 0 ); // No STI
     c->setWindowTitle( QObject::tr( "QTM - new entry [*]" ) );
     if( c->handleArguments() )
@@ -76,7 +76,7 @@ int main( int argc, char *argv[] )
       c->close();
   }
 #else
-  c = new Catkin;
+  c = new EditingWindow;
   c->setWindowTitle( QObject::tr( "QTM - new entry [*]" ) );
   if( c->handleArguments() ) {
     c->show();

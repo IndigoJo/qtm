@@ -57,7 +57,7 @@
 #include "Application.h"
 #include "SafeHttp.h"
 #include "SysTrayIcon.h"
-#include "catkin.h"
+#include "EditingWindow.h"
 #include "QuickpostTemplate.h"
 #include "QuickpostTemplateDialog.h"
 
@@ -182,7 +182,7 @@ SysTrayIcon::SysTrayIcon( bool noWindow, QObject *parent )
     noNewWindow = true;
 
   if( newWindow && !noNewWindow ) {
-    Catkin *c = new Catkin;
+    EditingWindow *c = new EditingWindow;
     c->setSTI( this );
     c->setWindowTitle( tr( "QTM - new entry [*]" ) );
     c->show();
@@ -203,12 +203,12 @@ bool SysTrayIcon::handleArguments()
 {
   int i;
   bool rv = false;
-  Catkin *c;
+  EditingWindow *c;
   QStringList failedFiles;
   QStringList args = QApplication::arguments();
 
   for( i = 1; i < args.size(); i++ ) {
-    c = new Catkin( true, 0 );
+    c = new EditingWindow( true, 0 );
     if( c->load( args.at( i ), true ) ) {
       c->setSTI( this );
       c->show();
@@ -339,7 +339,7 @@ void SysTrayIcon::setCopyTitle( bool status )
 
 void SysTrayIcon::newDoc()
 {
-    Catkin *c = new Catkin;
+    EditingWindow *c = new EditingWindow;
     c->setSTI( this );
     c->show();
     c->activateWindow();
@@ -385,7 +385,7 @@ void SysTrayIcon::choose( QString fname )
     fn = fname;
 
   if( !fn.isEmpty() ) {
-    Catkin *e = new Catkin( true );
+    EditingWindow *e = new EditingWindow( true );
     if( !e->load( fn, true ) ) {
       /*      e->show();
 	      else { */
@@ -699,22 +699,22 @@ void SysTrayIcon::handleResponseHeader( const QHttpResponseHeader &header ) // s
 
 void SysTrayIcon::doQuit()
 {
-  int catkins = 0;
+  int edwins = 0;
   int a;
 
   QWidgetList tlw = qApp->topLevelWidgets();
   for( a = 0; a < tlw.size(); a++ ) {
-    if( (QString( tlw[a]->metaObject()->className() ) == "Catkin")
+    if( (QString( tlw[a]->metaObject()->className() ) == "EditingWindow")
 	&& tlw[a]->isVisible() )
-      catkins++;
+      edwins++;
   }
 
 #ifndef NO_DEBUG_OUTPUT
-  qDebug() << catkins << " main windows";
+  qDebug() << edwins << " main windows";
 #endif
   
   //if( QApplication::topLevelWidgets().size() <= noWidgets )
-  if( !catkins )
+  if( !edwins )
     QCoreApplication::quit();
   else {
     qApp->setQuitOnLastWindowClosed( true );
@@ -787,7 +787,7 @@ void SysTrayIcon::doQP( QString receivedText )
     }
   }
 
-  Catkin *c = new Catkin( newPost );
+  EditingWindow *c = new EditingWindow( newPost );
   c->setSTI( this );
   c->setPostClean();
 

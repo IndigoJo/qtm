@@ -18,12 +18,12 @@
 
 *******************************************************************************/
 
-// catkin.h - Headers for QTM main window class.
+// EditingWindow.h - Headers for QTM main window class.
 
 #ifndef CATKIN_H
 #define CATKIN_H
 
-#include "ui_CatkinMainWindow.h"
+#include "ui_EditingWindowBase.h"
 #include "ui_SideWidget.h"
 #include "ui_aboutbox.h"
 //#include "ui_account_form.h"
@@ -69,16 +69,16 @@ class QPlainTextEdit;
 #define TEXTEDIT QTextEdit
 #endif
 
-class Catkin : public QMainWindow
+class EditingWindow : public QMainWindow
 {
   Q_OBJECT
 
  public:
-  Catkin( bool noRefreshBlogs = false, QWidget *widget = 0 );
+  EditingWindow( bool noRefreshBlogs = false, QWidget *widget = 0 );
   /*  Catkin( QList<QString>, QList<QString>, int,
       QWidget *parent = 0 );*/
-  Catkin( QString, QWidget *parent = 0 );
-  ~Catkin();
+  EditingWindow( QString, QWidget *parent = 0 );
+  ~EditingWindow();
 #if QT_VERSION >= 0x040200
 #ifdef USE_SYSTRAYICON
   void setSTI( SysTrayIcon * );
