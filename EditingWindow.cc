@@ -2084,9 +2084,8 @@ void EditingWindow::extractAccountDetails() // slot
 void EditingWindow::changeBlog( int b ) // slot
 {
   QString currentCategoryText;
-#ifndef NO_DEBUG_OUTPUT
   qDebug() << "Starting changeblog" << b;
-#endif
+
   currentBlog = b;
 
   currentBlogElement = currentAccountElement.firstChildElement( "blogs" )
@@ -2139,7 +2138,7 @@ void EditingWindow::changeBlog( int b ) // slot
 
 
   console->insertPlainText( QString( response ) );
-  cw.cbBlogSelector->disconnect( this, SLOT( changeBlog( int ) ) );
+  cw.cbBlogSelector->disconnect( this, SLT(_T( changeBlog( int ) ) );
   disconnect( this, SIGNAL( httpBusinessFinished() ), 0, 0 );
   handler.setProtocol( currentHttpBusiness );
   reader.setContentHandler( &handler );
@@ -3413,7 +3412,6 @@ void EditingWindow::save( const QString &fname )
   out << "\n";
 
   QDomNodeList catNodeList = currentBlogElement.firstChildElement( "categories" ).elementsByTagName( "category" );
-  out << QString( "Blog:%1\n" ).arg( cw.cbBlogSelector->currentIndex() );
   out << QString( "PrimaryID:%1\n" ).arg( cw.cbMainCat->itemData( cw.cbMainCat->currentIndex() ).toString() );
   QString catsList;
   int cats = 0;
@@ -3805,13 +3803,14 @@ bool EditingWindow::load( const QString &fname, bool fromSTI )
 				      .firstChildElement( "blogName" ).text(),
 				      blogNodeList.at( hh ).toElement()
 				      .firstChildElement( "blogid" ).text() );
-	  cw.cbBlogSelector->disconnect( SIGNAL( activated( int ) ), this, 0 );
-	  connect( cw.cbBlogSelector, SIGNAL( activated( int ) ),
-		   this, SLOT( changeBlog( int ) ) );
 
           if( blogNodeList.at( hh ).firstChildElement( "blogid" ).text() == currentBlogid )
             currentBlogElement = blogNodeList.at( hh ).toElement();
 	}
+	cw.cbBlogSelector->disconnect( SIGNAL( activated( int ) ), this, 0 );
+	qDebug() << "connecting changeBlog";
+	connect( cw.cbBlogSelector, SIGNAL( activated( int ) ),
+		 this, SLOT( changeBlog( int ) ) );
 	if( !isOK ) {
 	  QMessageBox::information( 0, tr( "QTM - Invalid blog" ),
 				    tr( "Could not get a valid blog number.  Please set it again." ),
@@ -3880,6 +3879,7 @@ bool EditingWindow::load( const QString &fname, bool fromSTI )
        break;
 
     details = accts.at( e ).toElement().firstChildElement( "details" );
+    qDebug() << "matching against" << details.firstChildElement( "title" ).text();
     if( details.firstChildElement( "server" ).text() == server &&
 	details.firstChildElement( "location" ).text() == location &&
 	details.firstChildElement( "login" ).text() == login ) {
@@ -3887,7 +3887,7 @@ bool EditingWindow::load( const QString &fname, bool fromSTI )
       currentAccountElement = accts.at( e ).toElement();
       extractAccountDetails();
       // First check whether the blog still exists
-      blogs = currentAccountElement.elementsByTagName( "blogs" );
+      blogs = currentAccountElement.elementsByTagName( "blog" );
       if( currentBlog > blogs.count() ) {
 	connect( this, SIGNAL( categoryRefreshFinished() ),
 		 this, SLOT( setLoadedPostCategories() ) );
@@ -3897,9 +3897,19 @@ bool EditingWindow::load( const QString &fname, bool fromSTI )
       }
       else {
 	// currentBlogAccount = blogs.at( currentBlog );
-	setLoadedPostCategories();
-	setPostClean();
-	return true;
+        qDebug() << "now setting categories";
+        if( blogs.at( currentBlog ).toElement().elementsByTagName( "category" ).count() ) {
+	    setLoadedPostCategories();
+	    setPostClean();
+	    return true;
+	}
+	else {
+	  connect( this, SIGNAL( categoryRefreshFinished() ),
+		   this, SLOT( setLoadedPostCategories() ) );
+	  changeBlog( currentBlog );
+	  setPostClean();
+	  return true;	  
+	}
       }
     }
   }
@@ -4065,11 +4075,18 @@ void EditingWindow::setLoadedPostCategories() // slot
   QDomNodeList catNodeList = currentBlogElement.elementsByTagName( "category" );
   b = catNodeList.count();
   if( b ) {
+    qDebug() << "populating cat list";
     for( j = 0; j < b; j++ ) {
       cw.cbMainCat->addItem( catNodeList.at( j ).firstChildElement( "categoryName" ).text(),
 			     QVariant( catNodeList.at( j ).firstChildElement( "categoryId" ).text() ) );
       cw.lwOtherCats->addItem( catNodeList.at( j ).firstChildElement( "categoryName" ).text() );
     }
+  }
+  else {
+    qDebug() << "no categories found";
+    connect( this, SIGNAL( categoryRefreshFinished() ),
+             this, SLOT( setLoadedPostCategories() ) );
+    return;
   }
 
   //qDebug( "Just populated blog selector" );
@@ -4094,12 +4111,15 @@ void EditingWindow::setLoadedPostCategories() // slot
   else {
     QDomNodeList catNodes = currentBlogElement.firstChildElement( "categories" ).elementsByTagName( "category" );
     QStringList catStringList = otherCatsList.split( ";" );
-    //qDebug() << "current Blog is" << currentBlogElement.firstChildElement( "blogName" ).text();
+    qDebug() << "current Blog is" << currentBlogElement.firstChildElement( "blogName" ).text();
+    qDebug() << "primaryCat is" << primaryCat;
 
     for( i = 0; i < catNodes.size(); i++ ) {
       cc = catNodes.at( i ).firstChildElement( "categoryId" ).text();
-      if( cc == QString::number( primaryCat ) )
+      if( cc == QString::number( primaryCat ) ) {
+	qDebug() << "found primary category";
 	cw.cbMainCat->setCurrentIndex( i );
+      }
       else {
 	if( catStringList.contains( cc ) )
 	  cw.lwOtherCats->setItemSelected( cw.lwOtherCats->item( i ), true );
@@ -4439,7 +4459,7 @@ void EditingWindow::setDirtySignals( bool d )
     }
     else {
       foreach( QWidget *w, widgetList )
-	disconnect( w, 0, this, 0 );
+	disconnect( w, 0, this, SLOT( dirtify() ) );
     }
 }
 
