@@ -2837,6 +2837,7 @@ void EditingWindow::doPreview( bool isChecked )
   QString line, techTagString;
   QString conversionString = "", conversionStringB = "";
   QTextDocument cDoc;
+  bool isPre = false;
 
   if( isChecked ) {
     ui.action_View_Console->setEnabled( false );
@@ -2845,14 +2846,24 @@ void EditingWindow::doPreview( bool isChecked )
 	    cw.leTitle->text() : "<i>Untitled</i>" );
     conversionString += EDITOR->toPlainText();
     QTextStream a( &conversionString );
-    QRegExp re( "^(<table|thead|tfoot|caption|tbody|tr|td|th|div|dl|dd|dt|ul|ol|li|pre|select|form|blockquote|address|math|p|h[1-6])>" );
+    QRegExp re( "^(<table|thead|tfoot|caption|tbody|tr|td|th|div|dl|dd|dt|ul|ol|li|select|form|blockquote|address|math|p|h[1-6])>" );
     do {
       line = a.readLine();
-      if( !line.isNull() ) {
+      if( !line.isEmpty() ) {
 	if( re.exactMatch( line ) )
 	  conversionStringB += line;
-	else
-	  conversionStringB += QString( "<p>%1</p>" ).arg( line );
+	else {
+	  if( line.startsWith( "<pre>" ) ) {
+	    isPre = true;
+	    conversionStringB += line;
+	  }
+	  else {
+	    conversionStringB += QString( isPre ? "%1\n" : "<p>%1</p>" ).arg( line );
+
+	    if( line.contains( "</pre>" ) )
+	      isPre = false;
+	  }
+	}
       }
     } while( !a.atEnd() );
 
