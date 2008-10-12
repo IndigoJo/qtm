@@ -5,8 +5,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>432</width>
-    <height>147</height>
+    <width>429</width>
+    <height>186</height>
    </rect>
   </property>
   <property name="windowTitle" >
@@ -125,6 +125,7 @@
  </widget>
  <tabstops>
   <tabstop>leLinkURL</tabstop>
+  <tabstop>leLinkText</tabstop>
   <tabstop>leLinkTitle</tabstop>
   <tabstop>chLinkTarget</tabstop>
   <tabstop>cbLinkTarget</tabstop>
@@ -173,12 +174,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>44</x>
-     <y>89</y>
+     <x>53</x>
+     <y>142</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>208</x>
-     <y>89</y>
+     <x>295</x>
+     <y>143</y>
     </hint>
    </hints>
   </connection>

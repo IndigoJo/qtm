@@ -3899,6 +3899,7 @@ bool EditingWindow::load( const QString &fname, bool fromSTI )
 	details.firstChildElement( "login" ).text() == login ) {
       qDebug() << "match found";
       currentAccountElement = accts.at( e ).toElement();
+      cw.cbAccountSelector->setCurrentIndex( e );
       extractAccountDetails();
       // First check whether the blog still exists
       blogs = currentAccountElement.elementsByTagName( "blog" );
