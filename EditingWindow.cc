@@ -740,6 +740,9 @@ void EditingWindow::doUiSetup()
   previewWindow = new QTextBrowser( mainStack );
   previewWindowID = mainStack->addWidget( previewWindow );
   // previousRaisedLSWidget = previewWindowID;
+#if QT_VERSION >= 0x040200
+  previewWindow->setOpenExternalLinks( true );
+#endif
 
   // Set up console
   console = new TEXTEDIT( mainStack );
