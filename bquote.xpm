@@ -1,5 +1,5 @@
 /* XPM */
-static char * bquote_xpm[] = {
+const char * bquote_xpm[] = {
 "16 16 2 1",	       
 " 	c None",       
 ".	c #000000",    

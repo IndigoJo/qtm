@@ -490,6 +490,8 @@ void EditingWindow::doUiSetup()
 	   this, SLOT( choose() ) );
   connect( ui.action_Save, SIGNAL( triggered( bool ) ),
 	   this, SLOT( save() ) );
+  connect( ui.action_Export, SIGNAL( triggered( bool ) ),
+           this, SLOT( exportEntry() ) );
   connect( ui.actionSave_As, SIGNAL( triggered( bool ) ),
 	   this, SLOT( saveAs() ) );
   connect( ui.action_Upload, SIGNAL( triggered( bool ) ),
@@ -1206,7 +1208,7 @@ void EditingWindow::getAccounts()
     portElement, loginElement, pwdElement, blogsElement, boolElement, attribsElement;
   QString oldCurrentAccountId, oldBlogid, currentTitle;
   QStringList thisAccountsAttribStrings;
-  int c, i, j;
+  int i, j;
 
   // Extract accounts list from account tree
   accountsList = accountsDom.elementsByTagName( "account" );
@@ -1382,7 +1384,6 @@ void EditingWindow::getAccounts()
 
 void EditingWindow::getPreferences()
 {
-  bool blogUnchanged;
   QSettings settings;
 
   PrefsDialog prefsDialog( this );
@@ -3136,7 +3137,6 @@ bool EditingWindow::load( const QString &fname, QDomDocument &dd )
 
 bool EditingWindow::load( const QString &fname, bool fromSTI )
 {
-  QDialog *pwd = 0;
   Ui::dPassword pui;
   addToConsole( "Starting load" );
   QMap<QString, QString> emap;

@@ -1,5 +1,5 @@
 /* XPM */
-static char * sysTrayIcon_xpm[] = {
+const char * sysTrayIcon_xpm[] = {
 "22 20 220 2",
 "  	c None",
 ". 	c #E6FF50",
