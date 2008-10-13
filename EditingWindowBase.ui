@@ -121,6 +121,7 @@
     <addaction name="actionOpen_recent" />
     <addaction name="action_Save" />
     <addaction name="actionSave_As" />
+    <addaction name="action_Export" />
     <addaction name="action_Upload" />
     <addaction name="separator" />
     <addaction name="actionPrint" />
@@ -189,6 +190,11 @@
     <string>Sa&amp;ve As ...</string>
    </property>
   </action>
+  <action name="action_Export" >
+   <property name="text" >
+    <string>&amp;Export</string>
+   </property>
+  </action> 
   <action name="actionPrint" >
    <property name="enabled" >
     <bool>false</bool>

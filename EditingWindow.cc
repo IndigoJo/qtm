@@ -1933,6 +1933,7 @@ void EditingWindow::blogger_getUsersBlogs( QByteArray response )
 				  QVariant( blogNodeList.at( a ).firstChildElement( "blogid" ).text() ) );
       currentBlog = cw.cbBlogSelector->currentIndex();
     }
+    cw.cbBlogSelector->setEnabled( true );
     addToConsole( accountsDom.toString( 2 ) );
 
     if( !initialChangeBlog )
@@ -2928,7 +2929,12 @@ void EditingWindow::publishPost() // slot
     statusBar()->showMessage( tr( "Cannot publish; HTTP is blocked" ), 2000 );
 }
 
-void EditingWindow::saveAs()
+void EditingWindow::exportEntry()
+{
+  saveAs( true );
+}
+
+void EditingWindow::saveAs( bool exp )
 {
   QString suggestedFilename;
 
@@ -2963,7 +2969,7 @@ already checks for the existence of a file.  Keeping in code until tested on oth
       }
     }
     else */
-    save( fn );
+    save( fn, exp );
 
     qtm->addRecentFile( cw.leTitle->text(), fn );
   }
@@ -2982,7 +2988,7 @@ void EditingWindow::save()
   save( filename );
 }
 
-void EditingWindow::save( const QString &fname )
+void EditingWindow::save( const QString &fname, bool exp )
 {
   int count, tags;
   QString text = EDITOR->document()->toPlainText();
@@ -3007,10 +3013,19 @@ void EditingWindow::save( const QString &fname )
     out << QString( "EntryNumber:%1\n" ).arg( entryNumber );
   out << QString( "Comments:%1\n" ).arg( cw.chComments->isChecked() ? "1" : "0" );
   out << QString( "TB:%1\n" ).arg( cw.chTB->isChecked() ? "1" : "0" );
-  out << QString( "AcctBlog:%1@%2 (%3)\n" ) // Include the blog name so it can be relayed to the user later
-    .arg( currentBlogid )
-    .arg( currentAccountId )
-    .arg( cw.cbBlogSelector->itemText( cw.cbBlogSelector->currentIndex() ) );
+  if( exp ) {
+    out << QString( "Server:%1\n" ).arg( server );
+    out << QString( "Location:%1\n" ).arg( location );
+    out << QString( "Login:%1\n" ).arg( login );
+    out << QString( "Password:%1\n" ).arg( password );
+    out << QString( "Blog:%1\n" ).arg( currentBlogid );
+  }
+  else {
+    out << QString( "AcctBlog:%1@%2 (%3)\n" ) // Include the blog name so it can be relayed to the user later
+      .arg( currentBlogid )
+      .arg( currentAccountId )
+      .arg( cw.cbBlogSelector->itemText( cw.cbBlogSelector->currentIndex() ) );
+  }
   out << "Tags:";
   tags = cw.lwTags->count();
   for( count = 0; count < tags; count++ ) {
@@ -3130,9 +3145,10 @@ bool EditingWindow::load( const QString &fname, bool fromSTI )
   QDomNodeList accts;
   bool getDetailsAgain = false;
   bool isOK;
-  int b, c, d, hh;
+  int b, c, d, g, h, hh;
   noAutoSave = true;
   QFile f( fname );
+  QDomElement details; 
 
   ui.actionSave_blogs->setEnabled( true );
   ui.actionSave_blogs->setVisible( true );
@@ -3302,38 +3318,47 @@ bool EditingWindow::load( const QString &fname, bool fromSTI )
 
   if( !loadedAccountId.isNull() ) {
     accts = accountsDom.elementsByTagName( "account" );
-    for( int g = 0; g <= accts.count(); g++ ) {
+    for( g = 0; g <= accts.count(); g++ ) {
       if( g == accts.count() ) {
+	qDebug() << accts.count() << "accounts";
 	// i.e. if it gets to the end of the accounts tree without finding the account
 	QMessageBox::information( 0, tr( "QTM - No such account" ),
 				  tr( "QTM could not find this account (perhaps it was deleted).\n\n"
-				      "Will set up a blank default account; you will need to fill in the access"
+				      "Will set up a blank default account; you will need to fill in the access "
 				      "details by choosing Accounts from the File menu." ),
 				  QMessageBox::Ok );
 	QDomElement newDefaultAccount = accountsDom.createElement( "account" );
 	newDefaultAccount.setAttribute( "id", QString( "newAccount_%1" ).arg( QDateTime::currentDateTime().toString( Qt::ISODate ) ) );
 	QDomElement newDetailElement = accountsDom.createElement( "details" );
-	QDomElement newNameElement = accountsDom.createElement( "name" );
+	QDomElement newNameElement = accountsDom.createElement( "title" );
 	newNameElement.appendChild( QDomText( accountsDom.createTextNode( tr( "New blank element" ) ) ) );
 	newDetailElement.appendChild( newNameElement );
 	newDefaultAccount.appendChild( newDetailElement );
-	accountsDom.documentElement().appendChild( newDefaultAccount );
+	accountsDom.firstChildElement( "accounts" ).appendChild( newDefaultAccount );
 	currentAccountElement = newDefaultAccount;
-        extractAccountDetails();
+        cw.cbAccountSelector->addItem( tr( "New blank element" ),
+                                       newDefaultAccount.attribute( "id" ) );
+        cw.cbAccountSelector->setCurrentIndex( cw.cbAccountSelector->count()-1 );
+	cw.cbBlogSelector->clear();
+        cw.cbBlogSelector->setEnabled( false );
+        cw.cbMainCat->clear();
+        cw.cbMainCat->setEnabled( false );
+        cw.lwOtherCats->clear();
+        cw.lwOtherCats->setEnabled( false );
 	setPostClean();
 	return true;
       }
-
+      
       if( accts.at( g ).toElement().attribute( "id" ) == loadedAccountId ) {
 	qDebug() << "found the account:" << loadedAccountId;
 	populateAccountList();
 	currentAccountElement = accts.at( g ).toElement();
-        extractAccountDetails();
+	extractAccountDetails();
 
 	QString st;
-	for( int h = 0; h < cw.cbAccountSelector->count(); h++ ) {
+	for( h = 0; h < cw.cbAccountSelector->count(); h++ ) {
 	  st = cw.cbAccountSelector->itemData( h ).toString();
- 	  if( st == loadedAccountId )
+	  if( st == loadedAccountId )
 	    cw.cbAccountSelector->setCurrentIndex( h );
 	}
 
@@ -3346,8 +3371,8 @@ bool EditingWindow::load( const QString &fname, bool fromSTI )
 				      blogNodeList.at( hh ).toElement()
 				      .firstChildElement( "blogid" ).text() );
 
-          if( blogNodeList.at( hh ).firstChildElement( "blogid" ).text() == currentBlogid )
-            currentBlogElement = blogNodeList.at( hh ).toElement();
+	  if( blogNodeList.at( hh ).firstChildElement( "blogid" ).text() == currentBlogid )
+	    currentBlogElement = blogNodeList.at( hh ).toElement();
 	}
 	cw.cbBlogSelector->disconnect( SIGNAL( activated( int ) ), this, 0 );
 	qDebug() << "connecting changeBlog";
@@ -3372,8 +3397,8 @@ bool EditingWindow::load( const QString &fname, bool fromSTI )
 	// Now populate and set the categories
 	QDomElement catsElement = currentBlogElement.firstChildElement( "categories" );
 	if( !catsElement.isNull() ) {
-          cw.cbMainCat->clear();
-          cw.lwOtherCats->clear();
+	  cw.cbMainCat->clear();
+	  cw.lwOtherCats->clear();
 
 	  QDomNodeList catNodeList = catsElement.elementsByTagName( "category" );
 	  int b = catNodeList.count();
@@ -3403,6 +3428,7 @@ bool EditingWindow::load( const QString &fname, bool fromSTI )
 	return true;
       }
     }
+
     filename = fname;
     setPostClean();
     return true;
@@ -3412,7 +3438,6 @@ bool EditingWindow::load( const QString &fname, bool fromSTI )
   // belong to an account; if it does, there is no need to check for the password
 
   qDebug() << "this is an old-style account";
-  QDomElement details; 
   QDomNodeList blogs;
 
   accts = accountsDom.documentElement().elementsByTagName( "account" );

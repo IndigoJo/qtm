@@ -189,8 +189,9 @@ class EditingWindow : public QMainWindow
   void choose( const QString fname = QString() );
   void openRecentFile();
   void save();
-  void save( const QString & );
-  void saveAs();
+  void save( const QString &, bool exp = false );
+  void exportEntry();
+  void saveAs( bool exp = false );
   void stopThisJob();
   void handleDone( bool );
   void handleResponseHeader( const QHttpResponseHeader & );
