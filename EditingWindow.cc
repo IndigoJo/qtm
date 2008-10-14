@@ -3951,13 +3951,13 @@ void EditingWindow::setDirtySignals( bool d )
 
     if( d ) {
       connect( EDITOR, SIGNAL( textChanged() ), this, SLOT( dirtify() ) );
-      connect( cw.cbAccountSelector, SIGNAL( currentIndexChanged( int ) ), this, SLOT( dirtify() ) );
-      connect( cw.cbBlogSelector, SIGNAL( currentIndexChanged( int ) ), this, SLOT( dirtify() ) );
-      connect( cw.cbStatus, SIGNAL( currentIndexChanged( int ) ), this, SLOT( dirtify() ) );
-      connect( cw.chComments, SIGNAL( toggled( bool ) ), this, SLOT( dirtify() ) );
-      connect( cw.chTB, SIGNAL( toggled( bool ) ), this, SLOT( dirtify() ) );
-      connect( cw.cbMainCat, SIGNAL( currentIndexChanged( int ) ), this, SLOT( dirtify() ) );
-      connect( cw.lwOtherCats, SIGNAL( itemSelectionChanged() ), this, SLOT( dirtify() ) );
+      connect( cw.cbAccountSelector, SIGNAL( activated( int ) ), this, SLOT( dirtify() ) );
+      connect( cw.cbBlogSelector, SIGNAL( activated( int ) ), this, SLOT( dirtify() ) );
+      connect( cw.cbStatus, SIGNAL( activated( int ) ), this, SLOT( dirtify() ) );
+      connect( cw.chComments, SIGNAL( clicked( bool ) ), this, SLOT( dirtify() ) );
+      connect( cw.chTB, SIGNAL( clicked( bool ) ), this, SLOT( dirtify() ) );
+      connect( cw.cbMainCat, SIGNAL( activated( int ) ), this, SLOT( dirtify() ) );
+      connect( cw.lwOtherCats, SIGNAL( activated( const QModelIndex & ) ), this, SLOT( dirtify() ) );
       connect( cw.teExcerpt, SIGNAL( textChanged() ), this, SLOT( dirtify() ) );
     }
     else {
