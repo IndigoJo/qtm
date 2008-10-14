@@ -913,7 +913,8 @@ void EditingWindow::setInitialAccount()
     QDomElement thisTitleElem;
     cw.cbAccountSelector->clear();
 
-    if( accountsList.count() == 1 ) {
+    if( accountsList.count() == 1 &&
+	accountsList.at( 0 ).firstChildElement( "details" ).isNull() ) {
       // This is if there is just one legacy account
       QDomElement detailElem, titleElem, serverElem, portElem, locElem,
 	loginElem, pwdElem;
@@ -1928,6 +1929,11 @@ void EditingWindow::blogger_getUsersBlogs( QByteArray response )
 				 "because you supplied a wrong file name "
 				 "or password." ) );
       addToConsole( QString( "%1\n" ).arg( fstring ) );
+      cw.cbBlogSelector->setEnabled( false );
+      cw.cbMainCat->setEnabled( false );
+      cw.cbMainCat->clear();
+      cw.lwOtherCats->setEnabled( false );
+      cw.lwOtherCats->clear();
     }
   }
   else {

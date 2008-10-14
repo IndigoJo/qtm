@@ -96,8 +96,6 @@ SysTrayIcon::SysTrayIcon( bool noWindow, QObject *parent )
   settings.endGroup();
 
 #ifndef DONT_USE_DBUS
-  /*  dbus = new QDbusConnection( "qtm" );
-  dbus = connectToBus( QDBusConnection::ActivationBus, "qtm" );*/
   new DBusAdaptor( this );
   QDBusConnection::sessionBus().registerObject( "/MainApplication", this );
   QDBusConnection::sessionBus().registerService( "uk.co.blogistan.catkin" );
@@ -134,8 +132,6 @@ SysTrayIcon::SysTrayIcon( bool noWindow, QObject *parent )
   configureTemplates = new QAction( tr( "&Configure ..." ), 0 );
   connect( configureTemplates, SIGNAL( triggered( bool ) ),
 	   this, SLOT( configureQuickpostTemplates() ) );
-  // templateMenu->addAction( configureTemplates );
-  // configureTemplates->setMenu( templateMenu );
   configureTemplates->setObjectName( "QTM Configure Templates" );
   setupQuickpostTemplates();
   menu->addAction( newWindowAtStartup );
@@ -175,8 +171,6 @@ SysTrayIcon::SysTrayIcon( bool noWindow, QObject *parent )
   connect( this, SIGNAL( activated( QSystemTrayIcon::ActivationReason ) ),
 	   this, SLOT( iconActivated( QSystemTrayIcon::ActivationReason ) ) );
 #endif
-  /*connect( http, SIGNAL( done( bool ) ),
-    this, SLOT( handleDone( bool ) ) ); */
 
   if( handleArguments() )
     noNewWindow = true;
@@ -215,10 +209,7 @@ bool SysTrayIcon::handleArguments()
       rv = true;
     }
     else {
-      /*QMessageBox::showMessage( 0, QObject::tr( "Error" ),
-				QObject::tr( "Could not load %1." ).arg( args.at( i ) ),
-				QMessageBox::Cancel, QMessageBox::NoButton ); */
-				failedFiles.append( args.at( i ) );
+      failedFiles.append( args.at( i ) );
     }
   }
   if( failedFiles.size() ) {
@@ -371,14 +362,6 @@ void SysTrayIcon::choose( QString fname )
 
   QString extn( QString( "%1 (*.%2)" ).arg( tr( "Blog entries" ) )
 		.arg( localStorageFileExtn ) );
-  /*  QFileDialog *fd = new QFileDialog;
-  fd->setFileMode( QFileDialog::AnyFile );
-  fd->setAcceptMode( QFileDialog::AcceptOpen );
-  fd->setWindowTitle( tr( "Choose a file to open" ) );
-  fd->setFilter( extn );
-  if( fd->exec() ) {
-    filesSelected = fd->selectedFiles();
-    fn = filesSelected[0];*/
   
   if( fname.isEmpty() )
     fn = QFileDialog::getOpenFileName( 0, tr( "Choose a file to open" ),
@@ -389,8 +372,6 @@ void SysTrayIcon::choose( QString fname )
   if( !fn.isEmpty() ) {
     EditingWindow *e = new EditingWindow( true );
     if( !e->load( fn, true ) ) {
-      /*      e->show();
-	      else { */
 #ifdef Q_WS_MAC
       QMessageBox::warning( 0, "QTM",
 			    tr( "Could not load the file you specified." ),
@@ -432,16 +413,9 @@ void SysTrayIcon::iconActivated( QSystemTrayIcon::ActivationReason ar )
 void SysTrayIcon::quickpost( QClipboard::Mode mode )
 {
   int i, j;
-  //QListIterator i;
-  //QStringListIterator j;
   bool qpt = false;
   QRegExp regExp;
 
-  /*#if QT_VERSION >= 0x040300 && !defined DONT_USE_SSL
-  QRegExp httpRegExp( "^(http|https):\\/\\/" );
-#else
-  QRegExp httpRegExp( "^http:\\/\\/" );
-#endif */
   cbtext = QApplication::clipboard()->text( mode );
 
   if( cbtext == "" )
@@ -454,7 +428,7 @@ void SysTrayIcon::quickpost( QClipboard::Mode mode )
 	&& !cbtext.startsWith( "https://" )
 #endif
 	) {
-      //qDebug( "doesn't match" );
+
       // If it's not obviously an URL.
       if( cbtext.startsWith( "https" ) ) {
 	if( supportsMessages() )
@@ -479,17 +453,12 @@ void SysTrayIcon::quickpost( QClipboard::Mode mode )
       // Otherwise, it's an URL, and has to be downloaded to extract the title.
 	if( !httpBusy ) {
 	  if( assocHostLists.count() ) {
-	    // i = QListIterator( assocHostLists );
-	    //while( i.hasNext() ) {
 	    for( i = 0; i < assocHostLists.count(); ++i ) {
 	      if( assocHostLists.at( i ).count() ) {
 		for( j = 0; j < assocHostLists.at( i ).count(); j++ ) {
-		  //qDebug() << "Trying " << assocHostLists.at( i ).at( j )
-		  //  .toAscii().data();
 		  if( (!assocHostLists.at( i ).at( j ).isEmpty()) &&
 		      cbtext.contains( QRegExp( QString( "[/\\.]%1[/\\.]" )
 						.arg( assocHostLists.at( i ).at( j ) ) ) ) ) {
-		    //qDebug() << "Match: " << cbtext;
 		    qpt = true;
 		    quickpostFromTemplate( i, 
 					   quickpostTemplateActions.value( i )->postTemplate(),
@@ -592,7 +561,6 @@ void SysTrayIcon::quickpostFromTemplate( int id, QString templateString, QString
       connect( http, SIGNAL( hostLookupFailed() ),
 	       this, SLOT( handleHostLookupFailed() ) );
     }
-    // cbtext = templateString.replace( "%url%", cbtext );
   }
 }
 
@@ -603,12 +571,9 @@ void SysTrayIcon::quickpostFromDBus( QString &url, QString &content )
   for( i = 0; i < assocHostLists.count(); ++i ) {
     if( assocHostLists.at( i ).count() ) {
       for( j = 0; j < assocHostLists.at( i ).count(); j++ ) {
-        //qDebug() << "Trying " << assocHostLists.at( i ).at( j )
-        //  .toAscii().data();
         if( (!assocHostLists.at( i ).at( j ).isEmpty()) &&
             url.contains( QRegExp( QString( "[/\\.]%1[/\\.]" )
                                    .arg( assocHostLists.at( i ).at( j ) ) ) ) ) {
-          //qDebug() << "Match: " << cbtext;
           activeTemplate = i;
           break;
         }
@@ -724,21 +689,6 @@ void SysTrayIcon::doQuit()
   }
 
 }
-//QCoreApplication::quit(); */
-
-/*
-#ifdef Q_WS_MAC
-  if( QApplication::topLevelWidgets().isEmpty() ) {
-    QCoreApplication::quit();
-  } else {
-    connect( qApp, SIGNAL( lastWindowClosed() ), qApp, SLOT( quit() ) );
-    qApp->closeAllWindows();
-  }
-#else
-  connect( qApp, SIGNAL( lastWindowClosed() ), qApp, SLOT( quit() ) );
-  qApp->closeAllWindows();
-#endif
-} */
 
 void SysTrayIcon::doQP( QString receivedText )
 {
@@ -956,9 +906,6 @@ void SysTrayIcon::configureQuickpostTemplates( QWidget *parent )
   QString templateFileName;
   QString templateFile;
   QSettings settings;
-
-  /*  QList<QString> titles, templateStrings;
-      QStringListModel *titlesModel;*/
 
   QuickpostTemplateDialog templateDialog( templateTitleList, templateList,
 					  defaultPublishStatusList, copyTitleStatusList,
