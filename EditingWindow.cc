@@ -1205,10 +1205,11 @@ void EditingWindow::getAccounts()
   QDomNodeList accountsList, thisAccountsAttribs;
   QDomDocument newAccountsDom;
   QDomElement newQTMAccounts, newAccount, detailElement, nameElement, serverElement, locationElement, 
-    portElement, loginElement, pwdElement, blogsElement, boolElement, attribsElement;
+    portElement, loginElement, pwdElement, blogsElement, boolElement, attribsElement, hbtElement;
   QString oldCurrentAccountId, oldBlogid, currentTitle;
   QStringList thisAccountsAttribStrings;
   int i, j;
+  bool ok;
 
   // Extract accounts list from account tree
   accountsList = accountsDom.elementsByTagName( "account" );
@@ -1223,6 +1224,11 @@ void EditingWindow::getAccounts()
     acct.login = detailElement.firstChildElement( "login" ).text();
     acct.password = detailElement.firstChildElement( "password" ).text();
 
+    acct.hostedBlogType = 0;
+    int hbt = detailElement.firstChildElement( "hostedBlogType" ).text().toInt( &ok );
+    if( ok )
+      acct.hostedBlogType = hbt;
+	  
     acct.categoriesEnabled = false;
     acct.postDateTime = false;
     acct.comments = false;
@@ -1268,6 +1274,8 @@ void EditingWindow::getAccounts()
       detailElement = newAccountsDom.createElement( "details" );
       nameElement = newAccountsDom.createElement( "title" );
       nameElement.appendChild( newAccountsDom.createTextNode( returnedAccountsList.at( i ).name ) );
+      hbtElement = newAccountsDom.createElement( "hostedBlogType" );
+      hbtElement.appendChild( newAccountsDom.createTextNode( QString::number( returnedAccountsList.at( i ).hostedBlogType ) ) );
       serverElement = newAccountsDom.createElement( "server" );
       serverElement.appendChild( newAccountsDom.createTextNode( returnedAccountsList.at( i ).server ) );
       locationElement = newAccountsDom.createElement( "location" );
@@ -1280,6 +1288,7 @@ void EditingWindow::getAccounts()
       pwdElement.appendChild( newAccountsDom.createTextNode( returnedAccountsList.at( i ).password ) );
 
       detailElement.appendChild( nameElement );
+      detailElement.appendChild( hbtElement );
       detailElement.appendChild( serverElement );
       detailElement.appendChild( locationElement );
       detailElement.appendChild( portElement );

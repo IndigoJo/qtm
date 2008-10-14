@@ -136,6 +136,9 @@ void AccountsDialog::changeListIndex( int index )
   leLogin->setText( accountList[currentRow].login );
   lePassword->setText( accountList[currentRow].password );
 
+  if( accountList[currentRow].hostedBlogType != -1 )
+    cbHostedBlogType->setCurrentIndex( accountList[currentRow].hostedBlogType );	  
+
   chCategoriesEnabled->setCheckState( accountList[currentRow].categoriesEnabled ?
 				      Qt::Checked : Qt::Unchecked );
   chPostDateTime->setCheckState( accountList[currentRow].postDateTime ?
@@ -287,7 +290,7 @@ void AccountsDialog::on_leBlogURI_returnPressed()
     return;
   }
 
-  bool found = false;
+  //bool found = false;
   //  QStringList hostedAccountStrings, hostedAccountServers, hostedAccountLocations;
   QStringList wpmuHosts;
   wpmuHosts << "wordpress.com" << "blogsome.com" << "blogs.ie"
@@ -334,10 +337,10 @@ void AccountsDialog::on_leBlogURI_returnPressed()
   }
 
   // Is this a self-hosted Wordpress, Textpattern or Drupal site?
-  if( cbHostedBlogType->currentIndex() >= 4 &&
-      cbHostedBlogType->currentIndex() <= 6 ) {
+  if( cbHostedBlogType->currentIndex() >= 5 &&
+      cbHostedBlogType->currentIndex() <= 7 ) {
     QString endpoint;
-    if( cbHostedBlogType->currentIndex() == 6 ) // i.e. Textpattern
+    if( cbHostedBlogType->currentIndex() == 7 ) // i.e. Textpattern
       endpoint = "rpc/index.php";
     else
       endpoint = "xmlrpc.php";
@@ -483,8 +486,6 @@ void AccountsDialog::on_leLocation_textEdited( const QString &text )
 
 void AccountsDialog::on_lePort_textEdited( const QString &text )
 {
-  bool ok;
-
   if( currentRow != -1 )
     accountList[currentRow].port = text;
 }
@@ -528,25 +529,31 @@ void AccountsDialog::on_chTB_toggled( bool )
 void AccountsDialog::on_cbHostedBlogType_activated( int newIndex )
 {
   switch( newIndex ) {
-  case 0: // wordpress.com
+  case 1: // wordpress.com
     leServer->setText( "yourblog.wordpress.com" );
     leLocation->setText( "/xmlrpc.php" );
     break;
-  case 1: // TypePad
+  case 2: // TypePad
     leServer->setText( "www.typepad.com" );
     leLocation->setText( "/t/api" );
     break;
-  case 2: // SquareSpace
+  case 3: // SquareSpace
     leServer->setText( "www.squarespace.com" );
     leLocation->setText( "/do/process/external/PostInterceptor" );
     break;
-  case 3: // Movable type
-  case 4: // Self-hosted Wordpress
-  case 5: // TextPattern  
+  case 4: // Movable type
+  case 5: // Self-hosted Wordpress
+    leServer->clear();
+    leLocation->clear();
+    break;
+  case 6: // Drupal  
+  case 7: // TextPattern
+    chTB->setChecked( false ); // these platforms don't support it
     leServer->clear();
     leLocation->clear();
     break;
   }
+  accountList[currentRow].hostedBlogType = newIndex;
 }
 
 bool AccountsDialog::eventFilter( QObject *obj, QEvent *event )
@@ -560,7 +567,7 @@ bool AccountsDialog::eventFilter( QObject *obj, QEvent *event )
             return QObject::eventFilter( obj, event );
        }
    }
-   
+ 
    return QObject::eventFilter( obj, event );
 }
 

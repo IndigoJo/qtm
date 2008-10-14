@@ -47,6 +47,7 @@ class AccountsDialog : public QDialog, public Ui::AccountsForm
 public:
   typedef struct _acct {
     QString id;
+    int hostedBlogType;
     QString name;
     QString server;
     QString location;

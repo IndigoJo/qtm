@@ -148,6 +148,11 @@
          </item>
          <item row="1" column="1" colspan="3" >
           <widget class="QComboBox" name="cbHostedBlogType" >
+            <item>
+              <property name="text">
+                <string>None</string>
+              </property>
+            </item>
            <item>
             <property name="text" >
              <string>Wordpress.com</string>
