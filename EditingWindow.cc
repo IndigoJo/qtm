@@ -1824,7 +1824,7 @@ void EditingWindow::changeAccount( int a ) // slot
       for( int i = 0; i < b; i++ )
 	cw.cbBlogSelector->addItem( blogsList.at( i ).firstChildElement( "blogName" ).text(),
 				    blogsList.at( i ).firstChildElement( "blogid" ).text() );
-
+      cw.cbBlogSelector->setEnabled( true );
       emit blogRefreshFinished();
       if( QApplication::overrideCursor() != 0 )
 	QApplication::restoreOverrideCursor();
@@ -1919,47 +1919,49 @@ void EditingWindow::blogger_getUsersBlogs( QByteArray response )
   cw.cbBlogSelector->clear();
 
   int i = blogNodeList.count();
-
-  if( !i ) {
-#ifndef NO_DEBUG_OUTPUT
-    qDebug() << "No blogs";
-#endif
-    QString fstring = handler.faultString();
-    if( !fstring.isEmpty() ) {
-      QMessageBox::critical( this, tr( "Could not connect" ),
-			     tr( "Could not connect to the server.\nThis may be "
-				 "because you supplied a wrong file name "
-				 "or password." ) );
-      addToConsole( QString( "%1\n" ).arg( fstring ) );
-      cw.cbBlogSelector->setEnabled( false );
-      cw.cbMainCat->setEnabled( false );
-      cw.cbMainCat->clear();
-      cw.lwOtherCats->setEnabled( false );
-      cw.lwOtherCats->clear();
-    }
+  QString fstring = handler.faultString();
+  if( !fstring.isEmpty() ) {
+    statusBar()->showMessage( tr( "Could not connect - check account details & password" ), 2000 );
+    addToConsole( QString( "%1\n" ).arg( fstring ) );
+    cw.cbBlogSelector->setEnabled( false );
+    cw.cbMainCat->setEnabled( false );
+    cw.cbMainCat->clear();
+    cw.lwOtherCats->setEnabled( false );
+    cw.lwOtherCats->clear();
+    if( QApplication::overrideCursor() )
+      QApplication::restoreOverrideCursor();
   }
   else {
+    if( !i ) {
 #ifndef NO_DEBUG_OUTPUT
-    qDebug() << "Blogs found";
+      qDebug() << "No blogs";
+#endif
+      statusBar()->showMessage( tr( "No blogs found" ), 2000 );
+    }
+    else {
+#ifndef NO_DEBUG_OUTPUT
+      qDebug() << "Blogs found";
 #endif
 
-    currentAccountElement.removeChild( currentAccountElement.firstChildElement( "blogs" ) );
-    currentAccountElement.appendChild( accountsDom.importNode( importedBlogList.firstChildElement( "blogs" ), true ) );
+      currentAccountElement.removeChild( currentAccountElement.firstChildElement( "blogs" ) );
+      currentAccountElement.appendChild( accountsDom.importNode( importedBlogList.firstChildElement( "blogs" ), true ) );
 
-    for( int a = 0; a < i; a++ ) {
-      cw.cbBlogSelector->addItem( blogNodeList.at( a ).firstChildElement( "blogName" ).text(),
-				  QVariant( blogNodeList.at( a ).firstChildElement( "blogid" ).text() ) );
-      currentBlog = cw.cbBlogSelector->currentIndex();
+      for( int a = 0; a < i; a++ ) {
+	cw.cbBlogSelector->addItem( blogNodeList.at( a ).firstChildElement( "blogName" ).text(),
+				    QVariant( blogNodeList.at( a ).firstChildElement( "blogid" ).text() ) );
+	currentBlog = cw.cbBlogSelector->currentIndex();
+      }
+      cw.cbBlogSelector->setEnabled( true );
+      addToConsole( accountsDom.toString( 2 ) );
+
+      if( !initialChangeBlog )
+	connect( cw.cbBlogSelector, SIGNAL( activated( int ) ),
+		 this, SLOT( changeBlog( int ) ) );
+
+      if( loadedEntryBlog != 999 )
+	connect( this, SIGNAL( httpBusinessFinished() ),
+		 this, SLOT( doInitialChangeBlog() ) );
     }
-    cw.cbBlogSelector->setEnabled( true );
-    addToConsole( accountsDom.toString( 2 ) );
-
-    if( !initialChangeBlog )
-      connect( cw.cbBlogSelector, SIGNAL( activated( int ) ),
-	       this, SLOT( changeBlog( int ) ) );
-
-    connect( this, SIGNAL( httpBusinessFinished() ),
-	     this, SLOT( doInitialChangeBlog() ) );
   }
 #ifndef NO_DEBUG_OUTPUT
   qDebug() << "Finished handling the output";
@@ -2114,10 +2116,7 @@ void EditingWindow::mt_getCategoryList( QByteArray response )
     qSort( catList.begin(), catList.end(), EditingWindow::caseInsensitiveLessThan );
 
   if( xfault ) {
-      QMessageBox::critical( this, tr( "Could not connect" ),
-			     tr( "Could not connect to the server.\n"
-				 "This may be because you supplied\n"
-				 "the wrong file name or password." ) );
+    statusBar()->showMessage( tr( "Could not connect; check account details & password" ), 2000 );
   }
   else {
     if( !i ) {
