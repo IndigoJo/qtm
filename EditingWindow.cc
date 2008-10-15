@@ -1676,6 +1676,11 @@ void EditingWindow::populateBlogList() // slot
    connect( cw.cbBlogSelector, SIGNAL( activated( int ) ),
 	    this, SLOT( changeBlog( int ) ) );
   }
+  else {
+    cw.cbBlogSelector->setEnabled( false );
+    cw.cbMainCat->setEnabled( false );
+    cw.lwOtherCats->setEnabled( false );
+  }
 }
 
 void EditingWindow::refreshBlogList() // slot
