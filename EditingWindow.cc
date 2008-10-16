@@ -3043,8 +3043,9 @@ void EditingWindow::save( const QString &fname, bool exp )
       .arg( currentAccountId )
       .arg( cw.cbBlogSelector->itemText( cw.cbBlogSelector->currentIndex() ) );
   }
-  out << "Tags:";
   tags = cw.lwTags->count();
+  if( tags )
+    out << "Tags:";
   for( count = 0; count < tags; count++ ) {
     out << QString( count ? ";%1" : "%1" )
       .arg( cw.lwTags->item( count )->text().replace( ' ', '+' ) );
