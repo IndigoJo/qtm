@@ -3023,7 +3023,7 @@ void EditingWindow::save( const QString &fname, bool exp )
   }
 
   QTextStream out( &f );
-  out << "QTM saved blog entry v3.0\n";
+  out << (exp ? "QTM saved blog entry v2.0\n" : "QTM saved blog entry v3.0\n");
   out << QString( "Title:%1\n" ).arg( cw.leTitle->text() );
   out << QString( "Publish:%1\n" ).arg( QString::number( cw.cbStatus->currentIndex() ) );
   if( entryBlogged )
@@ -3035,7 +3035,7 @@ void EditingWindow::save( const QString &fname, bool exp )
     out << QString( "Location:%1\n" ).arg( location );
     out << QString( "Login:%1\n" ).arg( login );
     out << QString( "Password:%1\n" ).arg( password );
-    out << QString( "Blog:%1\n" ).arg( currentBlogid );
+    out << QString( "Blog:%1\n" ).arg( cw.cbBlogSelector->currentIndex() );
   }
   else {
     out << QString( "AcctBlog:%1@%2 (%3)\n" ) // Include the blog name so it can be relayed to the user later
@@ -3482,6 +3482,7 @@ bool EditingWindow::load( const QString &fname, bool fromSTI )
       else {
         qDebug() << "now setting categories";
         if( blogs.at( currentBlog ).toElement().elementsByTagName( "category" ).count() ) {
+
 	    setLoadedPostCategories();
 	    setPostClean();
 	    return true;
