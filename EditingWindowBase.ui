@@ -172,9 +172,6 @@
    </property>
   </action>
   <action name="action_Save" >
-   <property name="icon" >
-    <iconset/>
-   </property>
    <property name="text" >
     <string>&amp;Save</string>
    </property>
@@ -192,15 +189,12 @@
   </action>
   <action name="action_Export" >
    <property name="text" >
-    <string>&amp;Export</string>
+    <string>&amp;Export ...</string>
    </property>
   </action> 
   <action name="actionPrint" >
    <property name="enabled" >
     <bool>false</bool>
-   </property>
-   <property name="icon" >
-    <iconset/>
    </property>
    <property name="text" >
     <string>Print ...</string>
@@ -302,9 +296,6 @@
    </property>
   </action>
   <action name="action_Bold" >
-   <property name="icon" >
-    <iconset/>
-   </property>
    <property name="text" >
     <string>&amp;Bold</string>
    </property>
@@ -313,9 +304,6 @@
    </property>
   </action>
   <action name="action_Italic" >
-   <property name="icon" >
-    <iconset/>
-   </property>
    <property name="text" >
     <string>&amp;Italic</string>
    </property>
@@ -324,9 +312,6 @@
    </property>
   </action>
   <action name="actionU_nderline" >
-   <property name="icon" >
-    <iconset/>
-   </property>
    <property name="text" >
     <string>U&amp;nderline</string>
    </property>
@@ -335,17 +320,11 @@
    </property>
   </action>
   <action name="actionP_aragraph" >
-   <property name="icon" >
-    <iconset/>
-   </property>
    <property name="text" >
     <string>P&amp;aragraph</string>
    </property>
   </action>
   <action name="action_Link" >
-   <property name="icon" >
-    <iconset/>
-   </property>
    <property name="text" >
     <string>&amp;Link ...</string>
    </property>
@@ -359,9 +338,6 @@
    </property>
   </action>
   <action name="actionI_mage" >
-   <property name="icon" >
-    <iconset/>
-   </property>
    <property name="text" >
     <string>I&amp;mage ...</string>
    </property>
@@ -375,9 +351,6 @@
    </property>
   </action>
   <action name="action_More" >
-   <property name="icon" >
-    <iconset/>
-   </property>
    <property name="text" >
     <string>&amp;More</string>
    </property>
