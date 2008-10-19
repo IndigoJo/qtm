@@ -1158,7 +1158,7 @@ void EditingWindow::refreshCategories()
     methodCall.appendChild( XmlMethodName( doc, "mt.getCategoryList" ) );
 
     QDomElement params = doc.createElement( "params" );
-    params.appendChild( XmlValue( doc, "string", cw.cbBlogSelector->itemData( cw.cbBlogSelector->currentIndex() ).toString() ) );
+    params.appendChild( XmlValue( doc, "string", currentBlogid ) );
     params.appendChild( XmlValue( doc, "string", currentAccountElement.firstChildElement( "details" )
                                                  .firstChildElement( "login" ).text() ) );
     params.appendChild( XmlValue( doc, "string", currentAccountElement.firstChildElement( "details" )
@@ -1676,11 +1676,6 @@ void EditingWindow::populateBlogList() // slot
    connect( cw.cbBlogSelector, SIGNAL( activated( int ) ),
 	    this, SLOT( changeBlog( int ) ) );
   }
-  else {
-    cw.cbBlogSelector->setEnabled( false );
-    cw.cbMainCat->setEnabled( false );
-    cw.lwOtherCats->setEnabled( false );
-  }
 }
 
 void EditingWindow::refreshBlogList() // slot
@@ -1860,8 +1855,7 @@ void EditingWindow::changeBlog( int b ) // slot
 
   currentBlog = b;
 
-  currentBlogElement = currentAccountElement.firstChildElement( "blogs" )
-    .elementsByTagName( "blog" ).at( currentBlog ).toElement();
+  currentBlogElement = currentAccountElement.elementsByTagName( "blog" ).at( currentBlog ).toElement();
   currentBlogid = currentBlogElement.firstChildElement( "blogid" ).text();
 #ifndef NO_DEBUG_OUTPUT
   qDebug() << currentBlogid;
@@ -3028,7 +3022,7 @@ void EditingWindow::save( const QString &fname, bool exp )
   }
 
   QTextStream out( &f );
-  out << "QTM saved blog entry v3.0\n";
+  out << (exp ? "QTM saved blog entry v2.0\n" : "QTM saved blog entry v3.0\n");
   out << QString( "Title:%1\n" ).arg( cw.leTitle->text() );
   out << QString( "Publish:%1\n" ).arg( QString::number( cw.cbStatus->currentIndex() ) );
   if( entryBlogged )
@@ -3040,7 +3034,7 @@ void EditingWindow::save( const QString &fname, bool exp )
     out << QString( "Location:%1\n" ).arg( location );
     out << QString( "Login:%1\n" ).arg( login );
     out << QString( "Password:%1\n" ).arg( password );
-    out << QString( "Blog:%1\n" ).arg( currentBlogid );
+    out << QString( "Blog:%1\n" ).arg( cw.cbBlogSelector->currentIndex() );
   }
   else {
     out << QString( "AcctBlog:%1@%2 (%3)\n" ) // Include the blog name so it can be relayed to the user later
@@ -3048,8 +3042,9 @@ void EditingWindow::save( const QString &fname, bool exp )
       .arg( currentAccountId )
       .arg( cw.cbBlogSelector->itemText( cw.cbBlogSelector->currentIndex() ) );
   }
-  out << "Tags:";
   tags = cw.lwTags->count();
+  if( tags )
+    out << "Tags:";
   for( count = 0; count < tags; count++ ) {
     out << QString( count ? ";%1" : "%1" )
       .arg( cw.lwTags->item( count )->text().replace( ' ', '+' ) );
@@ -3487,6 +3482,7 @@ bool EditingWindow::load( const QString &fname, bool fromSTI )
       else {
         qDebug() << "now setting categories";
         if( blogs.at( currentBlog ).toElement().elementsByTagName( "category" ).count() ) {
+
 	    setLoadedPostCategories();
 	    setPostClean();
 	    return true;
