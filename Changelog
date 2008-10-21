@@ -1,5 +1,18 @@
 Changelog:
 
+0.7
+
+New feature: Ability to specify "no categories" for a post, via a checkbox
+in the categories page
+New feature: Ability to "export" a blog entry, meaning save it with the full
+blog details as in previous versions of QTM
+UI improvement: Preview and Console menu entries changed to "Exit
+Preview/Console" when they are activated, and changed back when deactivated
+Bug fix: sorted the "deprecated type conversion" warnings stemming from the
+included XPM files
+Bug fix: displays ampersands in recent file menu properly
+Bug fix: stopped adding XML-RPC fault codes to the main account tree
+
 0.7-b1 (29th Sept 2008):
 
 Bug fixes to account dialog; fills in wordpress.com details correctly
