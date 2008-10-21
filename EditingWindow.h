@@ -118,7 +118,6 @@ class EditingWindow : public QMainWindow
   QDomElement XmlRpcArray( QDomDocument &, QString, QList<QString> );
   void setNetworkActionsEnabled( bool );
   //void newBloggerPost();
-  void newMTPost(); // formerly blogThis()
   QString & getHTMLList( QString, QString & );
   void saveAutoLinkDictionary();
   void loadAutoLinkDictionary();
@@ -227,7 +226,8 @@ class EditingWindow : public QMainWindow
   void makeOrderedList();
   void doPreview( bool );
   void showHighlightedURL( const QString & );
-  void blogThis();
+  //void blogThis();
+  void newMTPost(); // formerly blogThis()
   void updatePostCategories();
   void saveBlogs();
   void setPostCategories();

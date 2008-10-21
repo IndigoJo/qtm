@@ -593,9 +593,8 @@ void EditingWindow::doUiSetup()
 	   this, SLOT( addClipTBPing() ) );
   connect( ui.actionRe_move_ping, SIGNAL( triggered( bool ) ),
 	   this, SLOT( removeTBPing() ) );
-
   connect( ui.action_Blog_this, SIGNAL( triggered( bool ) ),
-	   this, SLOT( blogThis() ) );
+	   this, SLOT( newMTPost() ) );
   connect( ui.action_What_s_this, SIGNAL( triggered( bool ) ),
 	   this, SLOT( doWhatsThis() ) );
 
@@ -1668,6 +1667,7 @@ void EditingWindow::populateBlogList() // slot
        }
      }
      else {
+       cw.chNoCats->setEnabled( false );
        cw.cbMainCat->setEnabled( false );
        cw.lwOtherCats->setEnabled( false );
      }
@@ -1825,6 +1825,10 @@ void EditingWindow::changeAccount( int a ) // slot
 	cw.cbBlogSelector->addItem( blogsList.at( i ).firstChildElement( "blogName" ).text(),
 				    blogsList.at( i ).firstChildElement( "blogid" ).text() );
       cw.cbBlogSelector->setEnabled( true );
+      changeBlog( 0 );
+      cw.cbBlogSelector->disconnect( this, SLOT( changeBlog( int ) ) ); // eliminate duplicate connections
+      connect( cw.cbBlogSelector, SIGNAL( activated( int ) ),
+	       this, SLOT( changeBlog( int ) ) );
       emit blogRefreshFinished();
       if( QApplication::overrideCursor() != 0 )
 	QApplication::restoreOverrideCursor();
@@ -1875,6 +1879,7 @@ void EditingWindow::changeBlog( int b ) // slot
         cw.cbMainCat->addItem( currentCategoryText,
 			       QVariant( catsList.at( i ).firstChildElement( "categoryId" ).text() ) );
         cw.lwOtherCats->addItem( currentCategoryText );
+	cw.chNoCats->setEnabled( true );
 	cw.cbMainCat->setEnabled( true );
 	cw.lwOtherCats->setEnabled( true );
 	statusBar()->clearMessage(); // as otherwise, "there are no categories" would still show
@@ -1923,6 +1928,7 @@ void EditingWindow::blogger_getUsersBlogs( QByteArray response )
     statusBar()->showMessage( tr( "Could not connect - check account details & password" ), 2000 );
     addToConsole( QString( "%1\n" ).arg( fstring ) );
     cw.cbBlogSelector->setEnabled( false );
+    cw.chNoCats->setEnabled( false );
     cw.cbMainCat->setEnabled( false );
     cw.cbMainCat->clear();
     cw.lwOtherCats->setEnabled( false );
@@ -1951,6 +1957,8 @@ void EditingWindow::blogger_getUsersBlogs( QByteArray response )
 	currentBlog = cw.cbBlogSelector->currentIndex();
       }
       cw.cbBlogSelector->setEnabled( true );
+      connect( cw.cbBlogSelector, SIGNAL( activated( int ) ),
+	       this, SLOT( changeBlog( int ) ) );
       addToConsole( accountsDom.toString( 2 ) );
 
       if( !initialChangeBlog )
@@ -1984,8 +1992,9 @@ void EditingWindow::metaWeblog_newPost( QByteArray response )
     QString parsedData( response );
     entryNumber = parsedData.section( "<string>", 1, 1 )
       .section( "</string>", -2, -2 );
-    connect( this, SIGNAL( httpBusinessFinished() ),
-	     this, SLOT( setPostCategories() ) );
+    if( !cw.chNoCats->isChecked() )
+      connect( this, SIGNAL( httpBusinessFinished() ),
+	       this, SLOT( setPostCategories() ) );
 
     if( !entryEverSaved ) {
       if( postAsSave && cleanSave ) {
@@ -2120,6 +2129,7 @@ void EditingWindow::mt_getCategoryList( QByteArray response )
   else {
     if( !i ) {
       statusBar()->showMessage( tr( "There are no categories." ) );
+      cw.chNoCats->setEnabled( false );
       cw.cbMainCat->setEnabled( false );
       cw.lwOtherCats->setEnabled( false );
     }
@@ -2144,6 +2154,7 @@ void EditingWindow::mt_getCategoryList( QByteArray response )
       else
 	currentBlogElement.replaceChild( newCategoriesElement, currentBlogElement.firstChildElement( "categories" ) );
 
+      cw.chNoCats->setEnabled( true );
       cw.cbMainCat->setEnabled( true );
       cw.lwOtherCats->setEnabled( true );
       if( !noAutoSave ) {
@@ -2198,17 +2209,22 @@ void EditingWindow::mt_setPostCategories( QByteArray response )
 
 void EditingWindow::handleConsole( bool isChecked )
 {
-  switch( isChecked ) {
-    case false:
+  if( !isChecked ) {
       ui.actionP_review->setEnabled( true );
       mainStack->setCurrentIndex( previousRaisedLSWidget );
       searchWidget->setTextEdit( EDITOR );
-      break;
-    case true:
+      ui.action_View_Console->setText( tr( "&Console" ) );
+      ui.action_View_Console->setIconText( tr( "Console" ) );
+      ui.action_View_Console->setToolTip( tr( "Console" ) );
+  }
+  else {
       ui.actionP_review->setEnabled( false );
       previousRaisedLSWidget = mainStack->currentIndex();
       mainStack->setCurrentIndex( consoleID );
       searchWidget->setTextEdit( console );
+      ui.action_View_Console->setText( tr( "Exit &console" ) );
+      ui.action_View_Console->setIconText( tr( "Exit console" ) );
+      ui.action_View_Console->setToolTip( tr( "Exit console" ) );
   }
 }
 
@@ -2523,11 +2539,17 @@ void EditingWindow::doPreview( bool isChecked )
 	     this, SLOT( showHighlightedURL( const QString & ) ) );
     mainStack->setCurrentIndex( previewWindowID );
     searchWidget->setTextEdit( previewWindow );
+    ui.actionP_review->setText( tr( "Exit p&review" ) );
+    ui.actionP_review->setIconText( tr( "Exit preview" ) );
+    ui.actionP_review->setToolTip( tr( "Exit preview" ) );
   } else {
     ui.action_View_Console->setEnabled( true );
     mainStack->setCurrentIndex( previousRaisedLSWidget );
     previewWindow->disconnect( SIGNAL( highlighted( const QString & ) ) );
     searchWidget->setTextEdit( EDITOR );
+    ui.actionP_review->setText( tr( "Entry in p&review" ) );
+    ui.actionP_review->setIconText( tr( "Entry in preview" ) );
+    ui.actionP_review->setToolTip( tr( "Entry in preview" ) );
   }
 }
 
@@ -2536,10 +2558,10 @@ void EditingWindow::showHighlightedURL( const QString &highlightedURL )
   statusBar()->showMessage( highlightedURL, 2000 );
 }
 
-void EditingWindow::blogThis()
+/*void EditingWindow::blogThis()
 {
   newMTPost();
-}
+  }*/
 
 void EditingWindow::newMTPost()
 {
@@ -2818,33 +2840,36 @@ void EditingWindow::setPostCategories()
       QDomElement data = doc.createElement( "data" );
       QDomElement arrayValue = doc.createElement( "value" );
       QDomElement arrayStruct = doc.createElement( "struct" );
-#ifndef NO_DEBUG_OUTPUT
-      qDebug() << "posting prim cat";
-#endif
-      cat = currentBlogElement.firstChildElement( "categories" )
-          .childNodes().at( cw.cbMainCat->currentIndex() ).toElement();
-      QString primCat = cw.cbMainCat->itemData( cw.cbMainCat->currentIndex() ).toString();
-#ifndef NO_DEBUG_OUTPUT
-      qDebug() << "posted prim cat";
-#endif
-      arrayStruct.appendChild( XmlMember( doc, "categoryId", "string", primCat ) );
-      arrayStruct.appendChild( XmlMember( doc, "isPrimary", "boolean", "1" ) );
-      arrayValue.appendChild( arrayStruct );
-      data.appendChild( arrayValue );
 
-      for( int a = 0; a < cw.lwOtherCats->count(); a++ ) {
-	if( cw.lwOtherCats->isItemSelected( cw.lwOtherCats->item( a ) ) ) {
-	  cat = currentBlogElement.firstChildElement( "categories" ).childNodes().at( a ).toElement();
-	  secCatId = cw.cbMainCat->itemData( a ).toString();
-	  secCatName = cw.cbMainCat->itemText( a );
-	  arrayValue = doc.createElement( "value" );
-	  arrayStruct = doc.createElement( "struct" );
-	  arrayStruct.appendChild( XmlMember( doc, "categoryId", "int", secCatId ) );
-	  arrayStruct.appendChild( XmlMember( doc, "categoryName", "string",
-					      secCatName ) );
-	  arrayStruct.appendChild( XmlMember( doc, "isPrimary", "boolean", "0" ) );
-	  arrayValue.appendChild( arrayStruct );
-	  data.appendChild( arrayValue );
+      if( !cw.chNoCats->isChecked() ) {
+#ifndef NO_DEBUG_OUTPUT
+	qDebug() << "posting prim cat";
+#endif
+	cat = currentBlogElement.firstChildElement( "categories" )
+	.childNodes().at( cw.cbMainCat->currentIndex() ).toElement();
+	QString primCat = cw.cbMainCat->itemData( cw.cbMainCat->currentIndex() ).toString();
+#ifndef NO_DEBUG_OUTPUT
+	qDebug() << "posted prim cat";
+#endif
+	arrayStruct.appendChild( XmlMember( doc, "categoryId", "string", primCat ) );
+	arrayStruct.appendChild( XmlMember( doc, "isPrimary", "boolean", "1" ) );
+	arrayValue.appendChild( arrayStruct );
+	data.appendChild( arrayValue );
+
+	for( int a = 0; a < cw.lwOtherCats->count(); a++ ) {
+	  if( cw.lwOtherCats->isItemSelected( cw.lwOtherCats->item( a ) ) ) {
+	    cat = currentBlogElement.firstChildElement( "categories" ).childNodes().at( a ).toElement();
+	    secCatId = cw.cbMainCat->itemData( a ).toString();
+	    secCatName = cw.cbMainCat->itemText( a );
+	    arrayValue = doc.createElement( "value" );
+	    arrayStruct = doc.createElement( "struct" );
+	    arrayStruct.appendChild( XmlMember( doc, "categoryId", "int", secCatId ) );
+	    arrayStruct.appendChild( XmlMember( doc, "categoryName", "string",
+						secCatName ) );
+	    arrayStruct.appendChild( XmlMember( doc, "isPrimary", "boolean", "0" ) );
+	    arrayValue.appendChild( arrayStruct );
+	    data.appendChild( arrayValue );
+	  }
 	}
       }
 
@@ -3051,20 +3076,24 @@ void EditingWindow::save( const QString &fname, bool exp )
   }
   out << "\n";
 
-  QDomNodeList catNodeList = currentBlogElement.firstChildElement( "categories" ).elementsByTagName( "category" );
-  out << QString( "PrimaryID:%1\n" ).arg( cw.cbMainCat->itemData( cw.cbMainCat->currentIndex() ).toString() );
-  QString catsList;
-  int cats = 0;
-  for( int a = 0; a < cw.lwOtherCats->count(); a++ ) {
-    if( cw.lwOtherCats->isItemSelected( cw.lwOtherCats->item( a ) ) ) {
-      if( cats )
-	catsList.append( QString( ";%1" ).arg( cw.cbMainCat->itemData( a ).toString() ) );
-      else
-	catsList.append( cw.cbMainCat->itemData( a ).toString() );
-      cats++;
+  if( !cw.chNoCats->isChecked() ) {
+    QDomNodeList catNodeList = currentBlogElement.firstChildElement( "categories" ).elementsByTagName( "category" );
+    out << QString( "PrimaryID:%1\n" ).arg( cw.cbMainCat->itemData( cw.cbMainCat->currentIndex() ).toString() );
+    QString catsList;
+    int cats = 0;
+    for( int a = 0; a < cw.lwOtherCats->count(); a++ ) {
+      if( cw.lwOtherCats->isItemSelected( cw.lwOtherCats->item( a ) ) ) {
+	if( cats )
+	  catsList.append( QString( ";%1" ).arg( cw.cbMainCat->itemData( a ).toString() ) );
+	else
+	  catsList.append( cw.cbMainCat->itemData( a ).toString() );
+	cats++;
+      }
     }
+    out << QString( "CatIDs:%1\n" ).arg( catsList );
   }
-  out << QString( "CatIDs:%1\n" ).arg( catsList );
+  else
+    out << "PrimaryID:none\n";
   if( cw.teExcerpt->toPlainText().length() > 0 )
     out << QString( "Excerpt:%1\n" )
       .arg( cw.teExcerpt->toPlainText().replace( QChar( '\n' ), "\\n" ) );
@@ -3357,6 +3386,7 @@ bool EditingWindow::load( const QString &fname, bool fromSTI )
         cw.cbAccountSelector->setCurrentIndex( cw.cbAccountSelector->count()-1 );
 	cw.cbBlogSelector->clear();
         cw.cbBlogSelector->setEnabled( false );
+	cw.chNoCats->setEnabled( false );
         cw.cbMainCat->clear();
         cw.cbMainCat->setEnabled( false );
         cw.lwOtherCats->clear();
@@ -3435,6 +3465,7 @@ bool EditingWindow::load( const QString &fname, bool fromSTI )
 	    }
 	  }
 	  else {
+	    cw.chNoCats->setEnabled( false );
 	    cw.cbMainCat->setEnabled( false );
 	    cw.lwOtherCats->setEnabled( false );
 	  }
