@@ -162,7 +162,7 @@ SysTrayIcon::SysTrayIcon( bool noWindow, QObject *parent )
 	     this, SLOT( openRecentFile() ) );
   }
   recentFiles = qtm->recentFiles();
-  //  qDebug() << recentFiles.count() << " recent files";
+  //  // qDebug() << recentFiles.count() << " recent files";
   updateRecentFileMenu();
   connect( qtm, SIGNAL( recentFilesUpdated( QList<Application::recentFile> ) ),
 	   this, SLOT( setRecentFiles( QList<Application::recentFile> ) ) );
@@ -473,7 +473,7 @@ void SysTrayIcon::quickpost( QClipboard::Mode mode )
 	  }
 
 	  if( !qpt ) {
-	    //qDebug() << "doing quickpost";
+	    //// qDebug() << "doing quickpost";
 	    QString withoutHttp = cbtext.section( "://", 1 );
 	    QString host = withoutHttp.section( "/", 0, 0 );
 	    QString loc = withoutHttp.section( '/', 1, -1, QString::SectionIncludeLeadingSep );
@@ -677,7 +677,7 @@ void SysTrayIcon::doQuit()
   }
 
 #ifndef NO_DEBUG_OUTPUT
-  qDebug() << edwins << " main windows";
+  // qDebug() << edwins << " main windows";
 #endif
   
   //if( QApplication::topLevelWidgets().size() <= noWidgets )
@@ -720,7 +720,7 @@ void SysTrayIcon::doQP( QString receivedText )
     if( receivedText == "" )
       newPost = cbtext;
     else {
-	//// qDebug( receivedText.left( 300 ).toAscii().constData() );
+	//// // qDebug( receivedText.left( 300 ).toAscii().constData() );
 	// The title check will accept flaky 1990s HTML - this isn't a browser
       if( receivedText.contains( titleRegExp ) ) {
 	/*&& receivedText.section( titleRegExp, 1 )
@@ -847,7 +847,7 @@ void SysTrayIcon::setupQuickpostTemplates()
 	}
       }
 
-      // qDebug() << "Built list of associated hosts";
+      // // qDebug() << "Built list of associated hosts";
 
       if( titles.size() ) {
 	quickpostTemplateActions.clear();
@@ -856,7 +856,7 @@ void SysTrayIcon::setupQuickpostTemplates()
 	useDefaultPublishStatus = (defaultPublishStates.size() < numTemplates) ?
 	  false : true;
 
-	// qDebug( "Populating template menu" );
+	// // qDebug( "Populating template menu" );
 	// templateMenu->addSeparator();
 	templateTitleList.clear();
 	templateList.clear();
@@ -892,7 +892,7 @@ void SysTrayIcon::setupQuickpostTemplates()
 	templateMenu->addSeparator();
       }
       /*      else
-	      qDebug( "No templates found." );*/
+	      // qDebug( "No templates found." );*/
     }
     file.close();
   }

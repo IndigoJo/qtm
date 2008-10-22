@@ -1,22 +1,22 @@
 /*******************************************************************************
 
-    QTM - Qt-based blog manager
-    Copyright (C) 2006 Matthew J Smith
+  QTM - Qt-based blog manager
+  Copyright (C) 2006 Matthew J Smith
 
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU General Public License (version 2), as
-    published by the Free Software Foundation.
+  This program is free software; you can redistribute it and/or modify
+  it under the terms of the GNU General Public License (version 2), as
+  published by the Free Software Foundation.
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+  You should have received a copy of the GNU General Public License
+  along with this program; if not, write to the Free Software
+  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-*******************************************************************************/
+ *******************************************************************************/
 
 // EditingWindow.cc - Main window class for QTM applicaiton
 
@@ -116,8 +116,8 @@
 #define PROPERSEPS( x ) x
 #endif
 
-EditingWindow::EditingWindow( bool noRefreshBlogs, QWidget *parent )
-  : QMainWindow( parent )
+  EditingWindow::EditingWindow( bool noRefreshBlogs, QWidget *parent )
+: QMainWindow( parent )
 {
   QFont f, g, h;
 
@@ -132,18 +132,18 @@ EditingWindow::EditingWindow( bool noRefreshBlogs, QWidget *parent )
   checkForEmptySettings();
 
   if( editorFontString != "" ) {
-      f.fromString( editorFontString );
-      EDITOR->setFont( f );
+    f.fromString( editorFontString );
+    EDITOR->setFont( f );
   } else {
-      f = EDITOR->font();
-      editorFontString = f.toString();
+    f = EDITOR->font();
+    editorFontString = f.toString();
   }
   if( previewFontString != "" ) {
-      g.fromString( previewFontString );
-      previewWindow->setFont( g );
+    g.fromString( previewFontString );
+    previewWindow->setFont( g );
   } else {
-      g = previewWindow->font();
-      previewFontString = g.toString();
+    g = previewWindow->font();
+    previewFontString = g.toString();
   }
   if( consoleFontString != "" ) {
     h.fromString( consoleFontString );
@@ -155,7 +155,7 @@ EditingWindow::EditingWindow( bool noRefreshBlogs, QWidget *parent )
 
   cw.chComments->setEnabled( true );
   cw.chComments->setCheckState( allowComments ? Qt::Checked :
-				Qt::Unchecked );
+                                Qt::Unchecked );
   cw.chTB->setCheckState( allowTB ? Qt::Checked : Qt::Unchecked );
 
   handleEnableCategories();
@@ -175,7 +175,7 @@ EditingWindow::EditingWindow( bool noRefreshBlogs, QWidget *parent )
     }
     else {
 #ifndef NO_DEBUG_OUTPUT
-      qDebug() << "Can't read the XML";
+      // qDebug() << "Can't read the XML";
 #endif
       accountsXmlFile.close();
       accountsElement = accountsDom.createElement( "QTMAccounts" );
@@ -183,49 +183,49 @@ EditingWindow::EditingWindow( bool noRefreshBlogs, QWidget *parent )
       currentAccountElement.setAttribute( "id", "default" );
 
       if( !server.isEmpty() ) {
-	qDebug() << "copying details to new default element";
-	detailElem = accountsDom.createElement( "details" );
-	nameElem = accountsDom.createElement( "title" );
-	nameElem.appendChild( accountsDom.createTextNode( tr( "Default account" ) ) );
-	serverElem = accountsDom.createElement( "server" );
-	serverElem.appendChild( accountsDom.createTextNode( server ) );
-	locElem = accountsDom.createElement( "location" );
-	locElem.appendChild( accountsDom.createTextNode( location ) );
-	loginElem = accountsDom.createElement( "login" );
-	loginElem.appendChild( accountsDom.createTextNode( login ) );
-	pwdElem = accountsDom.createElement( "password" );
-	pwdElem.appendChild( accountsDom.createTextNode( password ) );
-	detailElem.appendChild( nameElem );
-	detailElem.appendChild( serverElem );
-	detailElem.appendChild( locElem );
-	detailElem.appendChild( loginElem );
-	detailElem.appendChild( pwdElem );
-	currentAccountElement.appendChild( detailElem );
+        // qDebug() << "copying details to new default element";
+        detailElem = accountsDom.createElement( "details" );
+        nameElem = accountsDom.createElement( "title" );
+        nameElem.appendChild( accountsDom.createTextNode( tr( "Default account" ) ) );
+        serverElem = accountsDom.createElement( "server" );
+        serverElem.appendChild( accountsDom.createTextNode( server ) );
+        locElem = accountsDom.createElement( "location" );
+        locElem.appendChild( accountsDom.createTextNode( location ) );
+        loginElem = accountsDom.createElement( "login" );
+        loginElem.appendChild( accountsDom.createTextNode( login ) );
+        pwdElem = accountsDom.createElement( "password" );
+        pwdElem.appendChild( accountsDom.createTextNode( password ) );
+        detailElem.appendChild( nameElem );
+        detailElem.appendChild( serverElem );
+        detailElem.appendChild( locElem );
+        detailElem.appendChild( loginElem );
+        detailElem.appendChild( pwdElem );
+        currentAccountElement.appendChild( detailElem );
 
-	// Delete the old account from the settings
-	settings.beginGroup( "account" );
-	settings.remove( "server" );
-	settings.remove( "location" );
-	settings.remove( "login" );
-	settings.remove( "password" );
-	settings.endGroup();
+        // Delete the old account from the settings
+        settings.beginGroup( "account" );
+        settings.remove( "server" );
+        settings.remove( "location" );
+        settings.remove( "login" );
+        settings.remove( "password" );
+        settings.endGroup();
 
-	// Now transfer the attributes to the default accounts
-	QStringList attribs( accountAttributes.keys() );
-	Q_FOREACH( QString s, attribs ) {
-	  if( *(accountAttributes[s]) ) {
-	    attribElem = accountsDom.createElement( "attribute" );
-	    attribElem.setAttribute( "name", s );
-	    detailElem.appendChild( attribElem );
-	  }
-	}
+        // Now transfer the attributes to the default accounts
+        QStringList attribs( accountAttributes.keys() );
+        Q_FOREACH( QString s, attribs ) {
+          if( *(accountAttributes[s]) ) {
+            attribElem = accountsDom.createElement( "attribute" );
+            attribElem.setAttribute( "name", s );
+            detailElem.appendChild( attribElem );
+          }
+        }
       }
       extractAccountDetails();
 
       accountsElement.appendChild( currentAccountElement );
       accountsDom.appendChild( accountsElement );
       accountsDom.insertBefore( accountsDom.createProcessingInstruction( "xml", "version=\"1.0\"" ),
-				accountsDom.firstChild() );
+                                accountsDom.firstChild() );
       QHostInfo::lookupHost( server, this, SLOT( handleInitialLookup( QHostInfo ) ) );
     }
   }
@@ -233,8 +233,8 @@ EditingWindow::EditingWindow( bool noRefreshBlogs, QWidget *parent )
   mainStack->setCurrentIndex( edID );
 }
 
-EditingWindow::EditingWindow( QString newPost, QWidget *parent )
-  : QMainWindow( parent )
+  EditingWindow::EditingWindow( QString newPost, QWidget *parent )
+: QMainWindow( parent )
 {
   QFont f, g, h;
   QDomElement detailElem, attribElem, nameElem, serverElem, locElem, loginElem, pwdElem;
@@ -247,18 +247,18 @@ EditingWindow::EditingWindow( QString newPost, QWidget *parent )
   checkForEmptySettings();
 
   if( editorFontString != "" ) {
-      f.fromString( editorFontString );
-      EDITOR->setFont( f );
+    f.fromString( editorFontString );
+    EDITOR->setFont( f );
   } else {
-      f = EDITOR->font();
-      editorFontString = f.toString();
+    f = EDITOR->font();
+    editorFontString = f.toString();
   }
   if( previewFontString != "" ) {
-      g.fromString( previewFontString );
-      previewWindow->setFont( g );
+    g.fromString( previewFontString );
+    previewWindow->setFont( g );
   } else {
-      g = previewWindow->font();
-      previewFontString = g.toString();
+    g = previewWindow->font();
+    previewFontString = g.toString();
   }
   if( consoleFontString != "" ) {
     h.fromString( consoleFontString );
@@ -271,7 +271,7 @@ EditingWindow::EditingWindow( QString newPost, QWidget *parent )
   cw.chComments->setEnabled( true );
   cw.chComments->setEnabled( true );
   cw.chComments->setCheckState( allowComments ? Qt::Checked :
-				Qt::Unchecked );
+                                Qt::Unchecked );
   cw.chTB->setCheckState( allowTB ? Qt::Checked : Qt::Unchecked );
 
   handleEnableCategories();
@@ -291,7 +291,7 @@ EditingWindow::EditingWindow( QString newPost, QWidget *parent )
     }
     else {
 #ifndef NO_DEBUG_OUTPUT
-      qDebug() << "Can't read the XML";
+      // qDebug() << "Can't read the XML";
 #endif
       accountsXmlFile.close();
       accountsElement = accountsDom.createElement( "QTMAccounts" );
@@ -299,49 +299,49 @@ EditingWindow::EditingWindow( QString newPost, QWidget *parent )
       currentAccountElement.setAttribute( "id", "default" );
 
       if( !server.isEmpty() ) {
-	qDebug() << "copying details to new default element";
-	detailElem = accountsDom.createElement( "details" );
-	nameElem = accountsDom.createElement( "title" );
-	nameElem.appendChild( accountsDom.createTextNode( tr( "Default account" ) ) );
-	serverElem = accountsDom.createElement( "server" );
-	serverElem.appendChild( accountsDom.createTextNode( server ) );
-	locElem = accountsDom.createElement( "location" );
-	locElem.appendChild( accountsDom.createTextNode( location ) );
-	loginElem = accountsDom.createElement( "login" );
-	loginElem.appendChild( accountsDom.createTextNode( login ) );
-	pwdElem = accountsDom.createElement( "password" );
-	pwdElem.appendChild( accountsDom.createTextNode( password ) );
-	detailElem.appendChild( nameElem );
-	detailElem.appendChild( serverElem );
-	detailElem.appendChild( locElem );
-	detailElem.appendChild( loginElem );
-	detailElem.appendChild( pwdElem );
-	currentAccountElement.appendChild( detailElem );
+        // qDebug() << "copying details to new default element";
+        detailElem = accountsDom.createElement( "details" );
+        nameElem = accountsDom.createElement( "title" );
+        nameElem.appendChild( accountsDom.createTextNode( tr( "Default account" ) ) );
+        serverElem = accountsDom.createElement( "server" );
+        serverElem.appendChild( accountsDom.createTextNode( server ) );
+        locElem = accountsDom.createElement( "location" );
+        locElem.appendChild( accountsDom.createTextNode( location ) );
+        loginElem = accountsDom.createElement( "login" );
+        loginElem.appendChild( accountsDom.createTextNode( login ) );
+        pwdElem = accountsDom.createElement( "password" );
+        pwdElem.appendChild( accountsDom.createTextNode( password ) );
+        detailElem.appendChild( nameElem );
+        detailElem.appendChild( serverElem );
+        detailElem.appendChild( locElem );
+        detailElem.appendChild( loginElem );
+        detailElem.appendChild( pwdElem );
+        currentAccountElement.appendChild( detailElem );
 
-	// Delete the old account from the settings
-	settings.beginGroup( "account" );
-	settings.remove( "server" );
-	settings.remove( "location" );
-	settings.remove( "login" );
-	settings.remove( "password" );
-	settings.endGroup();
+        // Delete the old account from the settings
+        settings.beginGroup( "account" );
+        settings.remove( "server" );
+        settings.remove( "location" );
+        settings.remove( "login" );
+        settings.remove( "password" );
+        settings.endGroup();
 
-	// Now transfer the attributes to the default accounts
-	QStringList attribs( accountAttributes.keys() );
-	Q_FOREACH( QString s, attribs ) {
-	  if( *(accountAttributes[s]) ) {
-	    attribElem = accountsDom.createElement( "attribute" );
-	    attribElem.setAttribute( "name", s );
-	    detailElem.appendChild( attribElem );
-	  }
-	}
+        // Now transfer the attributes to the default accounts
+        QStringList attribs( accountAttributes.keys() );
+        Q_FOREACH( QString s, attribs ) {
+          if( *(accountAttributes[s]) ) {
+            attribElem = accountsDom.createElement( "attribute" );
+            attribElem.setAttribute( "name", s );
+            detailElem.appendChild( attribElem );
+          }
+        }
       }
       extractAccountDetails();
 
       accountsElement.appendChild( currentAccountElement );
       accountsDom.appendChild( accountsElement );
       accountsDom.insertBefore( accountsDom.createProcessingInstruction( "xml", "version=\"1.0\"" ),
-				accountsDom.firstChild() );
+                                accountsDom.firstChild() );
       QHostInfo::lookupHost( server, this, SLOT( handleInitialLookup( QHostInfo ) ) );
     }
   }
@@ -401,28 +401,28 @@ void EditingWindow::doUiSetup()
   ui.actionClose_and_Delete->setEnabled( false );
 
   connect( ui.actionAbout_Qt, SIGNAL( triggered( bool ) ),
-	   qApp, SLOT( aboutQt() ) );
+           qApp, SLOT( aboutQt() ) );
   connect( ui.action_About, SIGNAL( triggered( bool ) ),
-	   this, SLOT( about() ) );
+           this, SLOT( about() ) );
   connect( ui.actionE_xit, SIGNAL( triggered( bool ) ),
-	   this, SLOT( doQuit() ) );
+           this, SLOT( doQuit() ) );
   connect( ui.action_Close, SIGNAL( triggered( bool ) ),
-	   this, SLOT( close() ) );
+           this, SLOT( close() ) );
   connect( ui.actionAccounts, SIGNAL( triggered( bool ) ),
-	   this, SLOT( getAccounts() ) );
+           this, SLOT( getAccounts() ) );
   connect( ui.actionPr_eferences, SIGNAL( triggered( bool ) ),
-	   this, SLOT( getPreferences() ) );
+           this, SLOT( getPreferences() ) );
   connect( ui.actionRefresh_blog_list, SIGNAL( triggered( bool ) ),
-	   this, SLOT( refreshBlogList() ) );
+           this, SLOT( refreshBlogList() ) );
   connect( ui.actionRefresh_categories, SIGNAL( triggered( bool ) ),
-	   this, SLOT( refreshCategories() ) );
+           this, SLOT( refreshCategories() ) );
 #if QT_VERSION >= 0x040200
 #if defined USE_SYSTRAYICON
   connect( ui.actionQuickpost_Templates, SIGNAL( triggered( bool ) ),
-	   this, SLOT( configureQuickpostTemplates() ) );
+           this, SLOT( configureQuickpostTemplates() ) );
 #else
   ui.actionQuickpost_Templates->setVisible( false );
-  #endif
+#endif
 #else
   ui.actionQuickpost_Templates->setVisible( false );
 #endif
@@ -485,23 +485,23 @@ void EditingWindow::doUiSetup()
   // Connect actions to slots
 
   connect( ui.action_New, SIGNAL( triggered( bool ) ),
-	   this, SLOT( newDoc() ) );
+           this, SLOT( newDoc() ) );
   connect( ui.action_Open, SIGNAL( triggered( bool ) ),
-	   this, SLOT( choose() ) );
+           this, SLOT( choose() ) );
   connect( ui.action_Save, SIGNAL( triggered( bool ) ),
-	   this, SLOT( save() ) );
+           this, SLOT( save() ) );
   connect( ui.action_Export, SIGNAL( triggered( bool ) ),
            this, SLOT( exportEntry() ) );
   connect( ui.actionSave_As, SIGNAL( triggered( bool ) ),
-	   this, SLOT( saveAs() ) );
+           this, SLOT( saveAs() ) );
   connect( ui.action_Upload, SIGNAL( triggered( bool ) ),
-	   this, SLOT( uploadFile() ) );
+           this, SLOT( uploadFile() ) );
   connect( ui.actionStop_this_job, SIGNAL( triggered( bool ) ),
-	   this, SLOT( stopThisJob() ) );
+           this, SLOT( stopThisJob() ) );
   connect( ui.actionSend_categories, SIGNAL( triggered( bool ) ),
-	   this, SLOT( updatePostCategories() ) );
+           this, SLOT( updatePostCategories() ) );
   connect( ui.actionSave_blogs, SIGNAL( triggered( bool ) ),
-	   this, SLOT( saveBlogs() ) );
+           this, SLOT( saveBlogs() ) );
 
 #ifdef Q_WS_MAC
   // The action to view the toolbar is not required on the Mac, because the grey
@@ -520,42 +520,42 @@ void EditingWindow::doUiSetup()
   connect( ui.actionU_nderline, SIGNAL( triggered( bool ) ),
            this, SLOT( makeUnderline() ) );
   connect( ui.actionBlockquote, SIGNAL( triggered( bool ) ),
-	   this, SLOT( makeBlockquote() ) );
+           this, SLOT( makeBlockquote() ) );
   connect( ui.action_More, SIGNAL( triggered( bool ) ),
            this, SLOT( insertMore() ) );
   connect( ui.action_Link, SIGNAL( triggered( bool ) ),
-	   this, SLOT( insertLink() ) );
+           this, SLOT( insertLink() ) );
   connect( ui.actionLink_from_C_lipboard, SIGNAL( triggered( bool ) ),
            this, SLOT( insertLinkFromClipboard() ) );
   connect( ui.action_Self_link, SIGNAL( triggered( bool ) ),
-	   this, SLOT( insertSelfLink() ) );
+           this, SLOT( insertSelfLink() ) );
   connect( ui.action_Auto_link, SIGNAL( triggered( bool ) ),
-	   this, SLOT( insertAutoLink() ) );
+           this, SLOT( insertAutoLink() ) );
   connect( ui.actionI_mage, SIGNAL( triggered( bool ) ),
-	   this, SLOT( insertImage() ) );
+           this, SLOT( insertImage() ) );
   connect( ui.actionIma_ge_from_Clipboard, SIGNAL( triggered( bool ) ),
            this, SLOT( insertImageFromClipboard() ) );
   connect( ui.action_Cut,  SIGNAL( triggered( bool ) ),   this, SLOT( cut() ) );
   connect( ui.actionC_opy, SIGNAL( triggered( bool ) ),   this, SLOT( copy() ) );
   connect( ui.actionCopy_upload_location, SIGNAL( triggered( bool ) ),
-	   this, SLOT( copyURL() ) );
+           this, SLOT( copyURL() ) );
   connect( ui.actionPaste, SIGNAL( triggered( bool ) ),   this, SLOT( paste() ) );
   connect( ui.actionMarked_paragraphs, SIGNAL( triggered( bool ) ),
-	   this, SLOT( pasteAsMarkedParagraphs() ) );
+           this, SLOT( pasteAsMarkedParagraphs() ) );
   connect( ui.actionBlockquote_2, SIGNAL( triggered( bool ) ),
-	   this, SLOT( pasteAsBlockquote() ) );
+           this, SLOT( pasteAsBlockquote() ) );
   connect( ui.actionMarkdown_blockquote, SIGNAL( triggered( bool ) ),
-	   this, SLOT( pasteAsMarkdownBlockquote() ) );
+           this, SLOT( pasteAsMarkdownBlockquote() ) );
   connect( ui.actionUnordered_list_2, SIGNAL( triggered( bool ) ),
-	   this, SLOT( pasteAsUnorderedList() ) );
+           this, SLOT( pasteAsUnorderedList() ) );
   connect( ui.actionOrdered_list, SIGNAL( triggered( bool ) ),
-	   this, SLOT( pasteAsOrderedList() ) );
+           this, SLOT( pasteAsOrderedList() ) );
   connect( ui.action_Undo, SIGNAL( triggered( bool ) ),   this, SLOT( undo() ) );
   connect( ui.action_Redo, SIGNAL( triggered( bool ) ),   this, SLOT( redo() ) );
   connect( ui.actionUnordered_list, SIGNAL( triggered( bool ) ),
-	   this, SLOT( makeUnorderedList() ) );
+           this, SLOT( makeUnorderedList() ) );
   connect( ui.action_Ordered_list, SIGNAL( triggered( bool ) ),
-	   this, SLOT( makeOrderedList() ) );
+           this, SLOT( makeOrderedList() ) );
 #if QT_VERSION >= 0x040200
   ui.action_Font->setVisible( false );
   ui.actionPreview_font->setVisible( false );
@@ -563,40 +563,40 @@ void EditingWindow::doUiSetup()
 #else
   connect( ui.action_Font, SIGNAL( triggered( bool ) ),   this, SLOT( doFont() ) );
   connect( ui.actionPreview_font, SIGNAL( triggered( bool ) ),
-	   this, SLOT( doPreviewFont() ) );
+           this, SLOT( doPreviewFont() ) );
   connect( ui.actionConsole_font, SIGNAL( triggered( bool ) ),
-	   this, SLOT( doConsoleFont() ) );
+           this, SLOT( doConsoleFont() ) );
 #endif
   connect( ui.actionP_review, SIGNAL( toggled( bool ) ),
-	   this, SLOT( doPreview( bool ) ) );
+           this, SLOT( doPreview( bool ) ) );
   connect( ui.action_BES, SIGNAL( triggered( bool ) ),
-	   this, SLOT( doViewBasicSettings() ) );
+           this, SLOT( doViewBasicSettings() ) );
   connect( ui.actionC_ategories, SIGNAL( triggered( bool ) ),
-	   this, SLOT( doViewCategories() ) );
+           this, SLOT( doViewCategories() ) );
   connect( ui.action_Show_Excerpt_window, SIGNAL( triggered( bool ) ),
-	   this, SLOT( doViewExcerpt() ) );
+           this, SLOT( doViewExcerpt() ) );
   connect( ui.actionTechnorati_tags, SIGNAL( triggered( bool ) ),
-	   this, SLOT( doViewTechTags() ) );
+           this, SLOT( doViewTechTags() ) );
   connect( ui.actionTrackback_pings, SIGNAL( triggered( bool ) ),
-	   this, SLOT( doViewTBPings() ) );
+           this, SLOT( doViewTBPings() ) );
   // Connect signals related to Technorati tags
   connect( ui.actionAdd_tag, SIGNAL( triggered( bool ) ),
-	   this, SLOT( addTechTag() ) );
+           this, SLOT( addTechTag() ) );
   connect( ui.actionAdd_tag_from_clipboard, SIGNAL( triggered( bool ) ),
-	   this, SLOT( addClipTag() ) );
+           this, SLOT( addClipTag() ) );
   connect( ui.action_Remove_tag, SIGNAL( triggered( bool ) ),
-	   this, SLOT( removeTechTag() ) );
+           this, SLOT( removeTechTag() ) );
   // Connect signals related to Trackback pings
   connect( ui.actionAdd_trackback_ping, SIGNAL( triggered( bool ) ),
-	   this, SLOT( addTBPing() ) );
+           this, SLOT( addTBPing() ) );
   connect( ui.actionAdd_ping_from_clip_board, SIGNAL( triggered( bool ) ),
-	   this, SLOT( addClipTBPing() ) );
+           this, SLOT( addClipTBPing() ) );
   connect( ui.actionRe_move_ping, SIGNAL( triggered( bool ) ),
-	   this, SLOT( removeTBPing() ) );
+           this, SLOT( removeTBPing() ) );
   connect( ui.action_Blog_this, SIGNAL( triggered( bool ) ),
-	   this, SLOT( newMTPost() ) );
+           this, SLOT( newMTPost() ) );
   connect( ui.action_What_s_this, SIGNAL( triggered( bool ) ),
-	   this, SLOT( doWhatsThis() ) );
+           this, SLOT( doWhatsThis() ) );
 
   // Set up the main layout
 
@@ -621,8 +621,8 @@ void EditingWindow::doUiSetup()
 
 #ifdef Q_WS_MAC
   cw.lwOtherCats->setWhatsThis( tr( "Secondary categories, if your blog system supports "
-				    "them.  To highlight more than one category, press "
-				    "Command and click the mouse, or the left mouse button." ) );
+                                    "them.  To highlight more than one category, press "
+                                    "Command and click the mouse, or the left mouse button." ) );
 #endif
 
   tagValidator = new QRegExpValidator( QRegExp( "([a-zA-Z0-9\\.%]+[\\+ ])*[a-zA-Z0-9\\.%]+" ), this );
@@ -643,7 +643,7 @@ void EditingWindow::doUiSetup()
   consoleID = mainStack->addWidget( console );
   console->setReadOnly( true );
   connect( ui.actionClear_console, SIGNAL( triggered( bool ) ),
-	   console, SLOT( clear() ) );
+           console, SLOT( clear() ) );
 
   // Set up editor widget
   ed = new TEXTEDIT( mainStack );
@@ -670,32 +670,32 @@ void EditingWindow::doUiSetup()
   mainWindowLayoutWithSearch->addLayout( mainWindowLayout );
   mainWindowLayoutWithSearch->addWidget( searchWidget );
   connect( ui.action_Find, SIGNAL( triggered( bool ) ),
-	   this, SLOT( handleFind() ) );
+           this, SLOT( handleFind() ) );
   connect( ui.actionFind_again, SIGNAL( triggered( bool ) ),
-	   searchWidget, SLOT( findAgain() ) );
+           searchWidget, SLOT( findAgain() ) );
   ui.action_Find->setShortcut( QKeySequence::fromString( "Ctrl+F" ) );
   ui.actionFind_again->setShortcut( QKeySequence::fromString( "Ctrl+G" ) );
   cWidget->setLayout( mainWindowLayoutWithSearch );
   setCentralWidget( cWidget );
 
   connect( cw.pbRefresh, SIGNAL( clicked( bool ) ),
-    this, SLOT( refreshCategories() ) );
+           this, SLOT( refreshCategories() ) );
   connect( cw.pbRefresh, SIGNAL( clicked( bool ) ),
-	   cw.cbMainCat, SLOT( clear() ) );
+           cw.cbMainCat, SLOT( clear() ) );
   connect( cw.pbRefresh, SIGNAL( clicked( bool ) ),
-	   cw.lwOtherCats, SLOT( clear() ) );
+           cw.lwOtherCats, SLOT( clear() ) );
   connect( ui.action_View_Console, SIGNAL( toggled( bool ) ),
            this, SLOT( handleConsole( bool ) ) );
   connect( cw.leTitle, SIGNAL( editingFinished() ),
-	   this, SLOT( changeCaptionAfterTitleChanged() ) );
+           this, SLOT( changeCaptionAfterTitleChanged() ) );
   connect( cw.leAddTag, SIGNAL( returnPressed() ),
-	   this, SLOT( addTechTagFromAddButton() ) );
+           this, SLOT( addTechTagFromAddButton() ) );
   connect( cw.tbAddTag, SIGNAL( clicked() ),
-	   this, SLOT( addTechTagFromLineEdit() ) );
+           this, SLOT( addTechTagFromLineEdit() ) );
   connect( cw.leTBPingURL, SIGNAL( returnPressed() ),
-	   this, SLOT( addTBPingFromLineEdit() ) );
+           this, SLOT( addTBPingFromLineEdit() ) );
   connect( cw.tbTBAdd, SIGNAL( clicked() ),
-	   this, SLOT( addTBPingFromLineEdit() ) );
+           this, SLOT( addTBPingFromLineEdit() ) );
 
   // Initialise recent file actions
 
@@ -709,7 +709,7 @@ void EditingWindow::doUiSetup()
     recentFileActions[i] = new QAction( this );
     recentFilesMenu->addAction( recentFileActions[i] );
     connect( recentFileActions[i], SIGNAL( triggered() ),
-	     this, SLOT( openRecentFile() ) );
+             this, SLOT( openRecentFile() ) );
   }
 
   cw.cbPageSelector->setCurrentIndex( 0 );
@@ -758,37 +758,37 @@ bool EditingWindow::handleArguments()
   if( args.size() > 1 ) {
     for( i = 1; i < args.size(); i++ ) {
       if( c ) // if there is a current new window
-	d = c;
+        d = c;
       c = new EditingWindow;
       if( c->load( args.at( i ) ) ) {
 #ifdef USE_SYSTRAYICON
-	c->setSTI( sti );
+        c->setSTI( sti );
 #endif
-	if( d ) // if there's an old window
-	  positionWidget( c, d );
-	c->show();
-	rv = false;
+        if( d ) // if there's an old window
+          positionWidget( c, d );
+        c->show();
+        rv = false;
       }
       else {
-	failedFiles.append( args.at( i ) );
+        failedFiles.append( args.at( i ) );
       }
       if( failedFiles.size() ) {
-	if( failedFiles.size() < args.size()-1 ) {
-	  QMessageBox::information( this, tr( "Error" ),
-				    tr( "Could not load the following:\n\n%1" )
-				    .arg( failedFiles.join( "\n" ) ),
-				    QMessageBox::Ok );
-	  rv = false;
-	}
-	else {
-	  if( QMessageBox::question( 0, tr( "Error" ),
-				     tr( "Could not load the following:\n\n%1" )
-				     .arg( failedFiles.join( "\n" ) ),
-				     tr( "&Open blank window" ), tr( "E&xit" ), 0 ) )
-	    QApplication::exit();
-	  else
-	    rv = false;
-	}
+        if( failedFiles.size() < args.size()-1 ) {
+          QMessageBox::information( this, tr( "Error" ),
+                                    tr( "Could not load the following:\n\n%1" )
+                                    .arg( failedFiles.join( "\n" ) ),
+                                    QMessageBox::Ok );
+          rv = false;
+        }
+        else {
+          if( QMessageBox::question( 0, tr( "Error" ),
+                                     tr( "Could not load the following:\n\n%1" )
+                                     .arg( failedFiles.join( "\n" ) ),
+                                     tr( "&Open blank window" ), tr( "E&xit" ), 0 ) )
+            QApplication::exit();
+          else
+            rv = false;
+        }
       }
     }
   }
@@ -844,7 +844,7 @@ void EditingWindow::closeEvent( QCloseEvent *event )
   QSettings settings;
 
 #ifndef NO_DEBUG_OUTPUT
-  qDebug( "close event" );
+  // qDebug( "close event" );
 #endif
 
   if( isWindowModified() ) {
@@ -880,7 +880,7 @@ void EditingWindow::doQuit()
 {
 #ifndef NO_DEBUG_OUTPUT
   int i = QApplication::topLevelWidgets().size();
-  qDebug() << i << " top level widgets";
+  // qDebug() << i << " top level widgets";
 #endif
 
   qApp->setQuitOnLastWindowClosed( true );
@@ -892,96 +892,96 @@ void EditingWindow::checkForEmptySettings()
   //Check if this is a brand new user
   if( localStorageDirectory.isEmpty() || server.isEmpty() ) {
     if( QMessageBox::question( 0, tr( "Welcome to QTM" ),
-			       tr( "You do not have any preferences set, and QTM "
-				   "needs to know where to find your blog, and where "
-				   "to store your data.\n\n"
-				   "Set these preferences now?" ),
-			       QMessageBox::Yes | QMessageBox::Default,
-			       QMessageBox::No ) == QMessageBox::Yes )
+                               tr( "You do not have any preferences set, and QTM "
+                                   "needs to know where to find your blog, and where "
+                                   "to store your data.\n\n"
+                                   "Set these preferences now?" ),
+                               QMessageBox::Yes | QMessageBox::Default,
+                               QMessageBox::No ) == QMessageBox::Yes )
       getPreferences();
   }
 }
 
 void EditingWindow::setInitialAccount()
 {
-    int i;
+  int i;
 
-    qDebug() << "server is empty";
-    QSettings settings;
-    lastAccountID = settings.value( "account/lastAccountID", "" ).toString();
-    QDomNodeList accountsList = accountsDom.documentElement()
-      .elementsByTagName( "account" );
-    QDomElement thisTitleElem;
-    cw.cbAccountSelector->clear();
+  // qDebug() << "server is empty";
+  QSettings settings;
+  lastAccountID = settings.value( "account/lastAccountID", "" ).toString();
+  QDomNodeList accountsList = accountsDom.documentElement()
+    .elementsByTagName( "account" );
+  QDomElement thisTitleElem;
+  cw.cbAccountSelector->clear();
 
-    if( accountsList.count() == 1 &&
-        accountsList.at( 0 ).firstChildElement( "details" ).isNull() ) {
-      // This is if there is just one legacy account
-      QDomElement detailElem, titleElem, serverElem, portElem, locElem,
-                  loginElem, pwdElem;
-      detailElem = accountsDom.createElement( "details" );
-      titleElem = accountsDom.createElement( "title" );
-      titleElem.appendChild( accountsDom.createTextNode( tr( "Default account" ) ) );
-      serverElem = accountsDom.createElement( "server" );
-      serverElem.appendChild( accountsDom.createTextNode( server ) );
-      locElem = accountsDom.createElement( "location" );
-      locElem.appendChild( accountsDom.createTextNode( location ) );
-      if( !port.isEmpty() ) {
-        portElem = accountsDom.createElement( "port" );
-        portElem.appendChild( accountsDom.createTextNode( port ) );
-      }
-      loginElem = accountsDom.createElement( "login" );
-      loginElem.appendChild( accountsDom.createTextNode( login ) );
-      pwdElem = accountsDom.createElement( "password" );
-      pwdElem.appendChild( accountsDom.createTextNode( password ) );
-      detailElem.appendChild( titleElem );
-      detailElem.appendChild( serverElem );
-      if( !portElem.isNull() )
-        detailElem.appendChild( portElem );
-      detailElem.appendChild( locElem );
-      detailElem.appendChild( loginElem );
-      detailElem.appendChild( pwdElem );
-      accountsList.at( 0 ).insertBefore( detailElem, QDomNode() ); // i.e. insert it at the start
-      accountsList.at( 0 ).toElement().setAttribute( "id", "default" );
+  if( accountsList.count() == 1 &&
+      accountsList.at( 0 ).firstChildElement( "details" ).isNull() ) {
+    // This is if there is just one legacy account
+    QDomElement detailElem, titleElem, serverElem, portElem, locElem,
+                loginElem, pwdElem;
+    detailElem = accountsDom.createElement( "details" );
+    titleElem = accountsDom.createElement( "title" );
+    titleElem.appendChild( accountsDom.createTextNode( tr( "Default account" ) ) );
+    serverElem = accountsDom.createElement( "server" );
+    serverElem.appendChild( accountsDom.createTextNode( server ) );
+    locElem = accountsDom.createElement( "location" );
+    locElem.appendChild( accountsDom.createTextNode( location ) );
+    if( !port.isEmpty() ) {
+      portElem = accountsDom.createElement( "port" );
+      portElem.appendChild( accountsDom.createTextNode( port ) );
     }
+    loginElem = accountsDom.createElement( "login" );
+    loginElem.appendChild( accountsDom.createTextNode( login ) );
+    pwdElem = accountsDom.createElement( "password" );
+    pwdElem.appendChild( accountsDom.createTextNode( password ) );
+    detailElem.appendChild( titleElem );
+    detailElem.appendChild( serverElem );
+    if( !portElem.isNull() )
+      detailElem.appendChild( portElem );
+    detailElem.appendChild( locElem );
+    detailElem.appendChild( loginElem );
+    detailElem.appendChild( pwdElem );
+    accountsList.at( 0 ).insertBefore( detailElem, QDomNode() ); // i.e. insert it at the start
+    accountsList.at( 0 ).toElement().setAttribute( "id", "default" );
+  }
 
-    for( i = 0; i < accountsList.count(); i++ ) {
-      thisTitleElem = accountsList.at( i ).toElement().firstChildElement( "details" )
-        .firstChildElement( "title" );
-      if( !thisTitleElem.isNull() )
-        cw.cbAccountSelector->addItem( thisTitleElem.text(),
-                                       accountsList.at( i ).toElement().attribute( "id" ) );
-      else
-        cw.cbAccountSelector->addItem( tr( "Unnamed account" ),
-                                       accountsList.at( i ).toElement().attribute( "id" ).isEmpty() ?
-                                       QString( "noid_%1" ).arg( i ) :
-                                       accountsList.at( i ).toElement().attribute( "id" ) );
-    }
+  for( i = 0; i < accountsList.count(); i++ ) {
+    thisTitleElem = accountsList.at( i ).toElement().firstChildElement( "details" )
+      .firstChildElement( "title" );
+    if( !thisTitleElem.isNull() )
+      cw.cbAccountSelector->addItem( thisTitleElem.text(),
+                                     accountsList.at( i ).toElement().attribute( "id" ) );
+    else
+      cw.cbAccountSelector->addItem( tr( "Unnamed account" ),
+                                     accountsList.at( i ).toElement().attribute( "id" ).isEmpty() ?
+                                     QString( "noid_%1" ).arg( i ) :
+                                     accountsList.at( i ).toElement().attribute( "id" ) );
+  }
 
-    qDebug() << "checking for last account ID";
-    for( i = 0; i < accountsList.count(); i++ ) {
-      if( accountsList.at( i ).toElement().attribute( "id" ) == lastAccountID ) {
-        qDebug() << "found it";
-        currentAccountElement = accountsList.at( i ).toElement();
-        currentAccountId = currentAccountElement.attribute( "id" );
-        cw.cbAccountSelector->setCurrentIndex( i );
-        extractAccountDetails();
-        populateBlogList();
-        connect( cw.cbAccountSelector, SIGNAL( activated( int ) ),
-                 this, SLOT( changeAccount( int ) ) );
-        break;
-      }
-      // If it reaches the end of the loop with no joy
-      if( i == accountsList.count()-1 ) {
-        qDebug() << "using first account";
-        currentAccountElement = accountsDom.documentElement()
-          .firstChildElement( "account" );
-        extractAccountDetails();
-        populateBlogList();
-        connect( cw.cbAccountSelector, SIGNAL( activated( int ) ),
-                 this, SLOT( changeAccount( int ) ) );
-      }
+  // qDebug() << "checking for last account ID";
+  for( i = 0; i < accountsList.count(); i++ ) {
+    if( accountsList.at( i ).toElement().attribute( "id" ) == lastAccountID ) {
+      // qDebug() << "found it";
+      currentAccountElement = accountsList.at( i ).toElement();
+      currentAccountId = currentAccountElement.attribute( "id" );
+      cw.cbAccountSelector->setCurrentIndex( i );
+      extractAccountDetails();
+      populateBlogList();
+      connect( cw.cbAccountSelector, SIGNAL( activated( int ) ),
+               this, SLOT( changeAccount( int ) ) );
+      break;
     }
+    // If it reaches the end of the loop with no joy
+    if( i == accountsList.count()-1 ) {
+      // qDebug() << "using first account";
+      currentAccountElement = accountsDom.documentElement()
+        .firstChildElement( "account" );
+      extractAccountDetails();
+      populateBlogList();
+      connect( cw.cbAccountSelector, SIGNAL( activated( int ) ),
+               this, SLOT( changeAccount( int ) ) );
+    }
+  }
 }
 
 void EditingWindow::readSettings()
@@ -1034,7 +1034,7 @@ void EditingWindow::readSettings()
   recentFiles = qtm->recentFiles();
   updateRecentFileMenu();
   connect( qtm, SIGNAL( recentFilesUpdated( QList<Application::recentFile> ) ),
-	   this, SLOT( setRecentFiles( QList<Application::recentFile> ) ) );
+           this, SLOT( setRecentFiles( QList<Application::recentFile> ) ) );
 
   if( server.isEmpty() || location.isEmpty() || login.isEmpty() ) {
     // Adequate network details absent, therefore disable all widgets and actions
@@ -1078,18 +1078,18 @@ void EditingWindow::updateRecentFileMenu()
     if( j < recentFiles.count() ) {
       t = recentFiles.value( j ).title.section( ' ', 0, 5 );
       if( t != recentFiles.value( j ).title )
-	t.append( tr( " ..." ) );
+        t.append( tr( " ..." ) );
       if( j == 9 )
         text = tr( "1&0 %1" )
- 	.arg( recentFiles.value( j ).title.isEmpty() ?
-	      recentFiles.value( j ).filename.section( "/", -1, -1 ) 
-	      : t.replace( '&', "&&" ) );
+          .arg( recentFiles.value( j ).title.isEmpty() ?
+                recentFiles.value( j ).filename.section( "/", -1, -1 ) 
+                : t.replace( '&', "&&" ) );
       else
         text  = tr("&%1 %2" )
-	  .arg( j + 1 )
-	  .arg( recentFiles.value( j ).title.isEmpty() ?
-	        recentFiles.value( j ).filename.section( "/", -1, -1 ) 
-		: t.replace( '&', "&&" ) );
+          .arg( j + 1 )
+          .arg( recentFiles.value( j ).title.isEmpty() ?
+                recentFiles.value( j ).filename.section( "/", -1, -1 ) 
+                : t.replace( '&', "&&" ) );
       recentFileActions[j]->setText( text );
       recentFileActions[j]->setData( recentFiles.value( j ).filename );
       recentFileActions[j]->setVisible( true );
@@ -1098,7 +1098,7 @@ void EditingWindow::updateRecentFileMenu()
     else {
       recentFileActions[j]->setVisible( false );
       if( !recentFiles.count() )
-	noRecentFilesAction->setVisible( true );
+        noRecentFilesAction->setVisible( true );
     }
   }
 }
@@ -1143,7 +1143,7 @@ void EditingWindow::callRefreshCategories()
 #endif
   }
 #ifndef NO_DEBUG_OUTPUT
-  qDebug() << "Finishing changeblog";
+  // qDebug() << "Finishing changeblog";
 #endif
 }
 
@@ -1161,15 +1161,15 @@ void EditingWindow::refreshCategories()
     QDomElement params = doc.createElement( "params" );
     params.appendChild( XmlValue( doc, "string", currentBlogid ) );
     params.appendChild( XmlValue( doc, "string", currentAccountElement.firstChildElement( "details" )
-                                                 .firstChildElement( "login" ).text() ) );
+                                  .firstChildElement( "login" ).text() ) );
     params.appendChild( XmlValue( doc, "string", currentAccountElement.firstChildElement( "details" )
-                                                 .firstChildElement( "password" ).text() ) );
+                                  .firstChildElement( "password" ).text() ) );
 
     methodCall.appendChild( params );
     doc.appendChild( methodCall );
     doc.insertBefore( doc.createProcessingInstruction( "xml",
-						       "version=\"1.0\" encoding=\"UTF-8\"" ),
-		      doc.firstChild() );
+                                                       "version=\"1.0\" encoding=\"UTF-8\"" ),
+                      doc.firstChild() );
     QByteArray requestArray( doc.toByteArray( 2 ) );
     responseData = "";
     QHttpRequestHeader header( "POST", location );
@@ -1186,16 +1186,16 @@ void EditingWindow::refreshCategories()
 
     currentHttpBusiness = 13; // Processing mt.getCategoryList
     connect( http, SIGNAL( done( bool ) ),
-	     this, SLOT( handleDone( bool ) ) );
+             this, SLOT( handleDone( bool ) ) );
     connect( http, SIGNAL( readyRead( const QHttpResponseHeader & ) ),
-       this, SLOT( handleResponseHeader( const QHttpResponseHeader & ) ) );
+             this, SLOT( handleResponseHeader( const QHttpResponseHeader & ) ) );
     connect( http, SIGNAL( hostLookupFailed() ),
-	     this, SLOT( handleHostLookupFailed() ) );
+             this, SLOT( handleHostLookupFailed() ) );
   }
   else {
 #ifdef QTM_DEBUG
     statusBar()->showMessage( tr( "refreshCategories: All HTTP requests are blocked" ),
-			      2000 );
+                              2000 );
 #else
     statusBar()->showMessage( tr( "All HTTP requests are blocked." ), 2000 );
 #endif
@@ -1209,7 +1209,7 @@ void EditingWindow::getAccounts()
   QDomNodeList accountsList, thisAccountsAttribs;
   QDomDocument newAccountsDom;
   QDomElement newQTMAccounts, newAccount, detailElement, nameElement, serverElement, locationElement, 
-    portElement, loginElement, pwdElement, blogsElement, boolElement, attribsElement, hbtElement;
+              portElement, loginElement, pwdElement, blogsElement, boolElement, attribsElement, hbtElement;
   QString oldCurrentAccountId, oldBlogid, currentTitle;
   QStringList thisAccountsAttribStrings;
   int i, j;
@@ -1232,7 +1232,7 @@ void EditingWindow::getAccounts()
     int hbt = detailElement.firstChildElement( "hostedBlogType" ).text().toInt( &ok );
     if( ok )
       acct.hostedBlogType = hbt;
-	  
+
     acct.categoriesEnabled = false;
     acct.postDateTime = false;
     acct.comments = false;
@@ -1245,7 +1245,7 @@ void EditingWindow::getAccounts()
       thisAccountsAttribStrings << thisAccountsAttribs.at( j ).toElement().attribute( "name" );
 
     if( thisAccountsAttribStrings.contains( "categoriesEnabled" ) ) {
-	acct.categoriesEnabled = true;
+      acct.categoriesEnabled = true;
     }
     if( thisAccountsAttribStrings.contains( "postDateTime" ) ) {
       acct.postDateTime = true;
@@ -1254,7 +1254,7 @@ void EditingWindow::getAccounts()
       acct.comments = true;
     }
     if( thisAccountsAttribStrings.contains( "trackback" ) ) {
-	acct.trackback = true;
+      acct.trackback = true;
     }
 
     acctsList.append( acct );
@@ -1300,45 +1300,45 @@ void EditingWindow::getAccounts()
       detailElement.appendChild( pwdElement );
 
       if( returnedAccountsList.at( i ).categoriesEnabled || returnedAccountsList.at( i ).postDateTime ||
-	  returnedAccountsList.at( i ).comments || returnedAccountsList.at( i ).trackback )
-	attribsElement = newAccountsDom.createElement( "attributes" );
+          returnedAccountsList.at( i ).comments || returnedAccountsList.at( i ).trackback )
+        attribsElement = newAccountsDom.createElement( "attributes" );
 
       if( returnedAccountsList.at( i ).categoriesEnabled ) {
-	boolElement = newAccountsDom.createElement( "attribute" );
-	boolElement.setAttribute( "name", "categoriesEnabled" );
-	attribsElement.appendChild( boolElement );
+        boolElement = newAccountsDom.createElement( "attribute" );
+        boolElement.setAttribute( "name", "categoriesEnabled" );
+        attribsElement.appendChild( boolElement );
       }
       if( returnedAccountsList.at( i ).postDateTime ) {
-	boolElement = newAccountsDom.createElement( "attribute" );
-	boolElement.setAttribute( "name", "postDateTime" );
-	attribsElement.appendChild( boolElement );
+        boolElement = newAccountsDom.createElement( "attribute" );
+        boolElement.setAttribute( "name", "postDateTime" );
+        attribsElement.appendChild( boolElement );
       }
       if( returnedAccountsList.at( i ).comments ) {
-	qDebug() << "comments attribute set";
-	boolElement = newAccountsDom.createElement( "attribute" );
-	boolElement.setAttribute( "name", "comments" );
-	attribsElement.appendChild( boolElement );
+        // qDebug() << "comments attribute set";
+        boolElement = newAccountsDom.createElement( "attribute" );
+        boolElement.setAttribute( "name", "comments" );
+        attribsElement.appendChild( boolElement );
       }
       if( returnedAccountsList.at( i ).trackback ) {
-	qDebug() << "TB attribute set";
-	boolElement = newAccountsDom.createElement( "attribute" );
-	boolElement.setAttribute( "name", "trackback" );
-	attribsElement.appendChild( boolElement );
+        // qDebug() << "TB attribute set";
+        boolElement = newAccountsDom.createElement( "attribute" );
+        boolElement.setAttribute( "name", "trackback" );
+        attribsElement.appendChild( boolElement );
       }
 
       if( !attribsElement.isNull() )
-	detailElement.appendChild( attribsElement );
+        detailElement.appendChild( attribsElement );
 
       newAccount.appendChild( detailElement );
-      
+
       // Check if each account is matched from the old list; if it is, copy the blogs list
       for( j = 0; j < accountsList.count(); j++ ) {
-	if( accountsList.at( j ).toElement().attribute( "id" ) == returnedAccountsList.at( i ).id ) {
-	  blogsElement = accountsList.at( j ).toElement().firstChildElement( "blogs" );
-	  if( !blogsElement.isNull() )
-	    newAccount.appendChild( newAccountsDom.importNode( blogsElement, true ) );
-	  break;
-	}
+        if( accountsList.at( j ).toElement().attribute( "id" ) == returnedAccountsList.at( i ).id ) {
+          blogsElement = accountsList.at( j ).toElement().firstChildElement( "blogs" );
+          if( !blogsElement.isNull() )
+            newAccount.appendChild( newAccountsDom.importNode( blogsElement, true ) );
+          break;
+        }
       }
       newQTMAccounts.appendChild( newAccount );
     }
@@ -1346,7 +1346,7 @@ void EditingWindow::getAccounts()
     // Now add processing instruction and the whole QTMAccounts element, and replace the old main
     // accounts tree with this one
     newAccountsDom.appendChild( newAccountsDom.createProcessingInstruction( "xml",
-									    "version='1.0'" ) );
+                                                                            "version='1.0'" ) );
     newAccountsDom.appendChild( newQTMAccounts );
     accountsDom = newAccountsDom.cloneNode( true ).toDocument();
 
@@ -1354,43 +1354,43 @@ void EditingWindow::getAccounts()
     accountsList = accountsDom.documentElement().elementsByTagName( "account" );
     for( i = 0; i < accountsList.count(); ++i ) {
       currentTitle = accountsList.at( i ).firstChildElement( "details" )
-	.firstChildElement( "title" ).text();
+        .firstChildElement( "title" ).text();
       if( currentTitle.isEmpty() )
-	currentTitle = tr( "(Unnamed account)" );
+        currentTitle = tr( "(Unnamed account)" );
       cw.cbAccountSelector->addItem( currentTitle, accountsList.at( i ).toElement().
-				     attribute( "id" ) );
+                                     attribute( "id" ) );
     }
     // Check if the old current account is in this list; if so, make it current again
     for( i = 0; i < accountsList.count(); ++i ) {
       if( accountsList.at( i ).toElement().attribute( "id" ) == oldCurrentAccountId ) {
-	cw.cbAccountSelector->setCurrentIndex( i );
-	currentAccountElement = accountsList.at( i ).toElement();
+        cw.cbAccountSelector->setCurrentIndex( i );
+        currentAccountElement = accountsList.at( i ).toElement();
         extractAccountDetails();
 
-	QStringList accountStringNames( accountStrings.keys() );
-	Q_FOREACH( QString s, accountStringNames ) {
-	  *(accountStrings[s]) = currentAccountElement.firstChildElement( "details" )
-	    .firstChildElement( s ).text();
-	}
+        QStringList accountStringNames( accountStrings.keys() );
+        Q_FOREACH( QString s, accountStringNames ) {
+          *(accountStrings[s]) = currentAccountElement.firstChildElement( "details" )
+            .firstChildElement( s ).text();
+        }
 
-	// Now check if the current account has any blogs
-	if( !currentAccountElement.firstChildElement( "blogs" ).isNull() ) {
-	  qDebug() << "blogs found";
-	  populateBlogList();
-	}
-	else {
-	  qDebug() << "no blogs found";
-	  refreshBlogList();
-	}
-	break;
+        // Now check if the current account has any blogs
+        if( !currentAccountElement.firstChildElement( "blogs" ).isNull() ) {
+          // qDebug() << "blogs found";
+          populateBlogList();
+        }
+        else {
+          // qDebug() << "no blogs found";
+          refreshBlogList();
+        }
+        break;
       }
       if( i == accountsList.count()-1 ) {
-	cw.cbAccountSelector->setCurrentIndex( 0 );
-	refreshBlogList();
+        cw.cbAccountSelector->setCurrentIndex( 0 );
+        refreshBlogList();
       }
     }
     connect( cw.cbAccountSelector, SIGNAL( activated( int ) ),
-	     this, SLOT( changeAccount( int ) ) );
+             this, SLOT( changeAccount( int ) ) );
     saveAccountsDom();
   }
 }
@@ -1410,16 +1410,16 @@ void EditingWindow::getPreferences()
     prefsDialog.leLocalDir->setText( lsd );
   }
   else
-  prefsDialog.leLocalDir->setText( localStorageDirectory );
+    prefsDialog.leLocalDir->setText( localStorageDirectory );
   prefsDialog.leFileExtn->setText( localStorageFileExtn );
   prefsDialog.chUseNewWindows->setCheckState( useNewWindows ? Qt::Checked :
-				       Qt::Unchecked );
+                                              Qt::Unchecked );
   prefsDialog.cbPostAsSave->setCheckState( postAsSave ? Qt::Checked :
-					    Qt::Unchecked );
+                                           Qt::Unchecked );
   prefsDialog.cbAllowComments->setCheckState( allowComments ? Qt::Checked :
-					       Qt::Unchecked );
+                                              Qt::Unchecked );
   prefsDialog.cbAllowTB->setCheckState( allowTB ? Qt::Checked :
-				       Qt::Unchecked );
+                                        Qt::Unchecked );
 #ifdef USE_SYSTRAYICON
   prefsDialog.chCopyTitle->setCheckState( copyTitle ? Qt::Checked : Qt::Unchecked );
 #else
@@ -1454,10 +1454,10 @@ void EditingWindow::getPreferences()
 #endif
 #endif
   prefsDialog.resize( QSize( prefsDialog.width(),
-			     prefsDialog.minimumHeight() ) );
+                             prefsDialog.minimumHeight() ) );
   if( prefsDialog.exec() ) {
 #ifndef NO_DEBUG_OUTPUT
-    qDebug( "Setting account variables" );
+    // qDebug( "Setting account variables" );
 #endif
     localStorageDirectory = prefsDialog.leLocalDir->text();
     localStorageFileExtn = prefsDialog.leFileExtn->text();
@@ -1473,7 +1473,7 @@ void EditingWindow::getPreferences()
 #endif
 #if QT_VERSION >= 0x040200
 #ifndef NO_DEBUG_OUTPUT
-    qDebug( "setting fonts" );
+    // qDebug( "setting fonts" );
 #endif
     QFont ef = prefsDialog.fcbComposer->currentFont();
     ef.setPointSize( prefsDialog.sbComposer->value() );
@@ -1492,7 +1492,7 @@ void EditingWindow::getPreferences()
     STI2ClickFunction = prefsDialog.cbSTI2ClickFunction->currentIndex();
     if( sti ) {
 #ifndef NO_DEBUG_OUTPUT
-      qDebug( "setting double click function" );
+      // qDebug( "setting double click function" );
 #endif
       sti->setDoubleClickFunction( STI2ClickFunction );
       sti->setCopyTitle( copyTitle );
@@ -1511,9 +1511,9 @@ void EditingWindow::getPreferences()
     if( !qd.exists() ) {
       addToConsole( tr( "Making directory %1" ).arg( localStorageDirectory ) );
       if( !qd.mkpath( localStorageDirectory ) )
-	statusBar()->showMessage( tr( "Could not create QTM directory." ), 2000 );
+        statusBar()->showMessage( tr( "Could not create QTM directory." ), 2000 );
       if( !noAutoSave )
-	saveAccountsDom();
+        saveAccountsDom();
     }
 
 
@@ -1537,7 +1537,7 @@ void EditingWindow::getPreferences()
     settings.setValue( "application/version", QTM_VERSION );
     settings.beginGroup( "account" );
     settings.setValue( "localStorageDirectory",
-		       localStorageDirectory.replace( "~", QDir::homePath() ) );
+                       localStorageDirectory.replace( "~", QDir::homePath() ) );
     settings.setValue( "localStorageFileExtn", localStorageFileExtn );
     settings.setValue( "useNewWindows", useNewWindows );
     settings.setValue( "postAsSave", postAsSave );
@@ -1577,23 +1577,23 @@ void EditingWindow::saveAccountsDom()
     QDir dir( localStorageDirectory );
     if( !dir.exists() ) {
       if( QMessageBox::question( 0, tr( "Cannot find storage directory" ),
-				 tr( "QTM cannot find the directory you specified to "
-				     "store your account data and files.\n\n"
-				     "Create it?" ),
-				 QMessageBox::Yes | QMessageBox::Default,
-				 QMessageBox::No ) == QMessageBox::Yes ) {
-	if( dir.mkpath( localStorageDirectory ) ) {
-	  domOut.setFileName( PROPERSEPS( QString( "%1/qtmaccounts2.xml" ).arg( localStorageDirectory ) ) );
-	  if( domOut.open( QIODevice::WriteOnly ) ) {
-	    QTextStream dfs( &domOut );
-	    accountsDom.save( dfs, 2 );
-	    domOut.close();
-	  }
-	  else
-	    statusBar()->showMessage( tr( "Could not write to accounts file." ), 2000 );
-	}
-	else
-	  statusBar()->showMessage( tr( "Could not create the directory." ), 2000 );
+                                 tr( "QTM cannot find the directory you specified to "
+                                     "store your account data and files.\n\n"
+                                     "Create it?" ),
+                                 QMessageBox::Yes | QMessageBox::Default,
+                                 QMessageBox::No ) == QMessageBox::Yes ) {
+        if( dir.mkpath( localStorageDirectory ) ) {
+          domOut.setFileName( PROPERSEPS( QString( "%1/qtmaccounts2.xml" ).arg( localStorageDirectory ) ) );
+          if( domOut.open( QIODevice::WriteOnly ) ) {
+            QTextStream dfs( &domOut );
+            accountsDom.save( dfs, 2 );
+            domOut.close();
+          }
+          else
+            statusBar()->showMessage( tr( "Could not write to accounts file." ), 2000 );
+        }
+        else
+          statusBar()->showMessage( tr( "Could not create the directory." ), 2000 );
       }
     }
   }
@@ -1609,22 +1609,22 @@ void EditingWindow::populateAccountList() // slot
   int a = accountNodeList.count();
 
   if( a ) {
-    qDebug () << "populating:" << a << "accounts";
+    // qDebug () << "populating:" << a << "accounts";
     cw.cbAccountSelector->clear();
 
     for( i = 0; i < a; i++ ) {
       cid = accountNodeList.at( i ).toElement().attribute( "id" );
       if( cid.isEmpty() )
-	cid = QString( "nameless_%1" ).arg( i + 1 );
+        cid = QString( "nameless_%1" ).arg( i + 1 );
       detail = accountNodeList.at( i ).firstChildElement( "details" );
       if( !detail.isNull() ) {
-	cname = detail.firstChildElement( "title" ).text();
-	if( cname.isEmpty() )
-	  cname = tr( "Unnamed account %1" ).arg( i + 1 );
-	cw.cbAccountSelector->addItem( cname, cid );
+        cname = detail.firstChildElement( "title" ).text();
+        if( cname.isEmpty() )
+          cname = tr( "Unnamed account %1" ).arg( i + 1 );
+        cw.cbAccountSelector->addItem( cname, cid );
       }
     }
-  
+
   }
 }
 
@@ -1633,13 +1633,13 @@ void EditingWindow::populateBlogList() // slot
   addToConsole( accountsDom.toString( 2 ) );
 
   QDomNodeList blogNodeList = currentAccountElement.firstChildElement( "blogs" )
-       .elementsByTagName( "blog" );
+    .elementsByTagName( "blog" );
   QDomNodeList catNodeList;
   QDomElement catsElement;
   QDomElement ct;
   int a = blogNodeList.count();
 #ifndef NO_DEBUG_OUTPUT
-  qDebug() << "Blogs: " << a;
+  // qDebug() << "Blogs: " << a;
 #endif
   int b, i, j;
 
@@ -1700,8 +1700,8 @@ void EditingWindow::refreshBlogList() // slot
 
   doc.appendChild( methodCall );
   doc.insertBefore( doc.createProcessingInstruction( "xml",
-						     "version=\"1.0\" encoding=\"UTF-8\"" ),
-		    doc.firstChild() );
+                                                     "version=\"1.0\" encoding=\"UTF-8\"" ),
+                    doc.firstChild() );
 
   responseData = "";
   QByteArray requestArray( doc.toByteArray( 2 ) );
@@ -1719,20 +1719,20 @@ void EditingWindow::refreshBlogList() // slot
 
   currentHttpBusiness = 5; // Processing blogger.getUsersPosts request
   connect( http, SIGNAL( done( bool ) ),
-	   this, SLOT( handleDone( bool ) ) );
+           this, SLOT( handleDone( bool ) ) );
   connect( http, SIGNAL( readyRead( const QHttpResponseHeader & ) ),
-	   this, SLOT( handleResponseHeader( const QHttpResponseHeader & ) ) );
+           this, SLOT( handleResponseHeader( const QHttpResponseHeader & ) ) );
   connect( http, SIGNAL( hostLookupFailed() ),
-	   this, SLOT( handleHostLookupFailed() ) );
+           this, SLOT( handleHostLookupFailed() ) );
 }
 
 void EditingWindow::handleResponseHeader( const QHttpResponseHeader &header ) // slot
 {
   if( header.statusCode() == 404 ) {
     QMessageBox::warning( this, tr( "Error 404" ),
-			  tr( "There is no web service at the location you\n"
-			      "specified.  Please change it in the Preferences\n"
-			      "window." ) );
+                          tr( "There is no web service at the location you\n"
+                              "specified.  Please change it in the Preferences\n"
+                              "window." ) );
     http->disconnect();
     http->abort();
     setNetworkActionsEnabled( false );
@@ -1744,7 +1744,7 @@ void EditingWindow::handleResponseHeader( const QHttpResponseHeader &header ) //
 void EditingWindow::stopThisJob()
 {
 #ifndef NO_DEBUG_OUTPUT
-  qDebug() << "Aborting.";
+  // qDebug() << "Aborting.";
 #endif
 
   http->disconnect();
@@ -1762,23 +1762,23 @@ void EditingWindow::handleDone( bool error ) // slot
     statusBar()->showMessage( tr( "The request failed." ), 2000 );
   else
     statusBar()->showMessage( QString( tr( "The request succeeded; %1 bytes received" ) )
-			      .arg( responseData.size() ), 2000 );
+                              .arg( responseData.size() ), 2000 );
 
   switch( currentHttpBusiness ) {
-  case 5: // if handling blogger.getusersBlogs
-    blogger_getUsersBlogs( responseData ); break;
-  case 7: // if handling metaWeblog.newPost
-    metaWeblog_newPost( responseData ); break;
-  case 8: // if handling metaWeblog.editPost
-    metaWeblog_editPost( responseData ); break;
-  case 11: // if handling metaWeblog.newMediaObject
-    metaWeblog_newMediaObject( responseData ); break;
-  case 12: // if handling mt.publishPost
-    mt_publishPost( responseData ); break;
-  case 13: // if handling mt.getCategoryList
-    mt_getCategoryList( responseData ); break;
-  case 15: // if handling mt.setPostCategories
-    mt_setPostCategories( responseData ); break;
+    case 5: // if handling blogger.getusersBlogs
+      blogger_getUsersBlogs( responseData ); break;
+    case 7: // if handling metaWeblog.newPost
+      metaWeblog_newPost( responseData ); break;
+    case 8: // if handling metaWeblog.editPost
+      metaWeblog_editPost( responseData ); break;
+    case 11: // if handling metaWeblog.newMediaObject
+      metaWeblog_newMediaObject( responseData ); break;
+    case 12: // if handling mt.publishPost
+      mt_publishPost( responseData ); break;
+    case 13: // if handling mt.getCategoryList
+      mt_getCategoryList( responseData ); break;
+    case 15: // if handling mt.setPostCategories
+      mt_setPostCategories( responseData ); break;
   }
 
   http->disconnect();
@@ -1802,8 +1802,8 @@ void EditingWindow::changeAccount( int a ) // slot
     .elementsByTagName( "account" ).at( a ).toElement();
   currentAccountId = currentAccountElement.toElement().attribute( "id" );
   extractAccountDetails();
-  qDebug() << "Current account: " << currentAccountElement.firstChildElement( "details" )
-    .firstChildElement( "title" ).text();
+  // qDebug() << "Current account: " << currentAccountElement.firstChildElement( "details" )
+  //  .firstChildElement( "title" ).text();
 
   QStringList accountStringNames( accountStrings.keys() );
   QStringList accountAttribNames( accountAttributes.keys() );
@@ -1812,34 +1812,34 @@ void EditingWindow::changeAccount( int a ) // slot
 
   Q_FOREACH( QString s, accountStringNames )
     *(accountStrings[s]) = currentAccountElement.firstChildElement( "details" )
-      .firstChildElement( s ).text();
+    .firstChildElement( s ).text();
 
   Q_FOREACH( QString t, accountAttribNames ) {
     *(accountAttributes[t]) = false;
     for( i = 0; i < attribNodes.count(); i++ ) {
       if( attribNodes.at( i ).toElement().attribute( "name" ) == t )
-	*(accountAttributes[t]) = true;
+        *(accountAttributes[t]) = true;
     }
   }
-    
+
   QDomElement blogsElement = currentAccountElement.firstChildElement( "blogs" );
   if( !blogsElement.isNull() ) {
     QDomNodeList blogsList = blogsElement.elementsByTagName( "blog" );
     int b = blogsList.count();
     if( b ) {
-      qDebug() << "Blogs: " << b;
+      // qDebug() << "Blogs: " << b;
       cw.cbBlogSelector->clear();
       for( int i = 0; i < b; i++ )
-	cw.cbBlogSelector->addItem( blogsList.at( i ).firstChildElement( "blogName" ).text(),
-				    blogsList.at( i ).firstChildElement( "blogid" ).text() );
+        cw.cbBlogSelector->addItem( blogsList.at( i ).firstChildElement( "blogName" ).text(),
+                                    blogsList.at( i ).firstChildElement( "blogid" ).text() );
       cw.cbBlogSelector->setEnabled( true );
       changeBlog( 0 );
       cw.cbBlogSelector->disconnect( this, SLOT( changeBlog( int ) ) ); // eliminate duplicate connections
       connect( cw.cbBlogSelector, SIGNAL( activated( int ) ),
-	       this, SLOT( changeBlog( int ) ) );
+               this, SLOT( changeBlog( int ) ) );
       emit blogRefreshFinished();
       if( QApplication::overrideCursor() != 0 )
-	QApplication::restoreOverrideCursor();
+        QApplication::restoreOverrideCursor();
     }
     else
       refreshBlogList();
@@ -1863,14 +1863,14 @@ void EditingWindow::extractAccountDetails() // slot
 void EditingWindow::changeBlog( int b ) // slot
 {
   QString currentCategoryText;
-  qDebug() << "Starting changeblog" << b;
+  // qDebug() << "Starting changeblog" << b;
 
   currentBlog = b;
 
   currentBlogElement = currentAccountElement.elementsByTagName( "blog" ).at( currentBlog ).toElement();
   currentBlogid = currentBlogElement.firstChildElement( "blogid" ).text();
 #ifndef NO_DEBUG_OUTPUT
-  qDebug() << currentBlogid;
+  // qDebug() << currentBlogid;
 #endif
   QDomElement catsElement = currentBlogElement.firstChildElement( "categories" );
   if( !catsElement.isNull() ) {
@@ -1878,7 +1878,7 @@ void EditingWindow::changeBlog( int b ) // slot
     int c = catsList.count();
     if( c ) {
 #ifndef NO_DEBUG_OUTPUT
-      qDebug() << "Categories: " << c;
+      // qDebug() << "Categories: " << c;
 #endif
       cw.cbMainCat->clear();
       cw.lwOtherCats->clear();
@@ -1921,7 +1921,7 @@ void EditingWindow::blogger_getUsersBlogs( QByteArray response )
   xis.setData( response );
   reader.parse( &xis );
 #ifndef NO_DEBUG_OUTPUT
-  qDebug() << "just parsed blog list";
+  // qDebug() << "just parsed blog list";
 #endif
 
   importedBlogList = handler.returnXml();
@@ -1945,13 +1945,13 @@ void EditingWindow::blogger_getUsersBlogs( QByteArray response )
   else {
     if( !i ) {
 #ifndef NO_DEBUG_OUTPUT
-      qDebug() << "No blogs";
+      // qDebug() << "No blogs";
 #endif
       statusBar()->showMessage( tr( "No blogs found" ), 2000 );
     }
     else {
 #ifndef NO_DEBUG_OUTPUT
-      qDebug() << "Blogs found";
+      // qDebug() << "Blogs found";
 #endif
 
       currentAccountElement.removeChild( currentAccountElement.firstChildElement( "blogs" ) );
@@ -1977,7 +1977,7 @@ void EditingWindow::blogger_getUsersBlogs( QByteArray response )
     }
   }
 #ifndef NO_DEBUG_OUTPUT
-  qDebug() << "Finished handling the output";
+  // qDebug() << "Finished handling the output";
 #endif
   if( QApplication::overrideCursor() )
     QApplication::restoreOverrideCursor();
@@ -1988,7 +1988,7 @@ void EditingWindow::metaWeblog_newPost( QByteArray response )
   // Returned data should only contain a single string, and no structs. Hence
   // the XmlRpcHandler is not suitable.
 #ifndef NO_DEBUG_OUTPUT
-  qDebug() << "posted the piece";
+  // qDebug() << "posted the piece";
 #endif
 
   addToConsole( QString( response ) );
@@ -2003,7 +2003,7 @@ void EditingWindow::metaWeblog_newPost( QByteArray response )
       .section( "</string>", -2, -2 );
     if( !cw.chNoCats->isChecked() )
       connect( this, SIGNAL( httpBusinessFinished() ),
-	       this, SLOT( setPostCategories() ) );
+               this, SLOT( setPostCategories() ) );
 
     if( !entryEverSaved ) {
       if( postAsSave && cleanSave ) {
@@ -2027,7 +2027,7 @@ void EditingWindow::metaWeblog_editPost( QByteArray response )
   }
   else {
     connect( this, SIGNAL( httpBusinessFinished() ),
-	     this, SLOT( setPostCategories() ) );
+             this, SLOT( setPostCategories() ) );
     if( !entryEverSaved ) {
       if( postAsSave && cleanSave ) {
         setWindowModified( false );
@@ -2047,7 +2047,7 @@ void EditingWindow::metaWeblog_newMediaObject( QByteArray response )
   XmlRpcHandler handler;
 
 #ifndef NO_DEBUG_OUTPUT
-  qDebug() << "Handling RPC response";
+  // qDebug() << "Handling RPC response";
 #endif
   disconnect( this, SIGNAL( httpBusinessFinished() ), 0, 0 );
   addToConsole( QString( response ) );
@@ -2068,7 +2068,7 @@ void EditingWindow::metaWeblog_newMediaObject( QByteArray response )
     statusBar()->showMessage( tr( "The upload returned a fault." ), 2000 );
   }
 #ifndef NO_DEBUG_OUTPUT
-  qDebug() << "Finished handling response";
+  // qDebug() << "Finished handling response";
 #endif
 
   if( QApplication::overrideCursor() != 0 )
@@ -2182,7 +2182,7 @@ void EditingWindow::mt_getCategoryList( QByteArray response )
   addToConsole( accountsDom.toString( 2 ) );
 
   connect( this, SIGNAL( httpBusinessFinished() ),
-	   this, SIGNAL( categoryRefreshFinished() ) );
+           this, SIGNAL( categoryRefreshFinished() ) );
 
   if( QApplication::overrideCursor() != 0 )
     QApplication::restoreOverrideCursor();
@@ -2210,7 +2210,7 @@ void EditingWindow::mt_setPostCategories( QByteArray response )
 
     if( location.contains( "mt-xmlrpc.cgi" ) && cw.cbStatus->currentIndex() == 1 )
       connect( this, SIGNAL( httpBusinessFinished() ),
-	       this, SLOT( publishPost() ) );
+               this, SLOT( publishPost() ) );
   }
   addToConsole( rdata );
   QApplication::restoreOverrideCursor();
@@ -2219,21 +2219,21 @@ void EditingWindow::mt_setPostCategories( QByteArray response )
 void EditingWindow::handleConsole( bool isChecked )
 {
   if( !isChecked ) {
-      ui.actionP_review->setEnabled( true );
-      mainStack->setCurrentIndex( previousRaisedLSWidget );
-      searchWidget->setTextEdit( EDITOR );
-      ui.action_View_Console->setText( tr( "&Console" ) );
-      ui.action_View_Console->setIconText( tr( "Console" ) );
-      ui.action_View_Console->setToolTip( tr( "Console" ) );
+    ui.actionP_review->setEnabled( true );
+    mainStack->setCurrentIndex( previousRaisedLSWidget );
+    searchWidget->setTextEdit( EDITOR );
+    ui.action_View_Console->setText( tr( "&Console" ) );
+    ui.action_View_Console->setIconText( tr( "Console" ) );
+    ui.action_View_Console->setToolTip( tr( "Console" ) );
   }
   else {
-      ui.actionP_review->setEnabled( false );
-      previousRaisedLSWidget = mainStack->currentIndex();
-      mainStack->setCurrentIndex( consoleID );
-      searchWidget->setTextEdit( console );
-      ui.action_View_Console->setText( tr( "Exit &console" ) );
-      ui.action_View_Console->setIconText( tr( "Exit console" ) );
-      ui.action_View_Console->setToolTip( tr( "Exit console" ) );
+    ui.actionP_review->setEnabled( false );
+    previousRaisedLSWidget = mainStack->currentIndex();
+    mainStack->setCurrentIndex( consoleID );
+    searchWidget->setTextEdit( console );
+    ui.action_View_Console->setText( tr( "Exit &console" ) );
+    ui.action_View_Console->setIconText( tr( "Exit console" ) );
+    ui.action_View_Console->setToolTip( tr( "Exit console" ) );
   }
 }
 
@@ -2263,7 +2263,7 @@ void EditingWindow::insertMore()
 void EditingWindow::makeBlockquote()
 {
   EDITOR->insertPlainText( QString( "<blockquote>%1</blockquote>" )
-			   .arg( EDITOR->textCursor().selectedText() ) );
+                           .arg( EDITOR->textCursor().selectedText() ) );
 }
 
 void EditingWindow::makePara()
@@ -2297,15 +2297,15 @@ void EditingWindow::insertLink( bool isAutoLink )
     }
     if( leui.chLinkTarget->isChecked() ) {
       switch( leui.cbLinkTarget->currentIndex() ) {
-      case 0: insertionString += QString( " target=\"_top\"" );   break;
-      case 1: insertionString += QString( " target=\"_blank\"" ); break;
-      case 2: insertionString += QString( " target=\"view_window\"" ); break;
+        case 0: insertionString += QString( " target=\"_top\"" );   break;
+        case 1: insertionString += QString( " target=\"_blank\"" ); break;
+        case 2: insertionString += QString( " target=\"view_window\"" ); break;
       }
     }
     insertionString += ">";
     EDITOR->insertPlainText( QString( "%1%2</a>" )
-			     .arg( insertionString )
-			     .arg( leui.leLinkText->text() ) );
+                             .arg( insertionString )
+                             .arg( leui.leLinkText->text() ) );
   }
   if( leui.cbMakeAutoLink->isChecked() ) {
     selectedStringLC = selectedString.toLower().trimmed();
@@ -2350,13 +2350,13 @@ void EditingWindow::insertAutoLink()
       .arg( autoLinkTitleDictionary.value( selectedTextLC ) );
     if( autoLinkTargetDictionary.contains( selectedTextLC ) )
       targetString = QString( " target=\"%1\"" )
-	.arg( targets.value( autoLinkTargetDictionary.value( selectedTextLC ) ) );
+        .arg( targets.value( autoLinkTargetDictionary.value( selectedTextLC ) ) );
 
     EDITOR->insertPlainText( QString( "<a href=\"%1\"%2%3>%4</a>" )
-			     .arg( autoLinkDictionary.value( selectedTextLC ) )
-			     .arg( titleString )
-			     .arg( targetString )
-			     .arg( selectedText ) );
+                             .arg( autoLinkDictionary.value( selectedTextLC ) )
+                             .arg( titleString )
+                             .arg( targetString )
+                             .arg( selectedText ) );
   }
   else
     insertLink( true );
@@ -2376,12 +2376,12 @@ void EditingWindow::insertImage()
       .arg( ieui.leImageURL->text() );
     if( ieui.leAltText->text().size() )
       insertionString += QString( " alt=\"%1\"" )
-	.arg( ieui.leAltText->text() );
+        .arg( ieui.leAltText->text() );
     if( ieui.chAlign->isChecked() ) {
       if( ieui.cbAlign->currentIndex() )
-	insertionString += " align=\"right\"";
+        insertionString += " align=\"right\"";
       else
-	insertionString += " align=\"left\"";
+        insertionString += " align=\"left\"";
     }
     insertionString += ">";
     EDITOR->insertPlainText( insertionString );
@@ -2473,7 +2473,7 @@ void EditingWindow::pasteAsBlockquote()
   if( !insertion.isEmpty() ) {
     insertion.replace( QRegExp( "\n{1,2}" ), "\n\n" );
     EDITOR->insertPlainText( QString( "<blockquote>%1</blockquote>" )
-			     .arg( insertion ) );
+                             .arg( insertion ) );
   }
 }
 
@@ -2545,7 +2545,7 @@ void EditingWindow::doPreview( bool isChecked )
     previewWindow->setHtml( conversionStringB );
     previousRaisedLSWidget = mainStack->currentIndex();
     connect( previewWindow, SIGNAL( highlighted( const QString & ) ),
-	     this, SLOT( showHighlightedURL( const QString & ) ) );
+             this, SLOT( showHighlightedURL( const QString & ) ) );
     mainStack->setCurrentIndex( previewWindowID );
     searchWidget->setTextEdit( previewWindow );
     ui.actionP_review->setText( tr( "Exit p&review" ) );
@@ -2568,7 +2568,7 @@ void EditingWindow::showHighlightedURL( const QString &highlightedURL )
 }
 
 /*void EditingWindow::blogThis()
-{
+  {
   newMTPost();
   }*/
 
@@ -2578,7 +2578,7 @@ void EditingWindow::newMTPost()
 
   QDomDocument doc;
   QDomElement methodCall, params, param, member, value, integer,
-    string, rpcstruct, rpcarray, actualValue;
+              string, rpcstruct, rpcarray, actualValue;
   QString description, extEntry, techTagString;
   bool takeComms = cw.chComments->isChecked();
   bool takeTB = cw.chTB->isChecked();
@@ -2590,9 +2590,9 @@ void EditingWindow::newMTPost()
 
     if( EDITOR->toPlainText().contains( "<!--more-->" ) ) {
       description = QString( EDITOR->toPlainText() )
-	.section( "<!--more-->", 0, 0 );
+        .section( "<!--more-->", 0, 0 );
       extEntry = QString( EDITOR->toPlainText() )
-	.section( "<!--more-->", -1, -1 );
+        .section( "<!--more-->", -1, -1 );
     } else {
       description = QString( EDITOR->toPlainText() );
       extEntry = "";
@@ -2688,21 +2688,21 @@ void EditingWindow::newMTPost()
     currentHttpBusiness = 7; // Processing metaWeblog.newPost request
     disconnect( this, SIGNAL( httpBusinessFinished() ) );
     connect( http, SIGNAL( done( bool ) ),
-	     this, SLOT( handleDone( bool ) ) );
+             this, SLOT( handleDone( bool ) ) );
     connect( http, SIGNAL( readyRead( const QHttpResponseHeader & ) ),
-	     this, SLOT( handleResponseHeader( const QHttpResponseHeader & ) ) );
+             this, SLOT( handleResponseHeader( const QHttpResponseHeader & ) ) );
     connect( http, SIGNAL( hostLookupFailed() ),
-	     this, SLOT( handleHostLookupFailed() ) );
+             this, SLOT( handleHostLookupFailed() ) );
   }
   else {
     if( currentHttpBusiness ) {
 #ifdef QTM_DEBUG
-    statusBar()->showMessage( tr( "refreshCategories: All HTTP requests are blocked" ),
-			      2000 );
+      statusBar()->showMessage( tr( "refreshCategories: All HTTP requests are blocked" ),
+                                2000 );
 #else
-    statusBar()->showMessage( tr( "All HTTP requests are blocked." ), 2000 );
+      statusBar()->showMessage( tr( "All HTTP requests are blocked." ), 2000 );
 #endif
-  }
+    }
     else
       submitMTEdit();
   }
@@ -2720,9 +2720,9 @@ void EditingWindow::submitMTEdit()
 
   if( EDITOR->toPlainText().contains( "<!--more-->" ) ) {
     description = QString( EDITOR->toPlainText() )
-	.section( "<!--more-->", 0, 0 );
+      .section( "<!--more-->", 0, 0 );
     extEntry = QString( EDITOR->toPlainText() )
-	.section( "<!--more-->", -1, -1 );
+      .section( "<!--more-->", -1, -1 );
   } else {
     description = QString( EDITOR->toPlainText() );
     extEntry = "";
@@ -2733,11 +2733,11 @@ void EditingWindow::submitMTEdit()
     techTagString = "<p style=\"text-align:right;font-size:10px;\">Technorati Tags: ";
     for( count = 0; count < tags; count++ ) {
       techTagString.append( QString( "<a href=\"http://technorati.com/tag/%1\""
-				     " rel=\"tag\">%2</a>%3" )
-			    .arg( cw.lwTags->item( count )->text() )
-			    .arg( cw.lwTags->item( count )->text()
-				  .replace( "+", " " ) )
-			    .arg( (count == tags-1) ? "</p>" : ", " ) );
+                                     " rel=\"tag\">%2</a>%3" )
+                            .arg( cw.lwTags->item( count )->text() )
+                            .arg( cw.lwTags->item( count )->text()
+                                  .replace( "+", " " ) )
+                            .arg( (count == tags-1) ? "</p>" : ", " ) );
     }
 
     if( cw.rbStartOfMainEntry->isChecked() )
@@ -2758,17 +2758,17 @@ void EditingWindow::submitMTEdit()
   value = doc.createElement( "value" );
   rpcstruct = doc.createElement( "struct" );
   rpcstruct.appendChild( XmlMember( doc, "title", "string",
-				    cw.leTitle->text() ) );
+                                    cw.leTitle->text() ) );
   rpcstruct.appendChild( XmlMember( doc, "description", "string", description ) );
   rpcstruct.appendChild( XmlMember( doc, "dateCreated", "dateTime.iso8601", dateTime ) );
   rpcstruct.appendChild( XmlMember( doc, "mt_allow_comments", "boolean",
-				    takeComms ? "1" : "0" ) );
+                                    takeComms ? "1" : "0" ) );
   rpcstruct.appendChild( XmlMember( doc, "mt_allow_pings", "boolean",
-				    takeTB ? "1" : "0" ) );
+                                    takeTB ? "1" : "0" ) );
   rpcstruct.appendChild( XmlMember( doc, "mt_text_more", "string", extEntry ) );
   if( cw.teExcerpt->toPlainText().length() )
     rpcstruct.appendChild( XmlMember( doc, "mt_excerpt", "string",
-				      cw.teExcerpt->toPlainText().replace( QChar( '&' ), "&amp;" ) ) );
+                                      cw.teExcerpt->toPlainText().replace( QChar( '&' ), "&amp;" ) ) );
   else
     rpcstruct.appendChild( XmlMember( doc, "mt_excerpt", "string", "" ) );
   rpcstruct.appendChild( XmlMember( doc, "mt_keywords", "string", "" ) );
@@ -2783,12 +2783,12 @@ void EditingWindow::submitMTEdit()
   param.appendChild( value );
   params.appendChild( param );
   params.appendChild( XmlValue( doc, "boolean",
-				cw.cbStatus->currentIndex() ? "1" : "0" ) );
+                                cw.cbStatus->currentIndex() ? "1" : "0" ) );
   methodCall.appendChild( params );
   doc.appendChild( methodCall );
   doc.insertBefore( doc.createProcessingInstruction( "xml",
-						     "version=\"1.0\" encoding=\"UTF-8\"" ),
-		    doc.firstChild() );
+                                                     "version=\"1.0\" encoding=\"UTF-8\"" ),
+                    doc.firstChild() );
 
   QByteArray requestArray( doc.toByteArray() );
   responseData = "";
@@ -2810,11 +2810,11 @@ void EditingWindow::submitMTEdit()
 
   currentHttpBusiness = 8; // Processing metaWeblog.editPost request
   connect( http, SIGNAL( done( bool ) ),
-	   this, SLOT( handleDone( bool ) ) );
+           this, SLOT( handleDone( bool ) ) );
   connect( http, SIGNAL( readyRead( const QHttpResponseHeader & ) ),
-	   this, SLOT( handleResponseHeader( const QHttpResponseHeader & ) ) );
+           this, SLOT( handleResponseHeader( const QHttpResponseHeader & ) ) );
   connect( http, SIGNAL( hostLookupFailed() ),
-	   this, SLOT( handleHostLookupFailed() ) );
+           this, SLOT( handleHostLookupFailed() ) );
 }
 
 void EditingWindow::updatePostCategories()
@@ -2832,7 +2832,7 @@ void EditingWindow::setPostCategories()
   QDomElement cat;
 
 #ifndef NO_DEBUG_OUTPUT
-  qDebug() << "starting to post categories";
+  // qDebug() << "starting to post categories";
 #endif
   if( categoriesEnabled ) {
     if( !currentHttpBusiness ) {
@@ -2852,13 +2852,13 @@ void EditingWindow::setPostCategories()
 
       if( !cw.chNoCats->isChecked() ) {
 #ifndef NO_DEBUG_OUTPUT
-        qDebug() << "posting prim cat";
+        // qDebug() << "posting prim cat";
 #endif
         cat = currentBlogElement.firstChildElement( "categories" )
           .childNodes().at( cw.cbMainCat->currentIndex() ).toElement();
         QString primCat = cw.cbMainCat->itemData( cw.cbMainCat->currentIndex() ).toString();
 #ifndef NO_DEBUG_OUTPUT
-        qDebug() << "posted prim cat";
+        // qDebug() << "posted prim cat";
 #endif
         arrayStruct.appendChild( XmlMember( doc, "categoryId", "string", primCat ) );
         arrayStruct.appendChild( XmlMember( doc, "isPrimary", "boolean", "1" ) );
@@ -2906,7 +2906,7 @@ void EditingWindow::setPostCategories()
       if( QApplication::overrideCursor() == 0 )
         QApplication::setOverrideCursor( QCursor( Qt::BusyCursor ) );
 #ifndef NO_DEBUG_OUTPUT
-      qDebug() << "posted categories";
+      // qDebug() << "posted categories";
 #endif
       currentHttpBusiness = 15; // Processing mt.setPostCategories request
       connect( http, SIGNAL( done( bool ) ),
@@ -2949,8 +2949,8 @@ void EditingWindow::publishPost() // slot
     methodCall.appendChild( params );
     doc.appendChild( methodCall );
     doc.insertBefore( doc.createProcessingInstruction( "xml",
-						       "version=\"1.0\" encoding=\"UTF-8\"" ),
-		      doc.firstChild() );
+                                                       "version=\"1.0\" encoding=\"UTF-8\"" ),
+                      doc.firstChild() );
 
     QByteArray requestArray( doc.toByteArray() );
 
@@ -2968,11 +2968,11 @@ void EditingWindow::publishPost() // slot
       QApplication::setOverrideCursor( QCursor( Qt::BusyCursor ) );
     currentHttpBusiness = 12; // Processing mt.publishPost request
     connect( http, SIGNAL( done( bool ) ),
-	     this, SLOT( handleDone( bool ) ) );
+             this, SLOT( handleDone( bool ) ) );
     connect( http, SIGNAL( readyRead( const QHttpResponseHeader & ) ),
-	     this, SLOT( handleResponseHeader( const QHttpResponseHeader & ) ) );
+             this, SLOT( handleResponseHeader( const QHttpResponseHeader & ) ) );
     connect( http, SIGNAL( hostLookupFailed() ),
-	     this, SLOT( handleHostLookupFailed() ) );
+             this, SLOT( handleHostLookupFailed() ) );
 
   }
   else
@@ -2999,7 +2999,7 @@ void EditingWindow::saveAs( bool exp )
   QString extn = QString( "%1 (*.%2)" ).arg( tr( "Blog entries" ) )
     .arg( localStorageFileExtn );
   QString fn = QFileDialog::getSaveFileName( this, tr( "Choose a filename" ),
-					     suggestedFilename, extn );
+                                             suggestedFilename, extn );
 
   if ( !fn.isEmpty() ) {
     if( !localStorageFileExtn.isEmpty() )
@@ -3051,7 +3051,7 @@ void EditingWindow::save( const QString &fname, bool exp )
 
   if( !f.open( QIODevice::WriteOnly ) ) {
     statusBar()->showMessage( tr( "Could not write to %1" ).arg(fname),
-			  2000 );
+                              2000 );
     return;
   }
 
@@ -3092,11 +3092,11 @@ void EditingWindow::save( const QString &fname, bool exp )
     int cats = 0;
     for( int a = 0; a < cw.lwOtherCats->count(); a++ ) {
       if( cw.lwOtherCats->isItemSelected( cw.lwOtherCats->item( a ) ) ) {
-	if( cats )
-	  catsList.append( QString( ";%1" ).arg( cw.cbMainCat->itemData( a ).toString() ) );
-	else
-	  catsList.append( cw.cbMainCat->itemData( a ).toString() );
-	cats++;
+        if( cats )
+          catsList.append( QString( ";%1" ).arg( cw.cbMainCat->itemData( a ).toString() ) );
+        else
+          catsList.append( cw.cbMainCat->itemData( a ).toString() );
+        cats++;
       }
     }
     out << QString( "CatIDs:%1\n" ).arg( catsList );
@@ -3120,26 +3120,26 @@ void EditingWindow::choose( QString fname )
 {
   QString fn;
   QString extn( QString( "%1 (*.%2)" ).arg( tr( "Blog entries" ) )
-		.arg( localStorageFileExtn ) );
+                .arg( localStorageFileExtn ) );
 
   if( fname.isEmpty() )
     fn = QFileDialog::getOpenFileName( this, tr( "Choose a file to open" ),
-				    localStorageDirectory, extn );
+                                       localStorageDirectory, extn );
   else
     fn = fname;
 
   if ( !fn.isEmpty() ) {
     if( !useNewWindows ) {
       if( saveCheck( true ) ) {
-	if( !load( fn ) )
-	  statusBar()->showMessage( tr( "File could not be loaded." ), 2000 );
-	else {
-	  qtm->addRecentFile( cw.leTitle->text(), fn );
+        if( !load( fn ) )
+          statusBar()->showMessage( tr( "File could not be loaded." ), 2000 );
+        else {
+          qtm->addRecentFile( cw.leTitle->text(), fn );
 
-	  dirtyIndicator->hide();
-	  setWindowModified( false );
-	  setDirtySignals( true );
-	}
+          dirtyIndicator->hide();
+          setWindowModified( false );
+          setDirtySignals( true );
+        }
       }
     }
     else {
@@ -3213,7 +3213,7 @@ bool EditingWindow::load( const QString &fname, bool fromSTI )
     accountsElement.appendChild( currentAccountElement );
     accountsDom.appendChild( accountsElement );
     accountsDom.insertBefore( accountsDom.createProcessingInstruction( "xml", "version=\"1.0\"" ),
-			      accountsDom.firstChild() );
+                              accountsDom.firstChild() );
   }
 
 
@@ -3296,7 +3296,7 @@ bool EditingWindow::load( const QString &fname, bool fromSTI )
     d = tags.count( QChar( ';' ) );
     if( d ) {
       for( c = 0; c <= d; c++ )
-	cw.lwTags->addItem( tags.section( QChar( ';' ), c, c ) );
+        cw.lwTags->addItem( tags.section( QChar( ';' ), c, c ) );
     } else
       cw.lwTags->addItem( tags );
   }
@@ -3374,7 +3374,7 @@ bool EditingWindow::load( const QString &fname, bool fromSTI )
     accts = accountsDom.elementsByTagName( "account" );
     for( g = 0; g <= accts.count(); g++ ) {
       if( g == accts.count() ) {
-        qDebug() << accts.count() << "accounts";
+        // qDebug() << accts.count() << "accounts";
         // i.e. if it gets to the end of the accounts tree without finding the account
         QMessageBox::information( 0, tr( "QTM - No such account" ),
                                   tr( "QTM could not find this account (perhaps it was deleted).\n\n"
@@ -3405,7 +3405,7 @@ bool EditingWindow::load( const QString &fname, bool fromSTI )
       }
 
       if( accts.at( g ).toElement().attribute( "id" ) == loadedAccountId ) {
-        qDebug() << "found the account:" << loadedAccountId;
+        // qDebug() << "found the account:" << loadedAccountId;
         populateAccountList();
         currentAccountElement = accts.at( g ).toElement();
         extractAccountDetails();
@@ -3430,7 +3430,7 @@ bool EditingWindow::load( const QString &fname, bool fromSTI )
             currentBlogElement = blogNodeList.at( hh ).toElement();
         }
         cw.cbBlogSelector->disconnect( SIGNAL( activated( int ) ), this, 0 );
-        qDebug() << "connecting changeBlog";
+        // qDebug() << "connecting changeBlog";
         connect( cw.cbBlogSelector, SIGNAL( activated( int ) ),
                  this, SLOT( changeBlog( int ) ) );
         if( !isOK ) {
@@ -3456,18 +3456,18 @@ bool EditingWindow::load( const QString &fname, bool fromSTI )
           QDomNodeList catNodeList = catsElement.elementsByTagName( "category" );
           int b = catNodeList.count();
           if( b ) {
-            qDebug() << "categories:" << b;
+            // qDebug() << "categories:" << b;
             for( int j = 0; j < b; j++ ) {
               cw.cbMainCat->addItem( catNodeList.at( j ).firstChildElement( "categoryName" ).text(),
                                      QVariant( catNodeList.at( j ).firstChildElement( "categoryId" ).text() ) );
               cw.lwOtherCats->addItem( catNodeList.at( j ).firstChildElement( "categoryName" ).text() );
             }
-            qDebug() << "primaryCat is" << QString::number( primaryCat );
+            // qDebug() << "primaryCat is" << QString::number( primaryCat );
             for( int i = 0; i < catNodeList.size(); i++ ) {
               QString cc = catNodeList.at( i ).firstChildElement( "categoryId" ).text();
-              qDebug() << "cc is" << cc;
+              // qDebug() << "cc is" << cc;
               if( cc == QString::number( primaryCat ) ) {
-                qDebug() << "found the primary category";
+                // qDebug() << "found the primary category";
                 cw.cbMainCat->setCurrentIndex( i );
               }
               else {
@@ -3496,7 +3496,7 @@ bool EditingWindow::load( const QString &fname, bool fromSTI )
   // Now we know this isn't an account entry, check whether the saved details actually
   // belong to an account; if it does, there is no need to check for the password
 
-  qDebug() << "this is an old-style account";
+  // qDebug() << "this is an old-style account";
   QDomNodeList blogs;
 
   accts = accountsDom.documentElement().elementsByTagName( "account" );
@@ -3505,11 +3505,11 @@ bool EditingWindow::load( const QString &fname, bool fromSTI )
       break;
 
     details = accts.at( e ).toElement().firstChildElement( "details" );
-    qDebug() << "matching against" << details.firstChildElement( "title" ).text();
+    // qDebug() << "matching against" << details.firstChildElement( "title" ).text();
     if( details.firstChildElement( "server" ).text() == server &&
         details.firstChildElement( "location" ).text() == location &&
         details.firstChildElement( "login" ).text() == login ) {
-      qDebug() << "match found";
+      // qDebug() << "match found";
       currentAccountElement = accts.at( e ).toElement();
       cw.cbAccountSelector->setCurrentIndex( e );
       extractAccountDetails();
@@ -3524,7 +3524,7 @@ bool EditingWindow::load( const QString &fname, bool fromSTI )
       }
       else {
 
-        qDebug() << "now setting categories";
+        // qDebug() << "now setting categories";
         if( blogs.at( currentBlog ).toElement().elementsByTagName( "category" ).count() ) {
           cw.cbBlogSelector->clear();
           for( hh = 0; hh < blogs.count(); hh++ ) {
@@ -3562,7 +3562,7 @@ bool EditingWindow::load( const QString &fname, bool fromSTI )
   }
 
   // This is an old-style account which isn't in the database
-  qDebug() << "old-style, not found";
+  // qDebug() << "old-style, not found";
 
   QDomElement newAcct, newDetails, newTitle, newServer, newLocation, newLogin, newPwd;
   newAcct = accountsDom.createElement( "account" );
@@ -3630,7 +3630,7 @@ void EditingWindow::setLoadedPostCategories() // slot
   QDomNodeList catNodeList = currentBlogElement.elementsByTagName( "category" );
   b = catNodeList.count();
   if( b ) {
-    qDebug() << "populating cat list";
+    // qDebug() << "populating cat list";
     for( j = 0; j < b; j++ ) {
       cw.cbMainCat->addItem( catNodeList.at( j ).firstChildElement( "categoryName" ).text(),
                              QVariant( catNodeList.at( j ).firstChildElement( "categoryId" ).text() ) );
@@ -3638,7 +3638,7 @@ void EditingWindow::setLoadedPostCategories() // slot
     }
   }
   else {
-    qDebug() << "no categories found";
+    // qDebug() << "no categories found";
     connect( this, SIGNAL( categoryRefreshFinished() ),
              this, SLOT( setLoadedPostCategories() ) );
     return;
@@ -3664,13 +3664,13 @@ void EditingWindow::setLoadedPostCategories() // slot
   else {
     QDomNodeList catNodes = currentBlogElement.firstChildElement( "categories" ).elementsByTagName( "category" );
     QStringList catStringList = otherCatsList.split( ";" );
-    qDebug() << "current Blog is" << currentBlogElement.firstChildElement( "blogName" ).text();
-    qDebug() << "primaryCat is" << primaryCat;
+    // qDebug() << "current Blog is" << currentBlogElement.firstChildElement( "blogName" ).text();
+    // qDebug() << "primaryCat is" << primaryCat;
 
     for( i = 0; i < catNodes.size(); i++ ) {
       cc = catNodes.at( i ).firstChildElement( "categoryId" ).text();
       if( cc == QString::number( primaryCat ) ) {
-        qDebug() << "found primary category";
+        // qDebug() << "found primary category";
         cw.cbMainCat->setCurrentIndex( i );
       }
       else {
@@ -3768,7 +3768,7 @@ void EditingWindow::uploadFile()
               connect( http, SIGNAL( hostLookupFailed() ),
                        this, SLOT( handleHostLookupFailed() ) );
 #ifndef NO_DEBUG_OUTPUT
-              qDebug() << "Posted image.";
+              // qDebug() << "Posted image.";
 #endif
             }
             else
@@ -3953,14 +3953,14 @@ void EditingWindow::removeTBPing()
 void EditingWindow::doFont()
 {
 #if QT_VERSION < 0x040200
-    bool isOK;
-    QSettings settings;
-    QFont f( QFontDialog::getFont( &isOK, EDITOR->font() ) );
-    EDITOR->setFont( f );
-    editorFontString = f.toString();
-    settings.beginGroup( "fonts" );
-    settings.setValue( "editorFontString", editorFontString );
-    settings.endGroup();
+  bool isOK;
+  QSettings settings;
+  QFont f( QFontDialog::getFont( &isOK, EDITOR->font() ) );
+  EDITOR->setFont( f );
+  editorFontString = f.toString();
+  settings.beginGroup( "fonts" );
+  settings.setValue( "editorFontString", editorFontString );
+  settings.endGroup();
 #endif
 }
 
@@ -4004,23 +4004,23 @@ void EditingWindow::setDirtySignals( bool d )
 {
   QList<QWidget *> widgetList;
   widgetList << EDITOR << cw.cbAccountSelector << cw.cbBlogSelector << cw.cbStatus
-	     << cw.chComments << cw.chTB << cw.cbMainCat << cw.lwOtherCats << cw.teExcerpt;
+    << cw.chComments << cw.chTB << cw.cbMainCat << cw.lwOtherCats << cw.teExcerpt;
 
-    if( d ) {
-      connect( EDITOR, SIGNAL( textChanged() ), this, SLOT( dirtify() ) );
-      connect( cw.cbAccountSelector, SIGNAL( activated( int ) ), this, SLOT( dirtify() ) );
-      connect( cw.cbBlogSelector, SIGNAL( activated( int ) ), this, SLOT( dirtify() ) );
-      connect( cw.cbStatus, SIGNAL( activated( int ) ), this, SLOT( dirtify() ) );
-      connect( cw.chComments, SIGNAL( clicked( bool ) ), this, SLOT( dirtify() ) );
-      connect( cw.chTB, SIGNAL( clicked( bool ) ), this, SLOT( dirtify() ) );
-      connect( cw.cbMainCat, SIGNAL( activated( int ) ), this, SLOT( dirtify() ) );
-      connect( cw.lwOtherCats, SIGNAL( activated( const QModelIndex & ) ), this, SLOT( dirtify() ) );
-      connect( cw.teExcerpt, SIGNAL( textChanged() ), this, SLOT( dirtify() ) );
-    }
-    else {
-      foreach( QWidget *w, widgetList )
-        disconnect( w, 0, this, SLOT( dirtify() ) );
-    }
+  if( d ) {
+    connect( EDITOR, SIGNAL( textChanged() ), this, SLOT( dirtify() ) );
+    connect( cw.cbAccountSelector, SIGNAL( activated( int ) ), this, SLOT( dirtify() ) );
+    connect( cw.cbBlogSelector, SIGNAL( activated( int ) ), this, SLOT( dirtify() ) );
+    connect( cw.cbStatus, SIGNAL( activated( int ) ), this, SLOT( dirtify() ) );
+    connect( cw.chComments, SIGNAL( clicked( bool ) ), this, SLOT( dirtify() ) );
+    connect( cw.chTB, SIGNAL( clicked( bool ) ), this, SLOT( dirtify() ) );
+    connect( cw.cbMainCat, SIGNAL( activated( int ) ), this, SLOT( dirtify() ) );
+    connect( cw.lwOtherCats, SIGNAL( activated( const QModelIndex & ) ), this, SLOT( dirtify() ) );
+    connect( cw.teExcerpt, SIGNAL( textChanged() ), this, SLOT( dirtify() ) );
+  }
+  else {
+    foreach( QWidget *w, widgetList )
+      disconnect( w, 0, this, SLOT( dirtify() ) );
+  }
 }
 
 void EditingWindow::setPostClean()
@@ -4054,18 +4054,18 @@ bool EditingWindow::saveCheck()
 
   activateWindow();
   int a = QMessageBox::warning( this, tr( "Not saved" ),
-				tr( "You have not saved this file.\n"
-				    "Save first?" ),
-				QMessageBox::Yes | QMessageBox::Default,
-				QMessageBox::No, QMessageBox::Cancel );
+                                tr( "You have not saved this file.\n"
+                                    "Save first?" ),
+                                QMessageBox::Yes | QMessageBox::Default,
+                                QMessageBox::No, QMessageBox::Cancel );
   switch( a ) {
-  case QMessageBox::Cancel:
-    return_value = false;
-    break;
-  case QMessageBox::Yes:
-    save();
-  default:
-    return_value = true;
+    case QMessageBox::Cancel:
+      return_value = false;
+      break;
+    case QMessageBox::Yes:
+      save();
+    default:
+      return_value = true;
   }
 
   return return_value;
@@ -4085,14 +4085,14 @@ void EditingWindow::doInitialChangeBlog()
       .elementsByTagName( "blog" ).at( currentBlog ).toElement();
     currentBlogid = currentBlogElement.firstChildElement( "blogid" ).text();
 #ifndef NO_DEBUG_OUTPUT
-    qDebug() << currentBlogid;
+    // qDebug() << currentBlogid;
 #endif
 
   }
   changeBlog( currentBlog );
 
   connect( cw.cbBlogSelector, SIGNAL( activated( int ) ),
-	   this, SLOT( changeBlog( int ) ) );
+           this, SLOT( changeBlog( int ) ) );
 }
 
 void EditingWindow::copyURL()
@@ -4128,7 +4128,7 @@ QDomElement EditingWindow::XmlValue( QDomDocument &doc, QString valueType,
 }
 
 QDomElement EditingWindow::XmlMember( QDomDocument &doc, QString valueName,
-			       QString valueType, QString actualValue )
+                                      QString valueType, QString actualValue )
 {
   QDomElement mem = doc.createElement( "member" );
   QDomElement name = doc.createElement( "name" );
@@ -4152,7 +4152,7 @@ QDomElement EditingWindow::XmlMethodName( QDomDocument &doc, QString methodName 
 }
 
 QDomElement EditingWindow::XmlRpcArray( QDomDocument &doc, QString valueName,
-				 QList<QString> text )
+                                        QList<QString> text )
 {
   QDomElement arrayValue, arrayValueString;
   int i;
@@ -4311,10 +4311,10 @@ void EditingWindow::loadAutoLinkDictionary()
     QFile file( dictionaryFileName );
     if( !dictDoc.setContent( &file, true, &errorString, &errorLine, &errorCol ) )
       QMessageBox::warning( 0, tr( "Failed to read templates" ),
-			    QString( tr( "Error: %1\n"
-					 "Line %2, col %3" ) )
-			    .arg( errorString ).arg( errorLine )
-			    .arg( errorCol ) );
+                            QString( tr( "Error: %1\n"
+                                         "Line %2, col %3" ) )
+                            .arg( errorString ).arg( errorLine )
+                            .arg( errorCol ) );
     else {
       QDomNodeList entryList = dictDoc.elementsByTagName( "entry" );
       for( int i = 0; i < entryList.count(); i++ ) {
@@ -4346,8 +4346,8 @@ void EditingWindow::loadAutoLinkDictionary()
 QByteArray EditingWindow::toBase64( QByteArray &qbarray )
 {
   QProgressDialog pdialog( tr( "Converting file to Base64" ),
-			   tr( "Cancel" ),
-			   0, qbarray.size(), 0 );
+                           tr( "Cancel" ),
+                           0, qbarray.size(), 0 );
   pdialog.setWindowModality( Qt::WindowModal );
   pdialog.setMinimumDuration( 2000 );
   pdialog.setWindowTitle( "QTM" );
@@ -4407,24 +4407,24 @@ void EditingWindow::addToConsole( const QString &t )
   QString text = t;
 #ifndef NO_DEBUG_OUTPUT
   if( currentHttpBusiness == 11 )
-    qDebug() << "Adding image to console";
+    // qDebug() << "Adding image to console";
 #endif
-  text.replace( QString( "<string>%1</string>" ).arg( password ),
-		tr( "<string>(password omitted)</string>" ) );
+    text.replace( QString( "<string>%1</string>" ).arg( password ),
+                  tr( "<string>(password omitted)</string>" ) );
   QTextCursor cursor( console->textCursor() );
 
   cursor.movePosition( QTextCursor::End );
   console->setTextCursor( cursor );
   if( text.contains( "<base64>" ) )
     console->insertPlainText( text.section( "<base64>", 0, 0, QString::SectionIncludeTrailingSep )
-			      .append( tr( " ... base64 encoded file omitted ... " ) )
-			      .append( text.section( "</base64>", 1, 1, QString::SectionIncludeLeadingSep ) ) );
+                              .append( tr( " ... base64 encoded file omitted ... " ) )
+                              .append( text.section( "</base64>", 1, 1, QString::SectionIncludeLeadingSep ) ) );
   else
     console->insertPlainText( text );
 
 #ifndef NO_DEBUG_OUTPUT
   if( currentHttpBusiness == 11 )
-    qDebug() << "Added image to console";
+    // qDebug() << "Added image to console";
 #endif
 }
 
