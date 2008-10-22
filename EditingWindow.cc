@@ -3707,7 +3707,7 @@ void EditingWindow::uploadFile()
                                                            QDir::homePath() );
     if( !uploadFilename.isEmpty() ) {
       if( QFile::exists( uploadFilename ) ){
-        inFile = QFile( uploadFilename );
+        inFile.setFileName( uploadFilename );
         if( inFile.open( QIODevice::ReadOnly ) ) {
           conversionBuffer = inFile.readAll();
           if( conversionBuffer.isEmpty() )
