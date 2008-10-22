@@ -1,6 +1,6 @@
 Changelog:
 
-0.7
+0.7 (22nd Oct 2008):
 
 New feature: Ability to specify "no categories" for a post, via a checkbox
 in the categories page
@@ -10,6 +10,8 @@ UI improvement: Preview and Console menu entries changed to "Exit
 Preview/Console" when they are activated, and changed back when deactivated
 Bug fix: sorted the "deprecated type conversion" warnings stemming from the
 included XPM files
+UI improvement: Number of secondary categories displayed next to "Others" in
+the heading
 Bug fix: displays ampersands in recent file menu properly
 Bug fix: stopped adding XML-RPC fault codes to the main account tree
 

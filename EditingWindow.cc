@@ -915,10 +915,10 @@ void EditingWindow::setInitialAccount()
     cw.cbAccountSelector->clear();
 
     if( accountsList.count() == 1 &&
-	accountsList.at( 0 ).firstChildElement( "details" ).isNull() ) {
+        accountsList.at( 0 ).firstChildElement( "details" ).isNull() ) {
       // This is if there is just one legacy account
       QDomElement detailElem, titleElem, serverElem, portElem, locElem,
-	loginElem, pwdElem;
+                  loginElem, pwdElem;
       detailElem = accountsDom.createElement( "details" );
       titleElem = accountsDom.createElement( "title" );
       titleElem.appendChild( accountsDom.createTextNode( tr( "Default account" ) ) );
@@ -927,8 +927,8 @@ void EditingWindow::setInitialAccount()
       locElem = accountsDom.createElement( "location" );
       locElem.appendChild( accountsDom.createTextNode( location ) );
       if( !port.isEmpty() ) {
-	portElem = accountsDom.createElement( "port" );
-	portElem.appendChild( accountsDom.createTextNode( port ) );
+        portElem = accountsDom.createElement( "port" );
+        portElem.appendChild( accountsDom.createTextNode( port ) );
       }
       loginElem = accountsDom.createElement( "login" );
       loginElem.appendChild( accountsDom.createTextNode( login ) );
@@ -937,7 +937,7 @@ void EditingWindow::setInitialAccount()
       detailElem.appendChild( titleElem );
       detailElem.appendChild( serverElem );
       if( !portElem.isNull() )
-	detailElem.appendChild( portElem );
+        detailElem.appendChild( portElem );
       detailElem.appendChild( locElem );
       detailElem.appendChild( loginElem );
       detailElem.appendChild( pwdElem );
@@ -947,39 +947,39 @@ void EditingWindow::setInitialAccount()
 
     for( i = 0; i < accountsList.count(); i++ ) {
       thisTitleElem = accountsList.at( i ).toElement().firstChildElement( "details" )
-	.firstChildElement( "title" );
+        .firstChildElement( "title" );
       if( !thisTitleElem.isNull() )
-	cw.cbAccountSelector->addItem( thisTitleElem.text(),
-				       accountsList.at( i ).toElement().attribute( "id" ) );
+        cw.cbAccountSelector->addItem( thisTitleElem.text(),
+                                       accountsList.at( i ).toElement().attribute( "id" ) );
       else
-	cw.cbAccountSelector->addItem( tr( "Unnamed account" ),
-				       accountsList.at( i ).toElement().attribute( "id" ).isEmpty() ?
-				       QString( "noid_%1" ).arg( i ) :
-				       accountsList.at( i ).toElement().attribute( "id" ) );
+        cw.cbAccountSelector->addItem( tr( "Unnamed account" ),
+                                       accountsList.at( i ).toElement().attribute( "id" ).isEmpty() ?
+                                       QString( "noid_%1" ).arg( i ) :
+                                       accountsList.at( i ).toElement().attribute( "id" ) );
     }
 
     qDebug() << "checking for last account ID";
     for( i = 0; i < accountsList.count(); i++ ) {
       if( accountsList.at( i ).toElement().attribute( "id" ) == lastAccountID ) {
-	qDebug() << "found it";
-	currentAccountElement = accountsList.at( i ).toElement();
-	currentAccountId = currentAccountElement.attribute( "id" );
-	cw.cbAccountSelector->setCurrentIndex( i );
+        qDebug() << "found it";
+        currentAccountElement = accountsList.at( i ).toElement();
+        currentAccountId = currentAccountElement.attribute( "id" );
+        cw.cbAccountSelector->setCurrentIndex( i );
         extractAccountDetails();
-	populateBlogList();
-	connect( cw.cbAccountSelector, SIGNAL( activated( int ) ),
-		 this, SLOT( changeAccount( int ) ) );
-	break;
+        populateBlogList();
+        connect( cw.cbAccountSelector, SIGNAL( activated( int ) ),
+                 this, SLOT( changeAccount( int ) ) );
+        break;
       }
       // If it reaches the end of the loop with no joy
       if( i == accountsList.count()-1 ) {
-	qDebug() << "using first account";
-	currentAccountElement = accountsDom.documentElement()
-	  .firstChildElement( "account" );
+        qDebug() << "using first account";
+        currentAccountElement = accountsDom.documentElement()
+          .firstChildElement( "account" );
         extractAccountDetails();
-	populateBlogList();
-	connect( cw.cbAccountSelector, SIGNAL( activated( int ) ),
-		 this, SLOT( changeAccount( int ) ) );
+        populateBlogList();
+        connect( cw.cbAccountSelector, SIGNAL( activated( int ) ),
+                 this, SLOT( changeAccount( int ) ) );
       }
     }
 }
@@ -1648,35 +1648,41 @@ void EditingWindow::populateBlogList() // slot
     for( i = 0; i < a; i++ ) {
       ct = blogNodeList.at( i ).firstChildElement( "blogName" );
       cw.cbBlogSelector->addItem( blogNodeList.at( i ).firstChildElement( "blogName" ).text(),
-				  QVariant( blogNodeList.at( i ).firstChildElement( "blogid" ).text() ));
+                                  QVariant( blogNodeList.at( i ).firstChildElement( "blogid" ).text() ));
       currentBlog = i;
       currentBlogElement = currentAccountElement.firstChildElement( "blogs" )
-          .elementsByTagName( "blog" ).at( currentBlog ).toElement();
+        .elementsByTagName( "blog" ).at( currentBlog ).toElement();
       currentBlogid = currentBlogElement.firstChildElement( "blogid" ).text();
     }
 
-   currentBlog = cw.cbBlogSelector->currentIndex();
+    currentBlog = cw.cbBlogSelector->currentIndex();
 
-   catsElement = blogNodeList.at( currentBlog ).firstChildElement( "categories" );
-   if( !catsElement.isNull() ) {
-     catNodeList = catsElement.elementsByTagName( "category" );
-     b = catNodeList.count();
-     if( b ) {
-       for( j = 0; j < b; j++ ) {
-	 cw.cbMainCat->addItem( catNodeList.at( j ).firstChildElement( "categoryName" ).text(),
-				QVariant( catNodeList.at( j ).firstChildElement( "categoryId" ).text() ) );
-	 cw.lwOtherCats->addItem( catNodeList.at( j ).firstChildElement( "categoryName" ).text() );
-       }
-     }
-     else {
-       cw.chNoCats->setEnabled( false );
-       cw.cbMainCat->setEnabled( false );
-       cw.lwOtherCats->setEnabled( false );
-     }
+    catsElement = blogNodeList.at( currentBlog ).firstChildElement( "categories" );
+    if( !catsElement.isNull() ) {
+      catNodeList = catsElement.elementsByTagName( "category" );
+      b = catNodeList.count();
+      if( b ) {
+        for( j = 0; j < b; j++ ) {
+          cw.cbMainCat->addItem( catNodeList.at( j ).firstChildElement( "categoryName" ).text(),
+                                 QVariant( catNodeList.at( j ).firstChildElement( "categoryId" ).text() ) );
+          cw.lwOtherCats->addItem( catNodeList.at( j ).firstChildElement( "categoryName" ).text() );
+        }
+      }
+      else {
+        cw.chNoCats->setEnabled( false );
+        cw.cbMainCat->setEnabled( false );
+        cw.lwOtherCats->setEnabled( false );
+      }
 
-   }
-   connect( cw.cbBlogSelector, SIGNAL( activated( int ) ),
-	    this, SLOT( changeBlog( int ) ) );
+    }
+    connect( cw.cbBlogSelector, SIGNAL( activated( int ) ),
+             this, SLOT( changeBlog( int ) ) );
+  }
+  else {
+    cw.cbBlogSelector->setEnabled( false );
+    cw.chNoCats->setEnabled( false );
+    cw.cbMainCat->setEnabled( false );
+    cw.lwOtherCats->setEnabled( false );
   }
 }
 
@@ -1879,16 +1885,16 @@ void EditingWindow::changeBlog( int b ) // slot
       for( int i = 0; i < c; i++ ) {
         currentCategoryText = catsList.at( i ).firstChildElement( "categoryName" ).text();
         cw.cbMainCat->addItem( currentCategoryText,
-			       QVariant( catsList.at( i ).firstChildElement( "categoryId" ).text() ) );
+                               QVariant( catsList.at( i ).firstChildElement( "categoryId" ).text() ) );
         cw.lwOtherCats->addItem( currentCategoryText );
-	cw.chNoCats->setEnabled( true );
-	cw.cbMainCat->setEnabled( true );
-	cw.lwOtherCats->setEnabled( true );
-	statusBar()->clearMessage(); // as otherwise, "there are no categories" would still show
+        cw.chNoCats->setEnabled( true );
+        cw.cbMainCat->setEnabled( true );
+        cw.lwOtherCats->setEnabled( true );
+        statusBar()->clearMessage(); // as otherwise, "there are no categories" would still show
       }
       emit categoryRefreshFinished();
       if( QApplication::overrideCursor() != 0 )
-	QApplication::restoreOverrideCursor();
+        QApplication::restoreOverrideCursor();
     }
     else
       callRefreshCategories();
@@ -1935,8 +1941,6 @@ void EditingWindow::blogger_getUsersBlogs( QByteArray response )
     cw.cbMainCat->clear();
     cw.lwOtherCats->setEnabled( false );
     cw.lwOtherCats->clear();
-    if( QApplication::overrideCursor() )
-      QApplication::restoreOverrideCursor();
   }
   else {
     if( !i ) {
@@ -1954,27 +1958,29 @@ void EditingWindow::blogger_getUsersBlogs( QByteArray response )
       currentAccountElement.appendChild( accountsDom.importNode( importedBlogList.firstChildElement( "blogs" ), true ) );
 
       for( int a = 0; a < i; a++ ) {
-	cw.cbBlogSelector->addItem( blogNodeList.at( a ).firstChildElement( "blogName" ).text(),
-				    QVariant( blogNodeList.at( a ).firstChildElement( "blogid" ).text() ) );
-	currentBlog = cw.cbBlogSelector->currentIndex();
+        cw.cbBlogSelector->addItem( blogNodeList.at( a ).firstChildElement( "blogName" ).text(),
+                                    QVariant( blogNodeList.at( a ).firstChildElement( "blogid" ).text() ) );
+        currentBlog = cw.cbBlogSelector->currentIndex();
       }
       cw.cbBlogSelector->setEnabled( true );
       connect( cw.cbBlogSelector, SIGNAL( activated( int ) ),
-	       this, SLOT( changeBlog( int ) ) );
+               this, SLOT( changeBlog( int ) ) );
       addToConsole( accountsDom.toString( 2 ) );
 
       if( !initialChangeBlog )
-	connect( cw.cbBlogSelector, SIGNAL( activated( int ) ),
-		 this, SLOT( changeBlog( int ) ) );
+        connect( cw.cbBlogSelector, SIGNAL( activated( int ) ),
+                 this, SLOT( changeBlog( int ) ) );
 
       if( loadedEntryBlog != 999 )
-	connect( this, SIGNAL( httpBusinessFinished() ),
-		 this, SLOT( doInitialChangeBlog() ) );
+        connect( this, SIGNAL( httpBusinessFinished() ),
+                 this, SLOT( doInitialChangeBlog() ) );
     }
   }
 #ifndef NO_DEBUG_OUTPUT
   qDebug() << "Finished handling the output";
 #endif
+  if( QApplication::overrideCursor() )
+    QApplication::restoreOverrideCursor();
 }
 
 void EditingWindow::metaWeblog_newPost( QByteArray response )
@@ -1988,7 +1994,8 @@ void EditingWindow::metaWeblog_newPost( QByteArray response )
   addToConsole( QString( response ) );
   if( response.contains( "<fault>" ) ) {
     statusBar()->showMessage( tr( "The submission returned a fault - see console." ), 2000 );
-    QApplication::restoreOverrideCursor();
+    if( QApplication::overrideCursor() )
+      QApplication::restoreOverrideCursor();
   }
   else {
     QString parsedData( response );
@@ -2000,9 +2007,9 @@ void EditingWindow::metaWeblog_newPost( QByteArray response )
 
     if( !entryEverSaved ) {
       if( postAsSave && cleanSave ) {
-	setWindowModified( false );
-	dirtyIndicator->hide();
-	setDirtySignals( true );
+        setWindowModified( false );
+        dirtyIndicator->hide();
+        setDirtySignals( true );
       }
     }
   }
@@ -2023,9 +2030,9 @@ void EditingWindow::metaWeblog_editPost( QByteArray response )
 	     this, SLOT( setPostCategories() ) );
     if( !entryEverSaved ) {
       if( postAsSave && cleanSave ) {
-	setWindowModified( false );
-	dirtyIndicator->hide();
-	setDirtySignals( true );
+        setWindowModified( false );
+        dirtyIndicator->hide();
+        setDirtySignals( true );
       }
     }
   }
@@ -2048,8 +2055,8 @@ void EditingWindow::metaWeblog_newMediaObject( QByteArray response )
   if( !response.contains( "<fault>" ) ) {
     if( response.contains( "<name>url</name>" ) ) {
       remoteFileLocation = QString( response )
-	.section( "<string>", 1, 1 )
-	.section( "</string>", 0, 0 );
+        .section( "<string>", 1, 1 )
+        .section( "</string>", 0, 0 );
       pbCopyURL->show();
       ui.actionCopy_upload_location->setVisible( true );
       statusBar()->showMessage( tr( "Your file is here: %1" ).arg( remoteFileLocation ), 2000 );
@@ -2117,11 +2124,11 @@ void EditingWindow::mt_getCategoryList( QByteArray response )
   int i = returnedCats.size();
   for( int j = 0; j < i; j++ )
     if( !returnedCats.at( j ).firstChildElement( "categoryId" ).isNull() &&
-	!returnedCats.at( j ).firstChildElement( "categoryName" ).isNull() ) {
+        !returnedCats.at( j ).firstChildElement( "categoryName" ).isNull() ) {
       catList.append( QString( "%1 ##ID:%2" )
-		      .arg( returnedCats.at( j ).firstChildElement( "categoryName" ).text() )
-		      .arg( returnedCats.at( j ).firstChildElement( "categoryId" ).text() ) );
-  }
+                      .arg( returnedCats.at( j ).firstChildElement( "categoryName" ).text() )
+                      .arg( returnedCats.at( j ).firstChildElement( "categoryId" ).text() ) );
+    }
   if( !noAlphaCats )
     qSort( catList.begin(), catList.end(), EditingWindow::caseInsensitiveLessThan );
 
@@ -2139,35 +2146,35 @@ void EditingWindow::mt_getCategoryList( QByteArray response )
       newCategoriesElement = accountsDom.createElement( "categories" );
       QStringList::iterator it;
       for( it = catList.begin(); it != catList.end(); ++it ) {
-	cw.cbMainCat->addItem( it->section( " ##ID:", 0, 0 ),
-			       QVariant( it->section( " ##ID:", 1, 1 ) ) );
-	cw.lwOtherCats->addItem( it->section( " ##ID:", 0, 0 ) );
-	currentCategory = accountsDom.createElement( "category" );
-	currentID = accountsDom.createElement( "categoryId" );
-	currentID.appendChild( accountsDom.createTextNode( it->section( " ##ID:", 1 ) ) );
-	currentName = accountsDom.createElement( "categoryName" );
-	currentName.appendChild( accountsDom.createTextNode( it->section( " ##ID:", 0, 0 ) ) );
-	currentCategory.appendChild( currentID );
-	currentCategory.appendChild( currentName );
-	newCategoriesElement.appendChild( currentCategory );
+        cw.cbMainCat->addItem( it->section( " ##ID:", 0, 0 ),
+                               QVariant( it->section( " ##ID:", 1, 1 ) ) );
+        cw.lwOtherCats->addItem( it->section( " ##ID:", 0, 0 ) );
+        currentCategory = accountsDom.createElement( "category" );
+        currentID = accountsDom.createElement( "categoryId" );
+        currentID.appendChild( accountsDom.createTextNode( it->section( " ##ID:", 1 ) ) );
+        currentName = accountsDom.createElement( "categoryName" );
+        currentName.appendChild( accountsDom.createTextNode( it->section( " ##ID:", 0, 0 ) ) );
+        currentCategory.appendChild( currentID );
+        currentCategory.appendChild( currentName );
+        newCategoriesElement.appendChild( currentCategory );
       }
       if( currentBlogElement.firstChildElement( "categories" ).isNull() )
-	currentBlogElement.appendChild( newCategoriesElement );
+        currentBlogElement.appendChild( newCategoriesElement );
       else
-	currentBlogElement.replaceChild( newCategoriesElement, currentBlogElement.firstChildElement( "categories" ) );
+        currentBlogElement.replaceChild( newCategoriesElement, currentBlogElement.firstChildElement( "categories" ) );
 
       cw.chNoCats->setEnabled( true );
       cw.cbMainCat->setEnabled( true );
       cw.lwOtherCats->setEnabled( true );
       if( !noAutoSave ) {
-	QFile domOut( PROPERSEPS( QString( "%1/qtmaccounts2.xml" ).arg( localStorageDirectory ) ) );
-	if( domOut.open( QIODevice::WriteOnly ) ) {
-	  QTextStream domFileStream( &domOut );
-	  accountsDom.save( domFileStream, 2 );
-	  domOut.close();
-	}
-	else
-	  statusBar()->showMessage( tr( "Could not write to accounts file (error %1)" ).arg( (int)domOut.error() ), 2000 );
+        QFile domOut( PROPERSEPS( QString( "%1/qtmaccounts2.xml" ).arg( localStorageDirectory ) ) );
+        if( domOut.open( QIODevice::WriteOnly ) ) {
+          QTextStream domFileStream( &domOut );
+          accountsDom.save( domFileStream, 2 );
+          domOut.close();
+        }
+        else
+          statusBar()->showMessage( tr( "Could not write to accounts file (error %1)" ).arg( (int)domOut.error() ), 2000 );
       }
     }
   }
@@ -2511,27 +2518,27 @@ void EditingWindow::doPreview( bool isChecked )
     ui.action_View_Console->setEnabled( false );
     conversionString += QString( "<b>%1</b>\n\n" )
       .arg( cw.leTitle->text().size() ?
-	    cw.leTitle->text() : "<i>Untitled</i>" );
+            cw.leTitle->text() : "<i>Untitled</i>" );
     conversionString += EDITOR->toPlainText();
     QTextStream a( &conversionString );
     QRegExp re( "^(<table|thead|tfoot|caption|tbody|tr|td|th|div|dl|dd|dt|ul|ol|li|select|form|blockquote|address|math|p|h[1-6])>" );
     do {
       line = a.readLine();
       if( !line.isEmpty() ) {
-	if( re.exactMatch( line ) )
-	  conversionStringB += line;
-	else {
-	  if( line.startsWith( "<pre>" ) ) {
-	    isPre = true;
-	    conversionStringB += line;
-	  }
-	  else {
-	    conversionStringB += QString( isPre ? "%1\n" : "<p>%1</p>" ).arg( line );
+        if( re.exactMatch( line ) )
+          conversionStringB += line;
+        else {
+          if( line.startsWith( "<pre>" ) ) {
+            isPre = true;
+            conversionStringB += line;
+          }
+          else {
+            conversionStringB += QString( isPre ? "%1\n" : "<p>%1</p>" ).arg( line );
 
-	    if( line.contains( "</pre>" ) )
-	      isPre = false;
-	  }
-	}
+            if( line.contains( "</pre>" ) )
+              isPre = false;
+          }
+        }
       }
     } while( !a.atEnd() );
 
@@ -2598,18 +2605,18 @@ void EditingWindow::newMTPost()
       tags = cw.lwTags->count();
       techTagString = "<p style=\"text-align:right;font-size:10px;\">Technorati Tags: ";
       for( count = 0; count < tags; count++ ) {
-	techTagString.append( QString( "<a href=\"http://technorati.com/tag/%1\""
-				       " rel=\"tag\">%2</a>%3" )
-			      .arg( cw.lwTags->item( count )->text().replace( ' ', '+' ) )
-			      .arg( cw.lwTags->item( count )->text()
-				    .replace( "+", " " ) )
-			      .arg( (count == tags-1) ? "</p>\n\n" : ", " ) );
+        techTagString.append( QString( "<a href=\"http://technorati.com/tag/%1\""
+                                       " rel=\"tag\">%2</a>%3" )
+                              .arg( cw.lwTags->item( count )->text().replace( ' ', '+' ) )
+                              .arg( cw.lwTags->item( count )->text()
+                                    .replace( "+", " " ) )
+                              .arg( (count == tags-1) ? "</p>\n\n" : ", " ) );
       }
 
       if( cw.rbStartOfMainEntry->isChecked() )
-	description.insert( 0, techTagString );
+        description.insert( 0, techTagString );
       else
-	description.append( techTagString );
+        description.append( techTagString );
     }
 
     QString blogid = cw.cbBlogSelector->itemData( cw.cbBlogSelector->currentIndex() ).toString();
@@ -2628,25 +2635,25 @@ void EditingWindow::newMTPost()
     value = doc.createElement( "value" );
     rpcstruct = doc.createElement( "struct" );
     rpcstruct.appendChild( XmlMember( doc, "title", "string",
-				      cw.leTitle->text() ) );
+                                      cw.leTitle->text() ) );
     rpcstruct.appendChild( XmlMember( doc, "description", "string", description ) );
     if( postDateTime )
-	rpcstruct.appendChild( XmlMember( doc, "dateCreated", "dateTime.iso8601", dateTime ) );
+      rpcstruct.appendChild( XmlMember( doc, "dateCreated", "dateTime.iso8601", dateTime ) );
     rpcstruct.appendChild( XmlMember( doc, "mt_allow_comments", "boolean",
-				      takeComms ? "1" : "0" ) );
+                                      takeComms ? "1" : "0" ) );
     rpcstruct.appendChild( XmlMember( doc, "mt_allow_pings", "boolean",
-				      takeTB ? "1" : "0" ) );
+                                      takeTB ? "1" : "0" ) );
     rpcstruct.appendChild( XmlMember( doc, "mt_text_more", "string", extEntry ) );
     if( cw.teExcerpt->toPlainText().length() )
       rpcstruct.appendChild( XmlMember( doc, "mt_excerpt", "string",
-					cw.teExcerpt->toPlainText().replace( QChar( '&' ), "&amp;" ) ) );
+                                        cw.teExcerpt->toPlainText().replace( QChar( '&' ), "&amp;" ) ) );
     else
       rpcstruct.appendChild( XmlMember( doc, "mt_excerpt", "string", "" ) );
     rpcstruct.appendChild( XmlMember( doc, "mt_keywords", "string", "" ) );
 
     if( cw.lwTBPings->count() ) {
       for( count = 0; count < cw.lwTBPings->count(); count++ )
-	tblist.append( cw.lwTBPings->item( count )->text() );
+        tblist.append( cw.lwTBPings->item( count )->text() );
       rpcstruct.appendChild( XmlRpcArray( doc, "mt_tb_ping_urls", tblist ) );
     }
 
@@ -2654,12 +2661,12 @@ void EditingWindow::newMTPost()
     param.appendChild( value );
     params.appendChild( param );
     params.appendChild( XmlValue( doc, "boolean",
-				  cw.cbStatus->currentIndex() ? "1" : "0" ) );
+                                  cw.cbStatus->currentIndex() ? "1" : "0" ) );
     methodCall.appendChild( params );
     doc.appendChild( methodCall );
     doc.insertBefore( doc.createProcessingInstruction( "xml",
-						       "version=\"1.0\" encoding=\"UTF-8\"" ),
-		      doc.firstChild() );
+                                                       "version=\"1.0\" encoding=\"UTF-8\"" ),
+                      doc.firstChild() );
 
     QByteArray requestArray( doc.toByteArray() );
     responseData = "";
@@ -2845,34 +2852,34 @@ void EditingWindow::setPostCategories()
 
       if( !cw.chNoCats->isChecked() ) {
 #ifndef NO_DEBUG_OUTPUT
-	qDebug() << "posting prim cat";
+        qDebug() << "posting prim cat";
 #endif
-	cat = currentBlogElement.firstChildElement( "categories" )
-	.childNodes().at( cw.cbMainCat->currentIndex() ).toElement();
-	QString primCat = cw.cbMainCat->itemData( cw.cbMainCat->currentIndex() ).toString();
+        cat = currentBlogElement.firstChildElement( "categories" )
+          .childNodes().at( cw.cbMainCat->currentIndex() ).toElement();
+        QString primCat = cw.cbMainCat->itemData( cw.cbMainCat->currentIndex() ).toString();
 #ifndef NO_DEBUG_OUTPUT
-	qDebug() << "posted prim cat";
+        qDebug() << "posted prim cat";
 #endif
-	arrayStruct.appendChild( XmlMember( doc, "categoryId", "string", primCat ) );
-	arrayStruct.appendChild( XmlMember( doc, "isPrimary", "boolean", "1" ) );
-	arrayValue.appendChild( arrayStruct );
-	data.appendChild( arrayValue );
+        arrayStruct.appendChild( XmlMember( doc, "categoryId", "string", primCat ) );
+        arrayStruct.appendChild( XmlMember( doc, "isPrimary", "boolean", "1" ) );
+        arrayValue.appendChild( arrayStruct );
+        data.appendChild( arrayValue );
 
-	for( int a = 0; a < cw.lwOtherCats->count(); a++ ) {
-	  if( cw.lwOtherCats->isItemSelected( cw.lwOtherCats->item( a ) ) ) {
-	    cat = currentBlogElement.firstChildElement( "categories" ).childNodes().at( a ).toElement();
-	    secCatId = cw.cbMainCat->itemData( a ).toString();
-	    secCatName = cw.cbMainCat->itemText( a );
-	    arrayValue = doc.createElement( "value" );
-	    arrayStruct = doc.createElement( "struct" );
-	    arrayStruct.appendChild( XmlMember( doc, "categoryId", "int", secCatId ) );
-	    arrayStruct.appendChild( XmlMember( doc, "categoryName", "string",
-						secCatName ) );
-	    arrayStruct.appendChild( XmlMember( doc, "isPrimary", "boolean", "0" ) );
-	    arrayValue.appendChild( arrayStruct );
-	    data.appendChild( arrayValue );
-	  }
-	}
+        for( int a = 0; a < cw.lwOtherCats->count(); a++ ) {
+          if( cw.lwOtherCats->isItemSelected( cw.lwOtherCats->item( a ) ) ) {
+            cat = currentBlogElement.firstChildElement( "categories" ).childNodes().at( a ).toElement();
+            secCatId = cw.cbMainCat->itemData( a ).toString();
+            secCatName = cw.cbMainCat->itemText( a );
+            arrayValue = doc.createElement( "value" );
+            arrayStruct = doc.createElement( "struct" );
+            arrayStruct.appendChild( XmlMember( doc, "categoryId", "int", secCatId ) );
+            arrayStruct.appendChild( XmlMember( doc, "categoryName", "string",
+                                                secCatName ) );
+            arrayStruct.appendChild( XmlMember( doc, "isPrimary", "boolean", "0" ) );
+            arrayValue.appendChild( arrayStruct );
+            data.appendChild( arrayValue );
+          }
+        }
       }
 
       array.appendChild( data );
@@ -2882,8 +2889,8 @@ void EditingWindow::setPostCategories()
       methodCall.appendChild( params );
       doc.appendChild( methodCall );
       doc.insertBefore( doc.createProcessingInstruction( "xml",
-							 "version=\"1.0\" encoding=\"UTF-8\"" ),
-			doc.firstChild() );
+                                                         "version=\"1.0\" encoding=\"UTF-8\"" ),
+                        doc.firstChild() );
       QByteArray requestArray( doc.toByteArray( 2 ) );
 
       responseData = "";
@@ -2897,22 +2904,22 @@ void EditingWindow::setPostCategories()
       addToConsole( doc.toString() );
 
       if( QApplication::overrideCursor() == 0 )
-	QApplication::setOverrideCursor( QCursor( Qt::BusyCursor ) );
+        QApplication::setOverrideCursor( QCursor( Qt::BusyCursor ) );
 #ifndef NO_DEBUG_OUTPUT
       qDebug() << "posted categories";
 #endif
       currentHttpBusiness = 15; // Processing mt.setPostCategories request
       connect( http, SIGNAL( done( bool ) ),
-	       this, SLOT( handleDone( bool ) ) );
+               this, SLOT( handleDone( bool ) ) );
       connect( http, SIGNAL( readyRead( const QHttpResponseHeader & ) ),
-	       this, SLOT( handleResponseHeader( const QHttpResponseHeader & ) ) );
+               this, SLOT( handleResponseHeader( const QHttpResponseHeader & ) ) );
       connect( http, SIGNAL( hostLookupFailed() ),
-	       this, SLOT( handleHostLookupFailed() ) );
+               this, SLOT( handleHostLookupFailed() ) );
     }
     else {
 #ifdef QTM_DEBUG
       statusBar()->showMessage( tr( "setPostCategories: All HTTP requests are blocked" ),
-				2000 );
+                                2000 );
 #else
       statusBar()->showMessage( tr( "All HTTP requests are blocked." ), 2000 );
 #endif
@@ -2997,21 +3004,21 @@ void EditingWindow::saveAs( bool exp )
   if ( !fn.isEmpty() ) {
     if( !localStorageFileExtn.isEmpty() )
       if( !fn.endsWith( QString( ".%1" ).arg( localStorageFileExtn ) ) )
-	fn.append( QString( ".%1" ).arg( localStorageFileExtn ) );
+        fn.append( QString( ".%1" ).arg( localStorageFileExtn ) );
     filename = fn;
     /*
-This section has been commented out as unnecessary; the getSaveFileName function
-already checks for the existence of a file.  Keeping in code until tested on other platforms.
+       This section has been commented out as unnecessary; the getSaveFileName function
+       already checks for the existence of a file.  Keeping in code until tested on other platforms.
 
- if( QFile::exists( fn ) ) {
-      if( !QMessageBox::warning( 0, tr( "File exists" ),
-				 tr( "A file by this name already exists. Continue?" ),
-				 QMessageBox::Yes, QMessageBox::No | QMessageBox::Default ) ) {
-	QFile::remove( fn );
-	save( fn );
-      }
-    }
-    else */
+       if( QFile::exists( fn ) ) {
+       if( !QMessageBox::warning( 0, tr( "File exists" ),
+       tr( "A file by this name already exists. Continue?" ),
+       QMessageBox::Yes, QMessageBox::No | QMessageBox::Default ) ) {
+       QFile::remove( fn );
+       save( fn );
+       }
+       }
+       else */
     save( fn, exp );
 
     qtm->addRecentFile( cw.leTitle->text(), fn );
@@ -3139,17 +3146,17 @@ void EditingWindow::choose( QString fname )
       EditingWindow *e = new EditingWindow( true );
       if( e->load( fn, true ) ) {
 #ifdef USE_SYSTRAYICON
-	e->setSTI( sti );
+        e->setSTI( sti );
 #endif
 
-	positionWidget( e, this );
-	qtm->addRecentFile( e->postTitle(), fn );
+        positionWidget( e, this );
+        qtm->addRecentFile( e->postTitle(), fn );
 
-	e->show();
+        e->show();
       }
       else {
-	statusBar()->showMessage( "Loading of new window failed", 2000 );
-	e->deleteLater();
+        statusBar()->showMessage( "Loading of new window failed", 2000 );
+        e->deleteLater();
       }
     }
   }
@@ -3367,117 +3374,117 @@ bool EditingWindow::load( const QString &fname, bool fromSTI )
     accts = accountsDom.elementsByTagName( "account" );
     for( g = 0; g <= accts.count(); g++ ) {
       if( g == accts.count() ) {
-	qDebug() << accts.count() << "accounts";
-	// i.e. if it gets to the end of the accounts tree without finding the account
-	QMessageBox::information( 0, tr( "QTM - No such account" ),
-				  tr( "QTM could not find this account (perhaps it was deleted).\n\n"
-				      "Will set up a blank default account; you will need to fill in the access "
-				      "details by choosing Accounts from the File menu." ),
-				  QMessageBox::Ok );
-	QDomElement newDefaultAccount = accountsDom.createElement( "account" );
-	newDefaultAccount.setAttribute( "id", QString( "newAccount_%1" ).arg( QDateTime::currentDateTime().toString( Qt::ISODate ) ) );
-	QDomElement newDetailElement = accountsDom.createElement( "details" );
-	QDomElement newNameElement = accountsDom.createElement( "title" );
-	newNameElement.appendChild( QDomText( accountsDom.createTextNode( tr( "New blank element" ) ) ) );
-	newDetailElement.appendChild( newNameElement );
-	newDefaultAccount.appendChild( newDetailElement );
-	accountsDom.firstChildElement( "accounts" ).appendChild( newDefaultAccount );
-	currentAccountElement = newDefaultAccount;
+        qDebug() << accts.count() << "accounts";
+        // i.e. if it gets to the end of the accounts tree without finding the account
+        QMessageBox::information( 0, tr( "QTM - No such account" ),
+                                  tr( "QTM could not find this account (perhaps it was deleted).\n\n"
+                                      "Will set up a blank default account; you will need to fill in the access "
+                                      "details by choosing Accounts from the File menu." ),
+                                  QMessageBox::Ok );
+        QDomElement newDefaultAccount = accountsDom.createElement( "account" );
+        newDefaultAccount.setAttribute( "id", QString( "newAccount_%1" ).arg( QDateTime::currentDateTime().toString( Qt::ISODate ) ) );
+        QDomElement newDetailElement = accountsDom.createElement( "details" );
+        QDomElement newNameElement = accountsDom.createElement( "title" );
+        newNameElement.appendChild( QDomText( accountsDom.createTextNode( tr( "New blank element" ) ) ) );
+        newDetailElement.appendChild( newNameElement );
+        newDefaultAccount.appendChild( newDetailElement );
+        accountsDom.firstChildElement( "accounts" ).appendChild( newDefaultAccount );
+        currentAccountElement = newDefaultAccount;
         cw.cbAccountSelector->addItem( tr( "New blank element" ),
                                        newDefaultAccount.attribute( "id" ) );
         cw.cbAccountSelector->setCurrentIndex( cw.cbAccountSelector->count()-1 );
-	cw.cbBlogSelector->clear();
+        cw.cbBlogSelector->clear();
         cw.cbBlogSelector->setEnabled( false );
-	cw.chNoCats->setEnabled( false );
+        cw.chNoCats->setEnabled( false );
         cw.cbMainCat->clear();
         cw.cbMainCat->setEnabled( false );
         cw.lwOtherCats->clear();
         cw.lwOtherCats->setEnabled( false );
-	setPostClean();
-	return true;
+        setPostClean();
+        return true;
       }
-      
+
       if( accts.at( g ).toElement().attribute( "id" ) == loadedAccountId ) {
-	qDebug() << "found the account:" << loadedAccountId;
-	populateAccountList();
-	currentAccountElement = accts.at( g ).toElement();
-	extractAccountDetails();
+        qDebug() << "found the account:" << loadedAccountId;
+        populateAccountList();
+        currentAccountElement = accts.at( g ).toElement();
+        extractAccountDetails();
 
-	QString st;
-	for( h = 0; h < cw.cbAccountSelector->count(); h++ ) {
-	  st = cw.cbAccountSelector->itemData( h ).toString();
-	  if( st == loadedAccountId )
-	    cw.cbAccountSelector->setCurrentIndex( h );
-	}
+        QString st;
+        for( h = 0; h < cw.cbAccountSelector->count(); h++ ) {
+          st = cw.cbAccountSelector->itemData( h ).toString();
+          if( st == loadedAccountId )
+            cw.cbAccountSelector->setCurrentIndex( h );
+        }
 
-	// Now populate the blog list
-	QDomNodeList blogNodeList = currentAccountElement.elementsByTagName( "blog" );
-	cw.cbBlogSelector->clear();
-	for( hh = 0; hh < blogNodeList.count(); hh++ ) {
-	  cw.cbBlogSelector->addItem( blogNodeList.at( hh ).toElement()
-				      .firstChildElement( "blogName" ).text(),
-				      blogNodeList.at( hh ).toElement()
-				      .firstChildElement( "blogid" ).text() );
+        // Now populate the blog list
+        QDomNodeList blogNodeList = currentAccountElement.elementsByTagName( "blog" );
+        cw.cbBlogSelector->clear();
+        for( hh = 0; hh < blogNodeList.count(); hh++ ) {
+          cw.cbBlogSelector->addItem( blogNodeList.at( hh ).toElement()
+                                      .firstChildElement( "blogName" ).text(),
+                                      blogNodeList.at( hh ).toElement()
+                                      .firstChildElement( "blogid" ).text() );
 
-	  if( blogNodeList.at( hh ).firstChildElement( "blogid" ).text() == currentBlogid )
-	    currentBlogElement = blogNodeList.at( hh ).toElement();
-	}
-	cw.cbBlogSelector->disconnect( SIGNAL( activated( int ) ), this, 0 );
-	qDebug() << "connecting changeBlog";
-	connect( cw.cbBlogSelector, SIGNAL( activated( int ) ),
-		 this, SLOT( changeBlog( int ) ) );
-	if( !isOK ) {
-	  QMessageBox::information( 0, tr( "QTM - Invalid blog" ),
-				    tr( "Could not get a valid blog number.  Please set it again." ),
-				    QMessageBox::Ok );
-	  return true;
-	}
-	
-	for( hh = 0; hh < cw.cbBlogSelector->count(); hh++ ) {
-	  if( cw.cbBlogSelector->itemData( hh ) == currentBlogid ) {
-	    cw.cbBlogSelector->setCurrentIndex( hh );
-	    break;
-	  }
-	}
+          if( blogNodeList.at( hh ).firstChildElement( "blogid" ).text() == currentBlogid )
+            currentBlogElement = blogNodeList.at( hh ).toElement();
+        }
+        cw.cbBlogSelector->disconnect( SIGNAL( activated( int ) ), this, 0 );
+        qDebug() << "connecting changeBlog";
+        connect( cw.cbBlogSelector, SIGNAL( activated( int ) ),
+                 this, SLOT( changeBlog( int ) ) );
+        if( !isOK ) {
+          QMessageBox::information( 0, tr( "QTM - Invalid blog" ),
+                                    tr( "Could not get a valid blog number.  Please set it again." ),
+                                    QMessageBox::Ok );
+          return true;
+        }
 
-	// Now populate and set the categories
-	QDomElement catsElement = currentBlogElement.firstChildElement( "categories" );
-	if( !catsElement.isNull() ) {
-	  cw.cbMainCat->clear();
-	  cw.lwOtherCats->clear();
+        for( hh = 0; hh < cw.cbBlogSelector->count(); hh++ ) {
+          if( cw.cbBlogSelector->itemData( hh ) == currentBlogid ) {
+            cw.cbBlogSelector->setCurrentIndex( hh );
+            break;
+          }
+        }
 
-	  QDomNodeList catNodeList = catsElement.elementsByTagName( "category" );
-	  int b = catNodeList.count();
-	  if( b ) {
-	    qDebug() << "categories:" << b;
-	    for( int j = 0; j < b; j++ ) {
-	      cw.cbMainCat->addItem( catNodeList.at( j ).firstChildElement( "categoryName" ).text(),
-				     QVariant( catNodeList.at( j ).firstChildElement( "categoryId" ).text() ) );
-	      cw.lwOtherCats->addItem( catNodeList.at( j ).firstChildElement( "categoryName" ).text() );
-	    }
-	    qDebug() << "primaryCat is" << QString::number( primaryCat );
-	    for( int i = 0; i < catNodeList.size(); i++ ) {
-	      QString cc = catNodeList.at( i ).firstChildElement( "categoryId" ).text();
-	      qDebug() << "cc is" << cc;
-	      if( cc == QString::number( primaryCat ) ) {
-		qDebug() << "found the primary category";
-		cw.cbMainCat->setCurrentIndex( i );
-	      }
-	      else {
-		if( otherCatStringList.contains( cc ) )
-		  cw.lwOtherCats->setItemSelected( cw.lwOtherCats->item( i ), true );
-	      }
-	    }
-	  }
-	  else {
-	    cw.chNoCats->setEnabled( false );
-	    cw.cbMainCat->setEnabled( false );
-	    cw.lwOtherCats->setEnabled( false );
-	  }
-	}
-	filename = fname;
-	setPostClean();
-	return true;
+        // Now populate and set the categories
+        QDomElement catsElement = currentBlogElement.firstChildElement( "categories" );
+        if( !catsElement.isNull() ) {
+          cw.cbMainCat->clear();
+          cw.lwOtherCats->clear();
+
+          QDomNodeList catNodeList = catsElement.elementsByTagName( "category" );
+          int b = catNodeList.count();
+          if( b ) {
+            qDebug() << "categories:" << b;
+            for( int j = 0; j < b; j++ ) {
+              cw.cbMainCat->addItem( catNodeList.at( j ).firstChildElement( "categoryName" ).text(),
+                                     QVariant( catNodeList.at( j ).firstChildElement( "categoryId" ).text() ) );
+              cw.lwOtherCats->addItem( catNodeList.at( j ).firstChildElement( "categoryName" ).text() );
+            }
+            qDebug() << "primaryCat is" << QString::number( primaryCat );
+            for( int i = 0; i < catNodeList.size(); i++ ) {
+              QString cc = catNodeList.at( i ).firstChildElement( "categoryId" ).text();
+              qDebug() << "cc is" << cc;
+              if( cc == QString::number( primaryCat ) ) {
+                qDebug() << "found the primary category";
+                cw.cbMainCat->setCurrentIndex( i );
+              }
+              else {
+                if( otherCatStringList.contains( cc ) )
+                  cw.lwOtherCats->setItemSelected( cw.lwOtherCats->item( i ), true );
+              }
+            }
+          }
+          else {
+            cw.chNoCats->setEnabled( false );
+            cw.cbMainCat->setEnabled( false );
+            cw.lwOtherCats->setEnabled( false );
+          }
+        }
+        filename = fname;
+        setPostClean();
+        return true;
       }
     }
 
@@ -3495,13 +3502,13 @@ bool EditingWindow::load( const QString &fname, bool fromSTI )
   accts = accountsDom.documentElement().elementsByTagName( "account" );
   for( int e = 0; e <= accts.count(); e++ ) {
     if( e == accts.count() )
-       break;
+      break;
 
     details = accts.at( e ).toElement().firstChildElement( "details" );
     qDebug() << "matching against" << details.firstChildElement( "title" ).text();
     if( details.firstChildElement( "server" ).text() == server &&
-	details.firstChildElement( "location" ).text() == location &&
-	details.firstChildElement( "login" ).text() == login ) {
+        details.firstChildElement( "location" ).text() == location &&
+        details.firstChildElement( "login" ).text() == login ) {
       qDebug() << "match found";
       currentAccountElement = accts.at( e ).toElement();
       cw.cbAccountSelector->setCurrentIndex( e );
@@ -3509,32 +3516,32 @@ bool EditingWindow::load( const QString &fname, bool fromSTI )
       // First check whether the blog still exists
       blogs = currentAccountElement.elementsByTagName( "blog" );
       if( currentBlog > blogs.count() ) {
-	connect( this, SIGNAL( categoryRefreshFinished() ),
-		 this, SLOT( setLoadedPostCategories() ) );
-	refreshBlogList();
-	setPostClean();
-	return true;
+        connect( this, SIGNAL( categoryRefreshFinished() ),
+                 this, SLOT( setLoadedPostCategories() ) );
+        refreshBlogList();
+        setPostClean();
+        return true;
       }
       else {
 
         qDebug() << "now setting categories";
         if( blogs.at( currentBlog ).toElement().elementsByTagName( "category" ).count() ) {
-	  cw.cbBlogSelector->clear();
-	  for( hh = 0; hh < blogs.count(); hh++ ) {
-	    cw.cbBlogSelector->addItem( blogs.at( hh ).firstChildElement( "blogName" ).text(),
-					QVariant( blogs.at( hh ).firstChildElement( "blogid" ).text() ));
-	  }
-	  setLoadedPostCategories();
-	  setPostClean();
-	  return true;
-	}
-	else {
-	  connect( this, SIGNAL( categoryRefreshFinished() ),
-		   this, SLOT( setLoadedPostCategories() ) );
-	  changeBlog( currentBlog );
-	  setPostClean();
-	  return true;	  
-	}
+          cw.cbBlogSelector->clear();
+          for( hh = 0; hh < blogs.count(); hh++ ) {
+            cw.cbBlogSelector->addItem( blogs.at( hh ).firstChildElement( "blogName" ).text(),
+                                        QVariant( blogs.at( hh ).firstChildElement( "blogid" ).text() ));
+          }
+          setLoadedPostCategories();
+          setPostClean();
+          return true;
+        }
+        else {
+          connect( this, SIGNAL( categoryRefreshFinished() ),
+                   this, SLOT( setLoadedPostCategories() ) );
+          changeBlog( currentBlog );
+          setPostClean();
+          return true;	  
+        }
       }
     }
   }
@@ -3547,11 +3554,11 @@ bool EditingWindow::load( const QString &fname, bool fromSTI )
     }
     else
       QMessageBox::warning( 0, tr( "No password" ),
-			    tr( "This entry was saved without a password.\n"
-				"You will need to set one, using the\n"
-				"Preferences window." ),
-			    QMessageBox::Ok, QMessageBox::NoButton );
-      
+                            tr( "This entry was saved without a password.\n"
+                                "You will need to set one, using the\n"
+                                "Preferences window." ),
+                            QMessageBox::Ok, QMessageBox::NoButton );
+
   }
 
   // This is an old-style account which isn't in the database
@@ -3584,7 +3591,7 @@ bool EditingWindow::load( const QString &fname, bool fromSTI )
   cw.cbAccountSelector->setCurrentIndex( cw.cbAccountSelector->count()-1 );
 
   connect( this, SIGNAL( categoryRefreshFinished() ),
-	   this, SLOT( setLoadedPostCategories() ) );
+           this, SLOT( setLoadedPostCategories() ) );
   refreshBlogList();
   saveBlogs();
 
@@ -3612,7 +3619,7 @@ void EditingWindow::setLoadedPostCategories() // slot
     j = blogNodes.size();
     for( z = 0; z < j; z++ )
       cw.cbBlogSelector->addItem( blogNodes.at( z ).firstChildElement( "blogName" ).text(),
-				  QVariant( blogNodes.at( z ).firstChildElement( "blogName" ).text() ) );
+                                  QVariant( blogNodes.at( z ).firstChildElement( "blogName" ).text() ) );
     cw.cbBlogSelector->setCurrentIndex( currentBlog );
   }
 
@@ -3626,7 +3633,7 @@ void EditingWindow::setLoadedPostCategories() // slot
     qDebug() << "populating cat list";
     for( j = 0; j < b; j++ ) {
       cw.cbMainCat->addItem( catNodeList.at( j ).firstChildElement( "categoryName" ).text(),
-			     QVariant( catNodeList.at( j ).firstChildElement( "categoryId" ).text() ) );
+                             QVariant( catNodeList.at( j ).firstChildElement( "categoryId" ).text() ) );
       cw.lwOtherCats->addItem( catNodeList.at( j ).firstChildElement( "categoryName" ).text() );
     }
   }
@@ -3646,10 +3653,10 @@ void EditingWindow::setLoadedPostCategories() // slot
       c = otherCatsList.section( QChar( ';' ), i, i );
       a = c.toInt( &isOK );
       if( isOK ) {
-	cw.lwOtherCats->setItemSelected( cw.lwOtherCats->item( a ), true );
+        cw.lwOtherCats->setItemSelected( cw.lwOtherCats->item( a ), true );
       }
       else
-	break;
+        break;
       i++;
     } while( c != f );
     initialChangeBlog = false;
@@ -3663,12 +3670,12 @@ void EditingWindow::setLoadedPostCategories() // slot
     for( i = 0; i < catNodes.size(); i++ ) {
       cc = catNodes.at( i ).firstChildElement( "categoryId" ).text();
       if( cc == QString::number( primaryCat ) ) {
-	qDebug() << "found primary category";
-	cw.cbMainCat->setCurrentIndex( i );
+        qDebug() << "found primary category";
+        cw.cbMainCat->setCurrentIndex( i );
       }
       else {
-	if( catStringList.contains( cc ) )
-	  cw.lwOtherCats->setItemSelected( cw.lwOtherCats->item( i ), true );
+        if( catStringList.contains( cc ) )
+          cw.lwOtherCats->setItemSelected( cw.lwOtherCats->item( i ), true );
       }
     }
     initialChangeBlog = false;
@@ -3691,89 +3698,89 @@ void EditingWindow::uploadFile()
 {
   QString fileInBase64;
   QByteArray conversionBuffer;
-  QFile *inFile;
+  QFile inFile;
   QDomDocument doc;
 
   if( !currentHttpBusiness ) {
     QString uploadFilename = QFileDialog::getOpenFileName( this,
-							   tr( "Select file to upload" ),
-							   QDir::homePath() );
+                                                           tr( "Select file to upload" ),
+                                                           QDir::homePath() );
     if( !uploadFilename.isEmpty() ) {
       if( QFile::exists( uploadFilename ) ){
-	inFile = new QFile( uploadFilename );
-	if( inFile->open( QIODevice::ReadOnly ) ) {
-	  conversionBuffer = inFile->readAll();
-	  if( conversionBuffer.isEmpty() )
-	    statusBar()->showMessage( tr( "This file was empty, or an error occurred." ), 2000 );
-	  else {
-	    QApplication::processEvents();
-	    fileInBase64 = toBase64( conversionBuffer );
+        inFile = QFile( uploadFilename );
+        if( inFile.open( QIODevice::ReadOnly ) ) {
+          conversionBuffer = inFile.readAll();
+          if( conversionBuffer.isEmpty() )
+            statusBar()->showMessage( tr( "This file was empty, or an error occurred." ), 2000 );
+          else {
+            QApplication::processEvents();
+            fileInBase64 = toBase64( conversionBuffer );
 
-	    if( !fileInBase64.isEmpty() ) {
-	      QDomElement methodCall = doc.createElement( "methodCall" );
-	      methodCall.appendChild( XmlMethodName( doc, "metaWeblog.newMediaObject" ) );
-	      QDomElement params = doc.createElement( "params" );
+            if( !fileInBase64.isEmpty() ) {
+              QDomElement methodCall = doc.createElement( "methodCall" );
+              methodCall.appendChild( XmlMethodName( doc, "metaWeblog.newMediaObject" ) );
+              QDomElement params = doc.createElement( "params" );
 
-	      QString blogid = currentBlogElement.firstChildElement( "blogid" ).text();
-	      QRegExp blogidRegExp( "^[0-9]+$" );
-	      bool blogidIsInt = blogidRegExp.exactMatch( blogid );
+              QString blogid = currentBlogElement.firstChildElement( "blogid" ).text();
+              QRegExp blogidRegExp( "^[0-9]+$" );
+              bool blogidIsInt = blogidRegExp.exactMatch( blogid );
 
-	      params.appendChild( XmlValue( doc, blogidIsInt ? "int" : "string", blogid ) );
-	      params.appendChild( XmlValue( doc, "string", login ) );
-	      params.appendChild( XmlValue( doc, "string", password ) );
+              params.appendChild( XmlValue( doc, blogidIsInt ? "int" : "string", blogid ) );
+              params.appendChild( XmlValue( doc, "string", login ) );
+              params.appendChild( XmlValue( doc, "string", password ) );
 
-	      QDomElement param = doc.createElement( "param" );
-	      QDomElement value = doc.createElement( "value" );
-	      QDomElement rpcStruct = doc.createElement( "struct" );
-	      rpcStruct.appendChild( XmlMember( doc, "bits", "base64", fileInBase64 ) );
-	      rpcStruct.appendChild( XmlMember( doc, "name", "string",
-						QFileInfo( uploadFilename ).fileName() ) );
-	      value.appendChild( rpcStruct );
-	      param.appendChild( value );
-	      params.appendChild( param );
+              QDomElement param = doc.createElement( "param" );
+              QDomElement value = doc.createElement( "value" );
+              QDomElement rpcStruct = doc.createElement( "struct" );
+              rpcStruct.appendChild( XmlMember( doc, "bits", "base64", fileInBase64 ) );
+              rpcStruct.appendChild( XmlMember( doc, "name", "string",
+                                                QFileInfo( uploadFilename ).fileName() ) );
+              value.appendChild( rpcStruct );
+              param.appendChild( value );
+              params.appendChild( param );
 
-	      methodCall.appendChild( params );
-	      doc.appendChild( methodCall );
-	      doc.insertBefore( doc.createProcessingInstruction( "xml",
-								 "version=\"1.0\" encoding=\"UTF-8\"" ),
-				doc.firstChild() );
+              methodCall.appendChild( params );
+              doc.appendChild( methodCall );
+              doc.insertBefore( doc.createProcessingInstruction( "xml",
+                                                                 "version=\"1.0\" encoding=\"UTF-8\"" ),
+                                doc.firstChild() );
 
-	      currentHttpBusiness = 11;
+              currentHttpBusiness = 11;
 
-	      QByteArray requestArray( doc.toByteArray() );
-	      responseData = "";
-	      QHttpRequestHeader header( "POST", location );
-	      header.setValue( "Host", server );
-	      header.setValue( "User-Agent", userAgentString );
-	      http->setHost( server );
-	      http->request( header, requestArray );
+              QByteArray requestArray( doc.toByteArray() );
+              responseData = "";
+              QHttpRequestHeader header( "POST", location );
+              header.setValue( "Host", server );
+              header.setValue( "User-Agent", userAgentString );
+              http->setHost( server );
+              http->request( header, requestArray );
 
-	      addToConsole( header.toString() );
-	      addToConsole( doc.toString() );
+              addToConsole( header.toString() );
+              addToConsole( doc.toString() );
 
-	      if( QApplication::overrideCursor() == 0 )
-		QApplication::setOverrideCursor( QCursor( Qt::BusyCursor ) );
+              if( QApplication::overrideCursor() == 0 )
+                QApplication::setOverrideCursor( QCursor( Qt::BusyCursor ) );
 
-	      connect( http, SIGNAL( done( bool ) ),
-		       this, SLOT( handleDone( bool ) ) );
-	      connect( http, SIGNAL( readyRead( const QHttpResponseHeader & ) ),
-		       this, SLOT( handleResponseHeader( const QHttpResponseHeader & ) ) );
-	      connect( http, SIGNAL( hostLookupFailed() ),
-		       this, SLOT( handleHostLookupFailed() ) );
+              connect( http, SIGNAL( done( bool ) ),
+                       this, SLOT( handleDone( bool ) ) );
+              connect( http, SIGNAL( readyRead( const QHttpResponseHeader & ) ),
+                       this, SLOT( handleResponseHeader( const QHttpResponseHeader & ) ) );
+              connect( http, SIGNAL( hostLookupFailed() ),
+                       this, SLOT( handleHostLookupFailed() ) );
 #ifndef NO_DEBUG_OUTPUT
-	      qDebug() << "Posted image.";
+              qDebug() << "Posted image.";
 #endif
-	    }
-	    else
-	      statusBar()->showMessage( tr( "Upload was cancelled." ), 2000 );
-	  }
-	  inFile->close();
-	}
-	else
-	  statusBar()->showMessage( tr( "Could not open the file." ), 2000 );
+            }
+            else
+              statusBar()->showMessage( tr( "Upload was cancelled." ), 2000 );
+          }
+          inFile.close();
+        }
+        else
+          statusBar()->showMessage( tr( "Could not open the file." ), 2000 );
       }
       else
-	statusBar()->showMessage( tr( "That file could not be found." ), 2000 );
+        statusBar()->showMessage( tr( "That file could not be found." ), 2000 );
     }
   }
   else
@@ -3866,7 +3873,7 @@ void EditingWindow::addTechTagFromAddButton()
       cw.lwTags->addItem( cw.leAddTag->text() );
       cw.leAddTag->clear();
       if( !isWindowModified() )
-	dirtify();
+        dirtify();
     } else {
       statusBar()->showMessage( tr( "This is not a valid tag." ), 2000 );
     }
@@ -3889,7 +3896,7 @@ void EditingWindow::addClipTBPing()
       statusBar()->showMessage( tr( "This URL validates." ) );
       cw.lwTBPings->addItem( clipboardText );
       if( !isWindowModified() )
-	dirtify();
+        dirtify();
     } else
       statusBar()->showMessage( tr( "This is not a valid URL." ), 2000 );
   }
@@ -3905,7 +3912,7 @@ void EditingWindow::addTBPingFromLineEdit()
       cw.lwTBPings->addItem( lineEditText );
       cw.leTBPingURL->clear();
       if( !isWindowModified() )
-	dirtify();
+        dirtify();
     } else
       statusBar()->showMessage( tr( "This is not a valid URL." ), 2000 );
   }
@@ -3929,7 +3936,7 @@ void EditingWindow::addTBPingFromAddButton()
       cw.lwTBPings->addItem( cw.leTBPingURL->text() );
       cw.leTBPingURL->clear();
       if( !isWindowModified() )
-	dirtify();
+        dirtify();
     } else
       statusBar()->showMessage( tr( "This is not a valid URL." ), 2000 );
   }
@@ -4012,7 +4019,7 @@ void EditingWindow::setDirtySignals( bool d )
     }
     else {
       foreach( QWidget *w, widgetList )
-	disconnect( w, 0, this, SLOT( dirtify() ) );
+        disconnect( w, 0, this, SLOT( dirtify() ) );
     }
 }
 
@@ -4108,7 +4115,7 @@ void EditingWindow::handleFind()
 }
 
 QDomElement EditingWindow::XmlValue( QDomDocument &doc, QString valueType,
-			      QString actualValue, QString memberType )
+                                     QString actualValue, QString memberType )
 {
   QDomElement param = doc.createElement( memberType );
   QDomElement value = doc.createElement( "value" );
@@ -4258,7 +4265,7 @@ void EditingWindow::saveAutoLinkDictionary()
     if( autoLinkTargetDictionary.contains( aldIterator.key() ) ) {
       currentTarget = doc.createElement( "target" );
       targetText = doc.createTextNode( QString::number( autoLinkTargetDictionary
-							.value( aldIterator.key() ) ) );
+                                                        .value( aldIterator.key() ) ) );
       currentTarget.appendChild( targetText );
       currentElement.appendChild( currentTarget );
     }
@@ -4267,24 +4274,22 @@ void EditingWindow::saveAutoLinkDictionary()
 
   doc.appendChild( autoLinkDictionaryElement );
   doc.insertBefore( doc.createProcessingInstruction( "xml",
-						     "version=\"1.0\" encoding=\"UTF-8\"" ),
-		    doc.firstChild() );
+                                                     "version=\"1.0\" encoding=\"UTF-8\"" ),
+                    doc.firstChild() );
 
   QSettings settings;
   settings.beginGroup( "account" );
   QString dictionaryFileName = QString( "%1/qtmautolinkdict.xml" )
     .arg( settings.value( "localStorageDirectory", "" ).toString() );
   settings.endGroup();
-  QFile *dictionaryFile = new QFile( dictionaryFileName );
-  if( dictionaryFile->open( QIODevice::WriteOnly ) ) {
-    QTextStream dictionaryFileStream( dictionaryFile );
+  QFile dictionaryFile( dictionaryFileName );
+  if( dictionaryFile.open( QIODevice::WriteOnly ) ) {
+    QTextStream dictionaryFileStream( &dictionaryFile );
     doc.save( dictionaryFileStream, 4 );
-    dictionaryFile->close();
+    dictionaryFile.close();
   }
   else
     statusBar()->showMessage(  tr( "Could not write to dictionary file" ), 2000 );
-  dictionaryFile->deleteLater();
-
 }
 
 void EditingWindow::loadAutoLinkDictionary()
@@ -4313,24 +4318,24 @@ void EditingWindow::loadAutoLinkDictionary()
     else {
       QDomNodeList entryList = dictDoc.elementsByTagName( "entry" );
       for( int i = 0; i < entryList.count(); i++ ) {
-	currentKeyElement = entryList.at( i ).firstChildElement( "key" );
-	currentURLElement = entryList.at( i ).firstChildElement( "URL" );
-	currentTitleElement = entryList.at( i ).firstChildElement( "title" );
-	currentTargetElement = entryList.at( i ).firstChildElement( "target" );
-	if( currentKeyElement.isNull() || currentURLElement.isNull() )
-	  continue;
-	else {
-	  currentKey = currentKeyElement.text();
-	  currentURL = currentURLElement.text();
-	  autoLinkDictionary.insert( currentKey, currentURL );
-	  if( !currentTitleElement.isNull() )
-	    autoLinkTitleDictionary.insert( currentKey, currentTitleElement.text() );
-	  if( !currentTargetElement.isNull() ) {
-	    currentTarget = currentTargetElement.text().toInt( &ok );
-	    if( ok )
-	      autoLinkTargetDictionary.insert( currentKey, currentTarget );
-	  }
-	}
+        currentKeyElement = entryList.at( i ).firstChildElement( "key" );
+        currentURLElement = entryList.at( i ).firstChildElement( "URL" );
+        currentTitleElement = entryList.at( i ).firstChildElement( "title" );
+        currentTargetElement = entryList.at( i ).firstChildElement( "target" );
+        if( currentKeyElement.isNull() || currentURLElement.isNull() )
+          continue;
+        else {
+          currentKey = currentKeyElement.text();
+          currentURL = currentURLElement.text();
+          autoLinkDictionary.insert( currentKey, currentURL );
+          if( !currentTitleElement.isNull() )
+            autoLinkTitleDictionary.insert( currentKey, currentTitleElement.text() );
+          if( !currentTargetElement.isNull() ) {
+            currentTarget = currentTargetElement.text().toInt( &ok );
+            if( ok )
+              autoLinkTargetDictionary.insert( currentKey, currentTarget );
+          }
+        }
       }
     }
   }
