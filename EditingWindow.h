@@ -236,6 +236,7 @@ class EditingWindow : public QMainWindow
   void doWhatsThis();
   void doViewBasicSettings();
   void doViewCategories();
+  void changeOtherCatsHeading();
   void doViewExcerpt();
   void doViewTechTags();
   void doViewTBPings();

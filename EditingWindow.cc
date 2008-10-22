@@ -608,6 +608,8 @@ void EditingWindow::doUiSetup()
   mainWindowLayout->setMargin( 5 );
   cw.setupUi( leftWidget );
 
+  connect( cw.lwOtherCats, SIGNAL( itemSelectionChanged() ),
+           this, SLOT( changeOtherCatsHeading() ) );
   cw.cbBlogSelector->setMaxVisibleItems( 10 );
   cw.cbMainCat->setMaxVisibleItems( 10 );
   cw.lwTags->addAction( ui.actionAdd_tag );
@@ -3438,8 +3440,6 @@ bool EditingWindow::load( const QString &fname, bool fromSTI )
 	  }
 	}
 
-        
-
 	// Now populate and set the categories
 	QDomElement catsElement = currentBlogElement.firstChildElement( "categories" );
 	if( !catsElement.isNull() ) {
@@ -3449,15 +3449,20 @@ bool EditingWindow::load( const QString &fname, bool fromSTI )
 	  QDomNodeList catNodeList = catsElement.elementsByTagName( "category" );
 	  int b = catNodeList.count();
 	  if( b ) {
+	    qDebug() << "categories:" << b;
 	    for( int j = 0; j < b; j++ ) {
 	      cw.cbMainCat->addItem( catNodeList.at( j ).firstChildElement( "categoryName" ).text(),
 				     QVariant( catNodeList.at( j ).firstChildElement( "categoryId" ).text() ) );
 	      cw.lwOtherCats->addItem( catNodeList.at( j ).firstChildElement( "categoryName" ).text() );
 	    }
+	    qDebug() << "primaryCat is" << QString::number( primaryCat );
 	    for( int i = 0; i < catNodeList.size(); i++ ) {
 	      QString cc = catNodeList.at( i ).firstChildElement( "categoryId" ).text();
-	      if( cc == QString::number( primaryCat ) )
+	      qDebug() << "cc is" << cc;
+	      if( cc == QString::number( primaryCat ) ) {
+		qDebug() << "found the primary category";
 		cw.cbMainCat->setCurrentIndex( i );
+	      }
 	      else {
 		if( otherCatStringList.contains( cc ) )
 		  cw.lwOtherCats->setItemSelected( cw.lwOtherCats->item( i ), true );
@@ -3511,12 +3516,17 @@ bool EditingWindow::load( const QString &fname, bool fromSTI )
 	return true;
       }
       else {
+
         qDebug() << "now setting categories";
         if( blogs.at( currentBlog ).toElement().elementsByTagName( "category" ).count() ) {
-
-	    setLoadedPostCategories();
-	    setPostClean();
-	    return true;
+	  cw.cbBlogSelector->clear();
+	  for( hh = 0; hh < blogs.count(); hh++ ) {
+	    cw.cbBlogSelector->addItem( blogs.at( hh ).firstChildElement( "blogName" ).text(),
+					QVariant( blogs.at( hh ).firstChildElement( "blogid" ).text() ));
+	  }
+	  setLoadedPostCategories();
+	  setPostClean();
+	  return true;
 	}
 	else {
 	  connect( this, SIGNAL( categoryRefreshFinished() ),
@@ -3783,6 +3793,15 @@ void EditingWindow::doViewBasicSettings()
 void EditingWindow::doViewCategories()
 {
   cw.cbPageSelector->setCurrentIndex( 1 );
+}
+
+void EditingWindow::changeOtherCatsHeading()
+{
+  int c = cw.lwOtherCats->selectedItems().count();
+  if( c )
+    cw.lOtherCats->setText( tr( "Others (%1)" ).arg( c ) );
+  else
+    cw.lOtherCats->setText( tr( "Others" ) );
 }
 
 void EditingWindow::doViewExcerpt()
