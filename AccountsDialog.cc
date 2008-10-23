@@ -50,9 +50,9 @@
 #include "return.xpm"
 
 AccountsDialog::AccountsDialog( QList<AccountsDialog::Account> &acctList,
-				int acctIndex,
-				QWidget *parent )
-  : QDialog( parent )
+                                int acctIndex,
+                                QWidget *parent )
+: QDialog( parent )
 {
   QString a;
   networkBiz = NoBusiness;
@@ -81,8 +81,8 @@ AccountsDialog::AccountsDialog( QList<AccountsDialog::Account> &acctList,
 
   // Set up list of account widgets;
   accountWidgets << leName << cbHostedBlogType << leServer << leLocation
-		 << lePort << leLogin << lePassword
-		 << chCategoriesEnabled << chPostDateTime << chComments << chTB;
+    << lePort << leLogin << lePassword
+    << chCategoriesEnabled << chPostDateTime << chComments << chTB;
 
   pbReset->setVisible( false );
 
@@ -100,11 +100,11 @@ AccountsDialog::AccountsDialog( QList<AccountsDialog::Account> &acctList,
   lwAccountList->setContextMenuPolicy( Qt::ActionsContextMenu );
 
   connect( addAccount, SIGNAL( triggered( bool ) ),
-	   this, SLOT( doNewAccount() ) );
+           this, SLOT( doNewAccount() ) );
   connect( removeAccount, SIGNAL( triggered( bool ) ),
-	   this, SLOT( removeThisAccount() ) );
+           this, SLOT( removeThisAccount() ) );
   connect( lwAccountList, SIGNAL( currentRowChanged( int ) ),
-    this, SLOT( changeListIndex( int ) ) );
+           this, SLOT( changeListIndex( int ) ) );
 
   entryDateTime = QDateTime();
   currentRow = acctIndex;
@@ -118,8 +118,8 @@ void AccountsDialog::changeListIndex( int index )
   if( doingNewAccount ) {
     if( dirty )
       lwAccountList->item( (lwAccountList->count())-1 )->setText( leName->text().isEmpty() ?
-								tr( "(No name)" ) :
-								leName->text() );
+                                                                  tr( "(No name)" ) :
+                                                                  leName->text() );
     else {
       accountList.removeAt( currentRow );
       lwAccountList->takeItem( lwAccountList->count()-1 );
@@ -140,11 +140,11 @@ void AccountsDialog::changeListIndex( int index )
     cbHostedBlogType->setCurrentIndex( accountList[currentRow].hostedBlogType );	  
 
   chCategoriesEnabled->setCheckState( accountList[currentRow].categoriesEnabled ?
-				      Qt::Checked : Qt::Unchecked );
+                                      Qt::Checked : Qt::Unchecked );
   chPostDateTime->setCheckState( accountList[currentRow].postDateTime ?
-				 Qt::Checked : Qt::Unchecked );
+                                 Qt::Checked : Qt::Unchecked );
   chComments->setCheckState( accountList[currentRow].comments ? Qt::Checked :
-			     Qt::Unchecked );
+                             Qt::Unchecked );
   chTB->setCheckState( accountList[currentRow].trackback ? Qt::Checked : Qt::Unchecked );
 
   Q_FOREACH( QWidget *w, accountWidgets )
@@ -162,7 +162,7 @@ void AccountsDialog::doNewAccount()
   accountList.append( Account() );
 
   lwAccountList->disconnect( SIGNAL( currentRowChanged( int ) ),
-			     this, SLOT( changeListIndex( int ) ) );
+                             this, SLOT( changeListIndex( int ) ) );
   currentRow = -1;
   Q_FOREACH( QWidget *v, accountWidgets ) {
     le = qobject_cast<QLineEdit *>( v );
@@ -174,7 +174,7 @@ void AccountsDialog::doNewAccount()
   currentRow = lwAccountList->count()-1;
   lwAccountList->setCurrentRow( lwAccountList->count()-1 );
   connect( lwAccountList, SIGNAL( currentRowChanged( int ) ),
-	   this, SLOT( changeListIndex( int ) ) );
+           this, SLOT( changeListIndex( int ) ) );
 
   doingNewAccount = true;
   leName->setFocus( Qt::OtherFocusReason );
@@ -197,8 +197,8 @@ void AccountsDialog::removeThisAccount()
     Q_FOREACH( QWidget *w, accountWidgets ) {
       le = qobject_cast<QLineEdit *>( w );
       if( le ) {
-	le->clear();
-	le->setEnabled( false );
+        le->clear();
+        le->setEnabled( false );
       }
     }
     currentRow = -1;
@@ -225,7 +225,7 @@ void AccountsDialog::setClean()
   Q_FOREACH( QWidget *v, accountWidgets ) {
     if( qobject_cast<QLineEdit *>( v ) )
       connect( v, SIGNAL( textChanged( const QString & ) ),
-	       this, SLOT( setDirty() ) );
+               this, SLOT( setDirty() ) );
   }
 }
 
@@ -237,11 +237,11 @@ void AccountsDialog::acceptAccount()
 
     if( lwAccountList->count() == 1 )
       connect( lwAccountList, SIGNAL( currentRowChanged( int ) ),
-	       this, SLOT( changeListIndex( int ) ) );
+               this, SLOT( changeListIndex( int ) ) );
   } else {
     if( lwAccountList->count() ) {
       lwAccountList->item( currentRow )->setText( leName->text().isEmpty() ?
-						  tr( "(No name)" ) : leName->text() );
+                                                  tr( "(No name)" ) : leName->text() );
     }
   }
 
@@ -256,8 +256,8 @@ void AccountsDialog::acceptAccount()
 void AccountsDialog::assignSlug()
 {
   currentAccountId = QString( "%1_%2" ).arg( entryDateTime.toString( Qt::ISODate ) )
-                                       .arg( leName->text().toLower()
-                                             .replace( QRegExp( "\\s" ), "_" ) );
+    .arg( leName->text().toLower()
+          .replace( QRegExp( "\\s" ), "_" ) );
   accountList[currentRow].id = currentAccountId;
 }
 
@@ -285,8 +285,8 @@ void AccountsDialog::on_leBlogURI_returnPressed()
 
   if( !uri.isValid() ) {
     QMessageBox::information( 0, tr( "QTM: URI not valid" ),
-			      tr( "That web location is not valid." ),
-			      QMessageBox::Cancel );
+                              tr( "That web location is not valid." ),
+                              QMessageBox::Cancel );
     return;
   }
 
@@ -294,14 +294,14 @@ void AccountsDialog::on_leBlogURI_returnPressed()
   //  QStringList hostedAccountStrings, hostedAccountServers, hostedAccountLocations;
   QStringList wpmuHosts;
   wpmuHosts << "wordpress.com" << "blogsome.com" << "blogs.ie"
-	    << "hadithuna.com" << "edublogs.com" << "weblogs.us"
-	    << "blogvis.com" << "blogates.com";
+    << "hadithuna.com" << "edublogs.com" << "weblogs.us"
+    << "blogvis.com" << "blogates.com";
   /*  hostedAccountEndpoints << "@host@;xmlrpc.php"
-			 << "www.typepad.com;/t/api"
-			 << "www.squarespace.com;/do/process/external/PostInterceptor"
-			 << "@host@;xmlrpc.php"
-			 << "@host@;xmlrpc.php"
-			 << "@host@;xmlrpc.php"; */
+      << "www.typepad.com;/t/api"
+      << "www.squarespace.com;/do/process/external/PostInterceptor"
+      << "@host@;xmlrpc.php"
+      << "@host@;xmlrpc.php"
+      << "@host@;xmlrpc.php"; */
 
   // First check for TypePad and SquareSpace
   if( uris.contains( "squarespace.com" ) ) {
@@ -324,14 +324,14 @@ void AccountsDialog::on_leBlogURI_returnPressed()
   for( i = 0; i <= wpmuHosts.count(); i++ ) {
     if( i < wpmuHosts.count() ) {
       if( uris.contains( wpmuHosts.at( i ) ) ) {
-	leServer->setText( uris.remove( "http://" ) );
-	accountList[currentRow].server = uris.remove( "http://" );
-	leLocation->setText( "/xmlrpc.php" );
-	accountList[currentRow].location = "/xmlrpc.php";
+        leServer->setText( uris.remove( "http://" ) );
+        accountList[currentRow].server = uris.remove( "http://" );
+        leLocation->setText( "/xmlrpc.php" );
+        accountList[currentRow].location = "/xmlrpc.php";
         lePort->clear();
         accountList[currentRow].port = "";
         leLogin->setFocus( Qt::TabFocusReason );
-	return;
+        return;
       }
     }
   }
@@ -362,22 +362,22 @@ void AccountsDialog::on_leBlogURI_returnPressed()
   // Now test for an rsd.xml file 
   http->setHost( uri.host() );
   QString loc( uri.path() );
-    if( re.exactMatch( loc ) )
+  if( re.exactMatch( loc ) )
     http->get( loc.section( "/", -2, 0, QString::SectionIncludeTrailingSep )
-	       .append( "rsd.xml" ) );
+               .append( "rsd.xml" ) );
   else
     http->get( loc.append( loc.endsWith( '/' ) ? "rsd.xml" : "/rsd.xml" ) );
   networkBiz = FindingRsdXml;
 
   connect( http, SIGNAL( requestFinished( int, bool ) ),
-	   this, SLOT( handleRequestFinished( int, bool ) ) );
+           this, SLOT( handleRequestFinished( int, bool ) ) );
   connect( http, SIGNAL( done( bool ) ),
-	   this, SLOT( handleHttpDone( bool ) ) );
+           this, SLOT( handleHttpDone( bool ) ) );
 
 }
 
 void AccountsDialog::handleRequestFinished( int /* id */,
-				      bool error )
+                                            bool error )
 {
   if( !error )
     httpByteArray = http->readAll();
@@ -399,64 +399,64 @@ void AccountsDialog::handleHttpDone( bool error )
 
   if( !error ) {
     switch( networkBiz ) {
-    case FindingRsdXml:
-      if( responseHeader.statusCode() == 200 ) { /* 200 means success */
-	rsdXml.setContent( httpByteArray );
-	httpByteArray = QByteArray();
- 	if( rsdXml.documentElement().tagName() == "rsd" ) {
-	  apis = rsdXml.elementsByTagName( "api" );
-	  for( i = 0; i < apis.count(); i++ ) {
-	    if( apis.at( i ).toElement().attribute( "name" ) == "MetaWeblog" ) {
-	      url = QUrl( apis.at( i ).toElement().attribute( "apiLink" ) );
-	      if( url.isValid() ) {
-		leServer->setText( url.host() );
-		leLocation->setText( url.path() );
-		break;
-	      }
-	    }
-	  }
-	}
-	else 
+      case FindingRsdXml:
+        if( responseHeader.statusCode() == 200 ) { /* 200 means success */
+          rsdXml.setContent( httpByteArray );
+          httpByteArray = QByteArray();
+          if( rsdXml.documentElement().tagName() == "rsd" ) {
+            apis = rsdXml.elementsByTagName( "api" );
+            for( i = 0; i < apis.count(); i++ ) {
+              if( apis.at( i ).toElement().attribute( "name" ) == "MetaWeblog" ) {
+                url = QUrl( apis.at( i ).toElement().attribute( "apiLink" ) );
+                if( url.isValid() ) {
+                  leServer->setText( url.host() );
+                  leLocation->setText( url.path() );
+                  break;
+                }
+              }
+            }
+          }
+          else 
+            QMessageBox::information( this, tr( "QTM: Failure" ), failure, QMessageBox::Cancel );
+        }
+        else 
+          // Attempt to find tell-tale files has failed
           QMessageBox::information( this, tr( "QTM: Failure" ), failure, QMessageBox::Cancel );
-      }
-      else 
-	// Attempt to find tell-tale files has failed
-	QMessageBox::information( this, tr( "QTM: Failure" ), failure, QMessageBox::Cancel );
-      http->close();
-      currentReq = QHttpRequestHeader();
-      disconnect( http, SIGNAL( requestFinished( int, bool ) ), this, 0 );
-      disconnect( http, SIGNAL( done( bool ) ), this, 0 );
-      break;
-    case FindingXmlrpcPhp:
-/*
-      // If it finds xmlrpc.php, it returns a short string with a successful (200) status code
-      if( responseHeader.statusCode() == 200 ) {
-	leServer->setText( currentHost );
-	currentHost = QString();
-	leLocation->setText( QUrl( currentReq.path() ).path() );
-	http->close();
-	currentReq = QHttpRequestHeader();
-	networkBiz = NoBusiness;
-	disconnect( http, SIGNAL( requestFinished() ), this, 0 );
-	disconnect( http, SIGNAL( done( bool ) ), this, 0 );
-	break;
-      }
-      else {
-	http->close();
-	http->setHost( QUrl( currentReq.path() ).host() );
-	http->get( QUrl( currentReq.path() ).path().replace( "xmlrpc.php", "rsd.xml" ) );
-	currentReq = QHttpRequestHeader();
-	networkBiz = FindingRsdXml;
-      }  */
+        http->close();
+        currentReq = QHttpRequestHeader();
+        disconnect( http, SIGNAL( requestFinished( int, bool ) ), this, 0 );
+        disconnect( http, SIGNAL( done( bool ) ), this, 0 );
+        break;
+      case FindingXmlrpcPhp:
+        /*
+        // If it finds xmlrpc.php, it returns a short string with a successful (200) status code
+        if( responseHeader.statusCode() == 200 ) {
+        leServer->setText( currentHost );
+        currentHost = QString();
+        leLocation->setText( QUrl( currentReq.path() ).path() );
+        http->close();
+        currentReq = QHttpRequestHeader();
+        networkBiz = NoBusiness;
+        disconnect( http, SIGNAL( requestFinished() ), this, 0 );
+        disconnect( http, SIGNAL( done( bool ) ), this, 0 );
+        break;
+        }
+        else {
+        http->close();
+        http->setHost( QUrl( currentReq.path() ).host() );
+        http->get( QUrl( currentReq.path() ).path().replace( "xmlrpc.php", "rsd.xml" ) );
+        currentReq = QHttpRequestHeader();
+        networkBiz = FindingRsdXml;
+        }  */
         break;
     }
   }
   else {
     QMessageBox::information( this, tr( "QTM - Network failure" ),
-			      tr( "QTM could not contact the site.  Please consult the documentation "
-				  "for your content management system or service and enter the "
-				  "server and location manually." ),
-			      QMessageBox::Cancel );
+                              tr( "QTM could not contact the site.  Please consult the documentation "
+                                  "for your content management system or service and enter the "
+                                  "server and location manually." ),
+                              QMessageBox::Cancel );
     http->close();
     currentReq = QHttpRequestHeader();
   }
@@ -467,7 +467,7 @@ void AccountsDialog::on_leName_textEdited( const QString &newName )
   if( currentRow != -1 ) {
     // qDebug( "title edited" );
     lwAccountList->item( currentRow )->setText( newName.isEmpty() ?
-						tr( "(No name)" ) : newName );
+                                                tr( "(No name)" ) : newName );
     accountList[currentRow].name = newName;
   }
 }
@@ -529,45 +529,45 @@ void AccountsDialog::on_chTB_toggled( bool )
 void AccountsDialog::on_cbHostedBlogType_activated( int newIndex )
 {
   switch( newIndex ) {
-  case 1: // wordpress.com
-    leServer->setText( "yourblog.wordpress.com" );
-    leLocation->setText( "/xmlrpc.php" );
-    break;
-  case 2: // TypePad
-    leServer->setText( "www.typepad.com" );
-    leLocation->setText( "/t/api" );
-    break;
-  case 3: // SquareSpace
-    leServer->setText( "www.squarespace.com" );
-    leLocation->setText( "/do/process/external/PostInterceptor" );
-    break;
-  case 4: // Movable type
-  case 5: // Self-hosted Wordpress
-    leServer->clear();
-    leLocation->clear();
-    break;
-  case 6: // Drupal  
-  case 7: // TextPattern
-    chTB->setChecked( false ); // these platforms don't support it
-    leServer->clear();
-    leLocation->clear();
-    break;
+    case 1: // wordpress.com
+      leServer->setText( "yourblog.wordpress.com" );
+      leLocation->setText( "/xmlrpc.php" );
+      break;
+    case 2: // TypePad
+      leServer->setText( "www.typepad.com" );
+      leLocation->setText( "/t/api" );
+      break;
+    case 3: // SquareSpace
+      leServer->setText( "www.squarespace.com" );
+      leLocation->setText( "/do/process/external/PostInterceptor" );
+      break;
+    case 4: // Movable type
+    case 5: // Self-hosted Wordpress
+      leServer->clear();
+      leLocation->clear();
+      break;
+    case 6: // Drupal  
+    case 7: // TextPattern
+      chTB->setChecked( false ); // these platforms don't support it
+      leServer->clear();
+      leLocation->clear();
+      break;
   }
   accountList[currentRow].hostedBlogType = newIndex;
 }
 
 bool AccountsDialog::eventFilter( QObject *obj, QEvent *event )
 {
-   if( obj == leBlogURI ) {
-       switch( event->type() ) {
-         case QEvent::FocusOut:
-            if( !leBlogURI->text().isEmpty() )
-              on_leBlogURI_returnPressed();
-         default:
-            return QObject::eventFilter( obj, event );
-       }
-   }
- 
-   return QObject::eventFilter( obj, event );
+  if( obj == leBlogURI ) {
+    switch( event->type() ) {
+      case QEvent::FocusOut:
+        if( !leBlogURI->text().isEmpty() )
+          on_leBlogURI_returnPressed();
+      default:
+        return QObject::eventFilter( obj, event );
+    }
+  }
+
+  return QObject::eventFilter( obj, event );
 }
 

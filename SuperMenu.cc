@@ -83,8 +83,8 @@ void SuperMenu::choose()
     EditingWindow *e = new EditingWindow( true );
     if( !e->load( fn, true ) ) {
       QMessageBox::warning( 0, "QTM",
-			    tr( "Could not load the file you specified." ),
-			    QMessageBox::Cancel, QMessageBox::NoButton );
+                            tr( "Could not load the file you specified." ),
+                            QMessageBox::Cancel, QMessageBox::NoButton );
       e->deleteLater();
     } else {
       e->setSTI( _sti );
