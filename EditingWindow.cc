@@ -3083,8 +3083,8 @@ void EditingWindow::save( const QString &fname, bool exp )
 			out << QString( count ? ";%1" : "%1" )
 				.arg( cw.lwTags->item( count )->text().replace( ' ', '+' ) );
 		}
+		out << "\n";
   }
-  out << "\n";
 
   if( !cw.chNoCats->isChecked() ) {
     QDomNodeList catNodeList = currentBlogElement.firstChildElement( "categories" ).elementsByTagName( "category" );
