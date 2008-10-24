@@ -3077,11 +3077,12 @@ void EditingWindow::save( const QString &fname, bool exp )
       .arg( cw.cbBlogSelector->itemText( cw.cbBlogSelector->currentIndex() ) );
   }
   tags = cw.lwTags->count();
-  if( tags )
-    out << "Tags:";
-  for( count = 0; count < tags; count++ ) {
-    out << QString( count ? ";%1" : "%1" )
-      .arg( cw.lwTags->item( count )->text().replace( ' ', '+' ) );
+	if( tags ) {
+		out << "Tags:";
+		for( count = 0; count < tags; count++ ) {
+			out << QString( count ? ";%1" : "%1" )
+				.arg( cw.lwTags->item( count )->text().replace( ' ', '+' ) );
+		}
   }
   out << "\n";
 
