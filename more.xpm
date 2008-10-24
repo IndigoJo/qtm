@@ -1,5 +1,5 @@
 /* XPM */
-static char * more_xpm[] = {
+const char * more_xpm[] = {
 "16 16 2 1",	       
 " 	c None",       
 ".	c #000000",    

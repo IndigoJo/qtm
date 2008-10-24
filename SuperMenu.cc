@@ -31,8 +31,8 @@
 #include <QKeySequence>
 #include <QDialog>
 
+#include "EditingWindow.h"
 #include "SuperMenu.h"
-#include "catkin.h"
 #include "SysTrayIcon.h"
 #include "ui_aboutbox.h"
 
@@ -52,7 +52,7 @@ SuperMenu::SuperMenu( QWidget *parent, SysTrayIcon *sti )
 
 void SuperMenu::newEntry()
 {
-  Catkin *c = new Catkin;
+  EditingWindow *c = new EditingWindow;
   c->setSTI( _sti );
   c->setWindowTitle( QObject::tr( "QTM - new entry [*]" ) );
   c->show();
@@ -80,11 +80,11 @@ void SuperMenu::choose()
     localStorageDirectory, extn );
 
   if( !fn.isEmpty() ) {
-    Catkin *e = new Catkin( true );
+    EditingWindow *e = new EditingWindow( true );
     if( !e->load( fn, true ) ) {
       QMessageBox::warning( 0, "QTM",
-			    tr( "Could not load the file you specified." ),
-			    QMessageBox::Cancel, QMessageBox::NoButton );
+                            tr( "Could not load the file you specified." ),
+                            QMessageBox::Cancel, QMessageBox::NoButton );
       e->deleteLater();
     } else {
       e->setSTI( _sti );

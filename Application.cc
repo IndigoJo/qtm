@@ -23,8 +23,8 @@
 #include "Application.h"
 #include <QtCore>
 
-Application::Application( int &argc, char **argv )
-  : QApplication( argc, argv )
+  Application::Application( int &argc, char **argv )
+: QApplication( argc, argv )
 {
   QSettings settings( "Catkin Project", "QTM" );
   int i;
@@ -35,7 +35,7 @@ Application::Application( int &argc, char **argv )
   for( i = 0; i < 20; i++ ) {
     crf = settings.value( QString( "recentFile%1" ).arg( i ), "" ).toString();
     /*    if( crf.isEmpty() )
-	  qDebug() << QString( "recentFile%1" ).arg( i ) << "is empty"; */
+          qDebug() << QString( "recentFile%1" ).arg( i ) << "is empty"; */
     currentRF.filename = crf.section( "filename:", 1, 1 ).section( " ##title:", 0, 0 );
     currentRF.title = crf.section( " ##title:", 1, 1 );
     if( currentRF.filename.isEmpty() )
@@ -147,8 +147,8 @@ void Application::saveRecentFiles()
   settings.beginGroup( "recentFiles" );
   for( i = 0; i < 20; ++i ) {
     settings.setValue( QString( "recentFile%1" ).arg( i ),
-		       QString( "filename:%1 ##title:%2" )
-		       .arg( _recentFiles.value( i ).filename )
-		       .arg( _recentFiles.value( i ).title ) );
+                       QString( "filename:%1 ##title:%2" )
+                       .arg( _recentFiles.value( i ).filename )
+                       .arg( _recentFiles.value( i ).title ) );
   }
 }

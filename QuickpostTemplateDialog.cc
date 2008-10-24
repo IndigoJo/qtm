@@ -41,40 +41,40 @@
 #include "ui_QuickpostTemplateForm.h"
 
 QuickpostTemplateDialog::QuickpostTemplateDialog( QStringList &titles,
-						  QStringList &templates,
-						  QList<int> &pubStates,
-						  QList<bool> &ctStates,
-						  QList<QStringList> &ahLists,
-						  bool status,
-						  QWidget *parent )
+                                                  QStringList &templates,
+                                                  QList<int> &pubStates,
+                                                  QList<bool> &ctStates,
+                                                  QList<QStringList> &ahLists,
+                                                  bool status,
+                                                  QWidget *parent )
   : QDialog( parent )
 {
   setupUi( this );
 
   teTemplateText->setWhatsThis( tr( "<p>Enter the text of your template here, in HTML "
-				    "format.</p>"
-				    "<p>Four place-markers are supported:</p>"
-				    "<p><strong>%title%</strong> - The page's title<br />"
-				    "<strong>%url%</strong> - the full web location (URL) of "
-				    "the page being blogged;<br />"
-				    "<strong>%host%</strong> - the page's host name (after http://), and<br />"
-				    "<strong>%domain%</strong> - the page's hostname without the \"www\".</p>" ) );
+                                    "format.</p>"
+                                    "<p>Four place-markers are supported:</p>"
+                                    "<p><strong>%title%</strong> - The page's title<br />"
+                                    "<strong>%url%</strong> - the full web location (URL) of "
+                                    "the page being blogged;<br />"
+                                    "<strong>%host%</strong> - the page's host name (after http://), and<br />"
+                                    "<strong>%domain%</strong> - the page's hostname without the \"www\".</p>" ) );
   lTemplate->setWhatsThis( tr( "<p>Enter the text of your template here, in HTML "
-			       "format.</p>"
-			       "<p>Four place-markers are supported:</p>"
-			       "<p><strong>%title%</strong> - The page's title<br />"
-			       "<strong>%url%</strong> - the full web location (URL) of "
-			       "the page being blogged;<br />"
-			       "<strong>%host%</strong> - the page's host name (after http://), and<br />"
-			       "<strong>%domain%</strong> - the page's hostname without the \"www\".</p>" ) );
+                               "format.</p>"
+                               "<p>Four place-markers are supported:</p>"
+                               "<p><strong>%title%</strong> - The page's title<br />"
+                               "<strong>%url%</strong> - the full web location (URL) of "
+                               "the page being blogged;<br />"
+                               "<strong>%host%</strong> - the page's host name (after http://), and<br />"
+                               "<strong>%domain%</strong> - the page's hostname without the \"www\".</p>" ) );
   cbDefaultPublishStatus->setWhatsThis( tr( "<p>Set this to Draft or Publish if you always want "
-					    "posts based on this template to have that status.</p>"
-					    "<p>Otherwise, the post will have the status you specify in "
-					    "the Preferences window.</p>" ) );
+                                            "posts based on this template to have that status.</p>"
+                                            "<p>Otherwise, the post will have the status you specify in "
+                                            "the Preferences window.</p>" ) );
   lDefaultPublishStatus->setWhatsThis( tr( "<p>Set this to Draft or Publish if you always want "
-					   "posts based on this template to have that status.</p>"
-					   "<p>Otherwise, the post will have the status you specify in "
-					   "the Preferences window.</p>" ) );
+                                           "posts based on this template to have that status.</p>"
+                                           "<p>Otherwise, the post will have the status you specify in "
+                                           "the Preferences window.</p>" ) );
 
 
   _templateTitles = titles;
@@ -90,19 +90,8 @@ QuickpostTemplateDialog::QuickpostTemplateDialog( QStringList &titles,
   originalCopyTitleStates = ctStates;
   originalAssocHostLists = ahLists;
 
-  // lowestNumber = lwTemplates->count();
-
   hboxLayout->setStretchFactor( hboxLayout->itemAt( 0 )->layout(), 2 );
   hboxLayout->setStretchFactor( hboxLayout->itemAt( 1 )->layout(), 3 );
-
-  /*  //QHBoxLayout *bl = qobject_cast<QHBoxLayout *>(lwTemplates->layout()->parent() );
-  QHBoxLayout *bl = (QHBoxLayout *)(lwTemplates->layout()->parent());
-  if( bl ) {
-    bl->setStretchFactor( lwTemplates->layout(), 2 );
-    bl->setStretchFactor( leName->layout(), 3 );
-    }*/
-  /*  lwTemplates->layout()->parent()->setStretchFactor( 
-      lwTemplates->layout()->parent()->setColumnStretch( 1, 3 );*/
 
   Q_FOREACH( QString a, _templateTitles ) {
     if( a.isEmpty() )
@@ -500,13 +489,13 @@ QList<QStringList> QuickpostTemplateDialog::assocHostLists()
   if( _assocHostLists.count() ) {
     for( i = 0; i < _assocHostLists.count(); i++ ) {
       for( j = 0; j < _assocHostLists[i].count(); j++ ) {
-	if( _assocHostLists[i].at( j ).isEmpty() ||
-	    emptyString.exactMatch( _assocHostLists[i].at( j ) ) )
-	  _assocHostLists[i].removeAt( j );
+        if( _assocHostLists[i].at( j ).isEmpty() ||
+            emptyString.exactMatch( _assocHostLists[i].at( j ) ) )
+          _assocHostLists[i].removeAt( j );
       }
     }
   }
- 
+
   return _assocHostLists;
 }
 

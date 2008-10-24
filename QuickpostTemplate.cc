@@ -27,7 +27,7 @@
 #include "QuickpostTemplate.h"
 
 QuickpostTemplate::QuickpostTemplate( int id, QString t,
-				      QString pt, QObject *parent )
+                                      QString pt, QObject *parent )
   : QAction( t, parent )
 {
   _postTemplate = pt;

@@ -24,15 +24,15 @@
 
 #include <QtNetwork>
 
-SafeHttp::SafeHttp( QObject *parent )
-  : QHttp( parent )
+  SafeHttp::SafeHttp( QObject *parent )
+: QHttp( parent )
 {
 
 }
 
 SafeHttp::SafeHttp( const QString &hostName,
-		    quint16 port, QObject *parent )
-  : QHttp( parent )
+                    quint16 port, QObject *parent )
+: QHttp( parent )
 {
   httpHost = hostName;
 }
@@ -42,9 +42,9 @@ SafeHttp::~SafeHttp()
 }
 
 void SafeHttp::safePost( const QString &host, 
-			 const QString &path,
-			 const QByteArray &data,
-			 QIODevice *dataTo )
+                         const QString &path,
+                         const QByteArray &data,
+                         QIODevice *dataTo )
 {
   httpHost = host;
   location = path;
@@ -52,7 +52,7 @@ void SafeHttp::safePost( const QString &host,
   httpDataTo = dataTo;
 
   QHostInfo::lookupHost( host, this,
-			 SLOT( handleLookupResult( QHostInfo ) ) );
+                         SLOT( handleLookupResult( QHostInfo ) ) );
 }
 
 void SafeHttp::handleLookupResult( const QHostInfo &hostInfo )

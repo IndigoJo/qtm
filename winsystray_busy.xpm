@@ -1,5 +1,5 @@
 /* XPM */             
-static char * sysTrayIcon_busy_xpm[] = {
+const char * sysTrayIcon_busy_xpm[] = {
   "16 16 3 1",        
   "        c None",   
   ".       c #FECB01",

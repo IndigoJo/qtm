@@ -23,7 +23,7 @@
 #include <QMenuBar>
 class QAction;
 class QMenu;
-class Catkin;
+class EditingWindow;
 class SysTrayIcon;
 
 class SuperMenu : public QMenuBar

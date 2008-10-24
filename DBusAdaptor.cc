@@ -22,7 +22,7 @@
 
 
 #include "DBusAdaptor.h"
-#include "catkin.h"
+#include "EditingWindow.h"
 #include "qtm_version.h"
 
 #include <QApplication>
@@ -72,7 +72,7 @@ Q_NOREPLY void DBusAdaptor::quit()
  */
 Q_NOREPLY void DBusAdaptor::newDocument()
 {
-  Catkin *c = new Catkin;
+  EditingWindow *c = new EditingWindow;
   c->setSTI( _sti );
   c->show();
   c->activateWindow();
@@ -87,7 +87,7 @@ Q_NOREPLY void DBusAdaptor::newDocument()
  */
 void DBusAdaptor::newDocumentWithTitleAndText( QString title, QString text )
 {
-  Catkin *c = new Catkin( text );
+  EditingWindow *c = new EditingWindow( text );
   c->setSTI( _sti );
   c->setPostTitle( title );
   c->setPostClean();
@@ -116,7 +116,7 @@ bool DBusAdaptor::open( QString path )
   bool rv = false;
 
   if( !path.isEmpty() ) {
-    Catkin *e = new Catkin( true );
+    EditingWindow *e = new EditingWindow( true );
     rv = e->load( path, true );
     if( rv ) {
       e->setSTI( _sti );

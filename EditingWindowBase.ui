@@ -25,7 +25,7 @@
      <x>0</x>
      <y>0</y>
      <width>800</width>
-     <height>25</height>
+     <height>26</height>
     </rect>
    </property>
    <widget class="QMenu" name="menu_Edit" >
@@ -121,6 +121,7 @@
     <addaction name="actionOpen_recent" />
     <addaction name="action_Save" />
     <addaction name="actionSave_As" />
+    <addaction name="action_Export" />
     <addaction name="action_Upload" />
     <addaction name="separator" />
     <addaction name="actionPrint" />
@@ -159,7 +160,10 @@
     <enum>Qt::ToolButtonIconOnly</enum>
    </property>
    <attribute name="toolBarArea" >
-    <number>4</number>
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak" >
+    <bool>false</bool>
    </attribute>
   </widget>
   <action name="action_New" >
@@ -171,9 +175,6 @@
    </property>
   </action>
   <action name="action_Save" >
-   <property name="icon" >
-    <iconset/>
-   </property>
    <property name="text" >
     <string>&amp;Save</string>
    </property>
@@ -189,12 +190,14 @@
     <string>Sa&amp;ve As ...</string>
    </property>
   </action>
+  <action name="action_Export" >
+   <property name="text" >
+    <string>&amp;Export ...</string>
+   </property>
+  </action>
   <action name="actionPrint" >
    <property name="enabled" >
     <bool>false</bool>
-   </property>
-   <property name="icon" >
-    <iconset/>
    </property>
    <property name="text" >
     <string>Print ...</string>
@@ -227,7 +230,7 @@
     <string>&amp;Accounts ...</string>
    </property>
    <property name="shortcut" >
-    <string>Shift+Ctrl+,</string>
+    <string>Ctrl+Shift+,</string>
    </property>
   </action>
   <action name="actionPr_eferences" >
@@ -296,9 +299,6 @@
    </property>
   </action>
   <action name="action_Bold" >
-   <property name="icon" >
-    <iconset/>
-   </property>
    <property name="text" >
     <string>&amp;Bold</string>
    </property>
@@ -307,9 +307,6 @@
    </property>
   </action>
   <action name="action_Italic" >
-   <property name="icon" >
-    <iconset/>
-   </property>
    <property name="text" >
     <string>&amp;Italic</string>
    </property>
@@ -318,9 +315,6 @@
    </property>
   </action>
   <action name="actionU_nderline" >
-   <property name="icon" >
-    <iconset/>
-   </property>
    <property name="text" >
     <string>U&amp;nderline</string>
    </property>
@@ -329,17 +323,11 @@
    </property>
   </action>
   <action name="actionP_aragraph" >
-   <property name="icon" >
-    <iconset/>
-   </property>
    <property name="text" >
     <string>P&amp;aragraph</string>
    </property>
   </action>
   <action name="action_Link" >
-   <property name="icon" >
-    <iconset/>
-   </property>
    <property name="text" >
     <string>&amp;Link ...</string>
    </property>
@@ -353,9 +341,6 @@
    </property>
   </action>
   <action name="actionI_mage" >
-   <property name="icon" >
-    <iconset/>
-   </property>
    <property name="text" >
     <string>I&amp;mage ...</string>
    </property>
@@ -369,9 +354,6 @@
    </property>
   </action>
   <action name="action_More" >
-   <property name="icon" >
-    <iconset/>
-   </property>
    <property name="text" >
     <string>&amp;More</string>
    </property>
@@ -418,6 +400,12 @@
    </property>
    <property name="text" >
     <string>&amp;Console</string>
+   </property>
+   <property name="whatsThis" >
+    <string>The console displays the raw code that QTM sends to your blog management system.</string>
+   </property>
+   <property name="shortcutContext" >
+    <enum>Qt::WidgetShortcut</enum>
    </property>
   </action>
   <action name="actionFile" >

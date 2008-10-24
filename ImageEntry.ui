@@ -1,7 +1,4 @@
 <ui version="4.0" >
- <author></author>
- <comment></comment>
- <exportmacro></exportmacro>
  <class>ImageEntry</class>
  <widget class="QDialog" name="ImageEntry" >
   <property name="geometry" >
@@ -9,7 +6,7 @@
     <x>0</x>
     <y>0</y>
     <width>422</width>
-    <height>137</height>
+    <height>108</height>
    </rect>
   </property>
   <property name="windowTitle" >
@@ -50,7 +47,7 @@
      <property name="orientation" >
       <enum>Qt::Vertical</enum>
      </property>
-     <property name="sizeHint" >
+     <property name="sizeHint" stdset="0" >
       <size>
        <width>81</width>
        <height>26</height>
@@ -111,7 +108,6 @@
    </item>
   </layout>
  </widget>
- <pixmapfunction></pixmapfunction>
  <tabstops>
   <tabstop>leImageURL</tabstop>
   <tabstop>leAltText</tabstop>

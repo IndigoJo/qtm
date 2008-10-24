@@ -1,6 +1,6 @@
 project(QTM)
 
-set( QTM_VERSION 0.7-b1 )
+set( QTM_VERSION 0.7 )
 
 IF(APPLE)
     set( PROGNAME QTM )
@@ -69,6 +69,11 @@ endif( USE_STI )
 # Packager can specify not to use QPlainTextEdit, even if Qt 4.4.0 is present
 # Note, the author has found that it does not scroll in between going below the
 # bottom of the widget and pressing Enter.
+
+if( NOT USE_PTE )
+  set( DONT_USE_PTE TRUE )
+endif( NOT USE_PTE )
+
 if( DONT_USE_PTE )
   add_definitions( -DDONT_USE_PTE )
 endif( DONT_USE_PTE )
@@ -138,7 +143,7 @@ endif( USE_DBUS )
 set(QTM_SRCS
     AccountsDialog.cc
     Application.cc
-    catkin.cc
+    EditingWindow.cc
     locationlineedit.cc
     main.cc
     PrefsDialog.cc
@@ -155,7 +160,7 @@ set(QTM_SRCS
 set(QTM_MOC_HDRS
     AccountsDialog.h
     Application.h
-    catkin.h
+    EditingWindow.h
     locationlineedit.h
     PrefsDialog.h
     QijSearchWidget.h
@@ -170,9 +175,9 @@ set(QTM_MOC_HDRS
 set(QTM_UIS
     aboutbox.ui
     AccountsForm.ui
+    EditingWindowBase.ui
     PrefsForm.ui
     PrefsForm41.ui
-    CatkinMainWindow.ui
     ImageEntry.ui
     LinkEntry.ui
     password-form.ui

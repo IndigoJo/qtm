@@ -1,5 +1,5 @@
 /* XPM */
-static char * previewIcon_xpm[] = {
+const char * previewIcon_xpm[] = {
   "32 32 3 1",
   "        c None",
   ".       c #FFCC00",

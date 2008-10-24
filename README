@@ -1,4 +1,4 @@
-QTM, version 0.7-m2
+QTM, version 0.7
 Copyright 2008, Matthew J Smith
 This program is released under the terms of the GNU General Public License,
 version 2.  This applies to all files written by me, or produced by me by
@@ -42,12 +42,7 @@ it may update the blog's category list rather than post those you chose for
 the entry to hand.  If you find your post has not been categorised, use the
 "Update this post's categories" entry in the File menu.
 
-(4) When compiling on some distributions, notably OpenSUSE 10.3 and 11, you 
-will notice dozens of warnings relating to "deprecated conversions" of one 
-string type to another.  You should ignore these, although I intend to fix 
-it in a future release.
-
-(5) When using a version of QTM compiled with Qt 4.4 on Windows Vista, you
+(4) When using a version of QTM compiled with Qt 4.4 on Windows Vista, you
 may find that the system-tray icon menu does not display properly when you
 right-click it.  This seems to be a problem with the menu clashing with the
 widget bar.  You may find it preferable to move the widget bar, or to use Qt
@@ -61,4 +56,4 @@ are on my wish list anyway.
 
 Matthew J Smith
 New Malden, Surrey, England
-23rd Jan, 2006 - 29th Sept 2008
+23rd Jan, 2006 - 22nd Oct 2008
