@@ -116,7 +116,8 @@ if( UNIX AND NOT APPLE )
   set_directory_properties( ADDITIONAL_MAKE_CLEAN_FILES 
 		qtm.1
 		qtm.1.gz
-	  qtm_version.h	)
+	  qtm_version.h
+	  qtmico.o )
   
   set( APP_ICON images/qtm-logo1.png )
 endif( UNIX AND NOT APPLE )
