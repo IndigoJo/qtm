@@ -1,7 +1,8 @@
 /**
  * Nested list helper
  *
- * Copyright 2008  Stephen Kelly <steveire@gmail.com>
+ * Copyright 2008 Stephen Kelly <steveire@gmail.com>
+ * Copyright 2008 Matthew J Smith <indigojo@blogistan.co.uk>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -10,27 +11,25 @@
  *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
  * Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
- * 02110-1301  USA
+ * 02110-1301 USA
  */
 
 #include "nestedlisthelper.h"
 
 #include <QtGui/QKeyEvent>
 #include <QtGui/QTextCursor>
+#include <QtGui/QTextEdit>
 #include <QtGui/QTextList>
 #include <QtGui/QTextBlock>
 #include <QtGui/QTextDocumentFragment>
 
-#include <ktextedit.h>
-#include <kdebug.h>
-
-NestedListHelper::NestedListHelper(QTextEdit *te)
+NestedListHelper::NestedListHelper( QTextEdit *te )
 {
     textEdit = te;
     listBottomMargin = 12;
@@ -42,29 +41,29 @@ NestedListHelper::~NestedListHelper()
 {
 }
 
-bool NestedListHelper::handleBeforeKeyPressEvent(QKeyEvent *event)
+bool NestedListHelper::handleBeforeKeyPressEvent( QKeyEvent *event )
 {
     QTextCursor cursor = textEdit->textCursor();
 
     // Only attempt to handle Backspace while on a list
-    if ((event->key() != Qt::Key_Backspace)
-            || (!cursor.currentList()))
+    if( (event->key() != Qt::Key_Backspace )
+            || (!cursor.currentList()) )
         return false;
 
     bool handled = false;
 
-    if (!cursor.hasSelection()
+    if( !cursor.hasSelection()
             && cursor.currentList()
             && event->key() == Qt::Key_Backspace
-            && cursor.atBlockStart()) {
+            && cursor.atBlockStart() ) {
         handleOnIndentLess();
         handled = true;
     }
 
-    if (cursor.hasSelection()
+    if( cursor.hasSelection()
             && cursor.currentList()
             && event->key() == Qt::Key_Backspace
-            && cursor.atBlockStart()) {
+            && cursor.atBlockStart() ) {
 
         // Workaround for qt bug 211460:
         // If there is a list with selection like this:
@@ -86,13 +85,13 @@ bool NestedListHelper::handleBeforeKeyPressEvent(QKeyEvent *event)
 
 bool NestedListHelper::canIndent() const
 {
-    if ((textEdit->textCursor().block().isValid())
+    if( (textEdit->textCursor().block().isValid())
 //            && (  textEdit->textCursor().block().previous().isValid() )
        ) {
         QTextBlock block = textEdit->textCursor().block();
         QTextBlock prevBlock = textEdit->textCursor().block().previous();
-        if (block.textList()) {
-            if (prevBlock.textList()) {
+        if( block.textList() ) {
+            if( prevBlock.textList() ) {
                 return block.textList()->format().indent() <= prevBlock.textList()->format().indent();
             }
         } else {
@@ -106,14 +105,14 @@ bool NestedListHelper::canDedent() const
 {
     QTextBlock thisBlock = textEdit->textCursor().block();
     QTextBlock nextBlock = thisBlock.next();
-    if (thisBlock.isValid()) {
+    if( thisBlock.isValid() ) {
         int nextBlockIndent = 0;
         int thisBlockIndent = 0;
-        if (nextBlock.isValid() && nextBlock.textList())
+        if( nextBlock.isValid() && nextBlock.textList() )
             nextBlockIndent = nextBlock.textList()->format().indent();
-        if (thisBlock.textList()) {
+        if( thisBlock.textList() ) {
             thisBlockIndent = thisBlock.textList()->format().indent();
-            if (thisBlockIndent >= nextBlockIndent)
+            if( thisBlockIndent >= nextBlockIndent )
                 return thisBlock.textList()->format().indent() > 0;
         }
     }
@@ -121,29 +120,29 @@ bool NestedListHelper::canDedent() const
 
 }
 
-bool NestedListHelper::handleAfterKeyPressEvent(QKeyEvent *event)
+bool NestedListHelper::handleAfterKeyPressEvent( QKeyEvent *event )
 {
     // Only attempt to handle Backspace and Return
-    if ((event->key() != Qt::Key_Backspace)
-            && (event->key() != Qt::Key_Return))
+    if( (event->key() != Qt::Key_Backspace)
+            && (event->key() != Qt::Key_Return) )
         return false;
 
     QTextCursor cursor = textEdit->textCursor();
     bool handled = false;
 
-    if (!cursor.hasSelection() && cursor.currentList()) {
+    if( !cursor.hasSelection() && cursor.currentList() ) {
 
         // Check if we're on the last list item.
         // itemNumber is zero indexed
         QTextBlock currentBlock = cursor.block();
-        if (cursor.currentList()->count() == cursor.currentList()->itemNumber(currentBlock) + 1) {
+        if( cursor.currentList()->count() == cursor.currentList()->itemNumber(currentBlock) + 1 ) {
             // Last block in this list, but may have just gained another list below.
-            if (currentBlock.next().textList()) {
+            if( currentBlock.next().textList() ) {
                 reformatList();
             }
 
             // No need to reformatList in this case. reformatList is slow.
-            if ((event->key() == Qt::Key_Return) || (event->key() == Qt::Key_Backspace)) {
+            if( (event->key() == Qt::Key_Return) || (event->key() == Qt::Key_Backspace) ) {
                 reformatBoundingItemSpacing();
                 handled = true;
             }
@@ -155,9 +154,9 @@ bool NestedListHelper::handleAfterKeyPressEvent(QKeyEvent *event)
 }
 
 
-bool NestedListHelper::handleAfterDropEvent(QDropEvent *dropEvent)
+bool NestedListHelper::handleAfterDropEvent( QDropEvent *dropEvent )
 {
-    Q_UNUSED(dropEvent);
+    Q_UNUSED( dropEvent );
     QTextCursor cursor = topOfSelection();
 
     QTextBlock droppedBlock = cursor.block();
@@ -165,16 +164,16 @@ bool NestedListHelper::handleAfterDropEvent(QDropEvent *dropEvent)
 
     int minimumIndent = droppedBlock.previous().textList()->format().indent();
 
-    if (firstDroppedItemIndent < minimumIndent) {
-        cursor = QTextCursor(droppedBlock);
+    if( firstDroppedItemIndent < minimumIndent ) {
+        cursor = QTextCursor( droppedBlock );
         QTextListFormat fmt = droppedBlock.textList()->format();
-        fmt.setIndent(minimumIndent);
-        QTextList* list = cursor.createList(fmt);
+        fmt.setIndent( minimumIndent );
+        QTextList* list = cursor.createList( fmt );
 
         int endOfDrop = bottomOfSelection().position();
-        while (droppedBlock.next().position() < endOfDrop) {
+        while( droppedBlock.next().position() < endOfDrop ) {
             droppedBlock = droppedBlock.next();
-            if (droppedBlock.textList()->format().indent() != firstDroppedItemIndent) {
+            if( droppedBlock.textList()->format().indent() != firstDroppedItemIndent ) {
 
                 // new list?
             }
@@ -187,50 +186,50 @@ bool NestedListHelper::handleAfterDropEvent(QDropEvent *dropEvent)
     return true;
 }
 
-void NestedListHelper::processList(QTextList* list)
+void NestedListHelper::processList( QTextList* list )
 {
-    QTextBlock block = list->item(0);
+    QTextBlock block = list->item( 0 );
     int thisListIndent = list->format().indent();
 
-    QTextCursor cursor = QTextCursor(block);
-    list = cursor.createList(list->format());
+    QTextCursor cursor = QTextCursor( block );
+    list = cursor.createList( list->format() );
     bool processingSubList  = false;
-    while (block.next().textList() != 0) {
+    while( block.next().textList() != 0 ) {
         block = block.next();
 
         QTextList* nextList = block.textList();
         int nextItemIndent = nextList->format().indent();
-        if (nextItemIndent < thisListIndent) {
+        if( nextItemIndent < thisListIndent ) {
             return;
-        } else if (nextItemIndent > thisListIndent) {
-            if (processingSubList) {
+        } else if( nextItemIndent > thisListIndent ) {
+            if( processingSubList ) {
                 continue;
             }
             processingSubList = true;
-            processList(nextList);
+            processList( nextList );
         } else {
             processingSubList = false;
-            list->add(block);
+            list->add( block );
         }
     }
 //     delete nextList;
 //     nextList = 0;
 }
 
-void NestedListHelper::reformatList(QTextBlock block)
+void NestedListHelper::reformatList( QTextBlock block )
 {
-    if (block.textList()) {
+    if( block.textList() ) {
         int minimumIndent =  block.textList()->format().indent();
 
         // Start at the top of the list
-        while (block.previous().textList() != 0) {
-            if (block.previous().textList()->format().indent() < minimumIndent) {
+        while( block.previous().textList() != 0 ) {
+            if( block.previous().textList()->format().indent() < minimumIndent ) {
                 break;
             }
             block = block.previous();
         }
 
-        processList(block.textList());
+        processList( block.textList() );
 
     }
 }
@@ -238,15 +237,15 @@ void NestedListHelper::reformatList(QTextBlock block)
 void NestedListHelper::reformatList()
 {
     QTextCursor cursor = textEdit->textCursor();
-    reformatList(cursor.block());
+    reformatList( cursor.block() );
 }
 
 QTextCursor NestedListHelper::topOfSelection()
 {
     QTextCursor cursor = textEdit->textCursor();
 
-    if (cursor.hasSelection())
-        cursor.setPosition(qMin(cursor.position(), cursor.anchor()));
+    if( cursor.hasSelection() )
+        cursor.setPosition( qMin( cursor.position(), cursor.anchor() ) );
     return cursor;
 }
 
@@ -254,8 +253,8 @@ QTextCursor NestedListHelper::bottomOfSelection()
 {
     QTextCursor cursor = textEdit->textCursor();
 
-    if (cursor.hasSelection())
-        cursor.setPosition(qMax(cursor.position(), cursor.anchor()));
+    if( cursor.hasSelection())
+        cursor.setPosition( qMax( cursor.position(), cursor.anchor() ) );
     return cursor;
 }
 
@@ -264,30 +263,30 @@ void NestedListHelper::handleOnIndentMore()
     QTextCursor cursor = textEdit->textCursor();
 
     QTextListFormat listFmt;
-    if (!cursor.currentList()) {
+    if( !cursor.currentList() ) {
 
         QTextListFormat::Style style;
         cursor = topOfSelection();
-        cursor.movePosition(QTextCursor::PreviousBlock);
-        if (cursor.currentList()) {
+        cursor.movePosition( QTextCursor::PreviousBlock );
+        if( cursor.currentList() ) {
             style = cursor.currentList()->format().style();
         } else {
 
             cursor = bottomOfSelection();
-            cursor.movePosition(QTextCursor::NextBlock);
+            cursor.movePosition( QTextCursor::NextBlock );
 
-            if (cursor.currentList()) {
+            if( cursor.currentList() ) {
                 style = cursor.currentList()->format().style();
             } else {
                 style = QTextListFormat::ListDisc;
             }
         }
-        handleOnBulletType(style);
+        handleOnBulletType( style );
     } else {
         listFmt = cursor.currentList()->format();
-        listFmt.setIndent(listFmt.indent() + 1);
+        listFmt.setIndent( listFmt.indent() + 1 );
 
-        cursor.createList(listFmt);
+        cursor.createList( listFmt );
         reformatList();
     }
 
@@ -298,48 +297,48 @@ void NestedListHelper::handleOnIndentLess()
 {
     QTextCursor cursor = textEdit->textCursor();
     QTextList* currentList = cursor.currentList();
-    if (!currentList)
+    if( !currentList )
         return;
     QTextListFormat listFmt;
     listFmt = currentList->format();
-    if (listFmt.indent() > 1) {
-        listFmt.setIndent(listFmt.indent() - 1);
-        cursor.createList(listFmt);
-        reformatList(cursor.block());
+    if( listFmt.indent() > 1 ) {
+        listFmt.setIndent( listFmt.indent() - 1 );
+        cursor.createList( listFmt );
+        reformatList( cursor.block() );
     } else {
         QTextBlockFormat bfmt;
-        bfmt.setObjectIndex(-1);
-        cursor.setBlockFormat(bfmt);
-        reformatList(cursor.block().next());
+        bfmt.setObjectIndex( -1 );
+        cursor.setBlockFormat( bfmt );
+        reformatList( cursor.block().next() );
     }
     reformatBoundingItemSpacing();
 }
 
 
-void NestedListHelper::handleOnBulletType(int styleIndex)
+void NestedListHelper::handleOnBulletType( int styleIndex )
 {
     QTextCursor cursor = textEdit->textCursor();
-    if (styleIndex != 0) {
+    if( styleIndex != 0 ) {
         QTextListFormat::Style style = (QTextListFormat::Style)styleIndex;
         QTextList *currentList = cursor.currentList();
         QTextListFormat listFmt;
 
         cursor.beginEditBlock();
 
-        if (currentList) {
+        if( currentList ) {
             listFmt = currentList->format();
-            listFmt.setStyle(style);
-            currentList->setFormat(listFmt);
+            listFmt.setStyle( style );
+            currentList->setFormat( listFmt );
         } else {
-            listFmt.setStyle(style);
-            cursor.createList(listFmt);
+            listFmt.setStyle( style );
+            cursor.createList( listFmt );
         }
 
         cursor.endEditBlock();
     } else {
         QTextBlockFormat bfmt;
-        bfmt.setObjectIndex(-1);
-        cursor.setBlockFormat(bfmt);
+        bfmt.setObjectIndex( -1 );
+        cursor.setBlockFormat( bfmt );
         reformatBoundingItemSpacing();
     }
 
@@ -347,7 +346,7 @@ void NestedListHelper::handleOnBulletType(int styleIndex)
     reformatList();
 }
 
-void NestedListHelper::reformatBoundingItemSpacing(QTextBlock block)
+void NestedListHelper::reformatBoundingItemSpacing( QTextBlock block )
 {
     // This is a workaround for qt bug 201228. Spacing between items is not kept
     // consistent.
@@ -361,19 +360,19 @@ void NestedListHelper::reformatBoundingItemSpacing(QTextBlock block)
     bool prevBlockValid = block.previous().isValid();
     bool nextBlockValid = block.next().isValid();
 
-    if (block.textList()) {
-        if (prevBlockValid && block.previous().textList()) {
+    if( block.textList() ) {
+        if( prevBlockValid && block.previous().textList() ) {
             thisBlockTopMargin = listNoMargin;
         }
 
-        if (nextBlockValid && block.next().textList()) {
+        if( nextBlockValid && block.next().textList() ) {
             thisBlockBottomMargin = listNoMargin;
         }
     } else {
-        if (prevBlockValid && !block.previous().textList()) {
+        if( prevBlockValid && !block.previous().textList() ) {
             thisBlockTopMargin = listNoMargin;
         }
-        if (nextBlockValid && !block.next().textList()) {
+        if( nextBlockValid && !block.next().textList() ) {
             thisBlockBottomMargin = listNoMargin;
         }
 
@@ -382,31 +381,31 @@ void NestedListHelper::reformatBoundingItemSpacing(QTextBlock block)
     QTextCursor cursor;
 
     fmt = block.blockFormat();
-    fmt.setBottomMargin(thisBlockBottomMargin);
-    fmt.setTopMargin(thisBlockTopMargin);
-    cursor = QTextCursor(block);
-    cursor.setBlockFormat(fmt);
+    fmt.setBottomMargin( thisBlockBottomMargin );
+    fmt.setTopMargin( thisBlockTopMargin );
+    cursor = QTextCursor( block );
+    cursor.setBlockFormat( fmt );
 
-    if (nextBlockValid) {
+    if( nextBlockValid ) {
         block = block.next();
         fmt = block.blockFormat();
-        fmt.setTopMargin(nextBlockTopMargin);
-        cursor = QTextCursor(block);
-        cursor.setBlockFormat(fmt);
+        fmt.setTopMargin( nextBlockTopMargin );
+        cursor = QTextCursor( block );
+        cursor.setBlockFormat( fmt );
 
         block = block.previous();
     }
-    if (prevBlockValid) {
+    if( prevBlockValid ) {
         block = block.previous();
         fmt = block.blockFormat();
-        fmt.setBottomMargin(previousBlockBottomMargin);
-        cursor = QTextCursor(block);
-        cursor.setBlockFormat(fmt);
+        fmt.setBottomMargin( previousBlockBottomMargin );
+        cursor = QTextCursor( block );
+        cursor.setBlockFormat( fmt );
     }
 }
 
 void NestedListHelper::reformatBoundingItemSpacing()
 {
-    reformatBoundingItemSpacing(topOfSelection().block());
-    reformatBoundingItemSpacing(bottomOfSelection().block());
+    reformatBoundingItemSpacing( topOfSelection().block() );
+    reformatBoundingItemSpacing( bottomOfSelection().block() );
 }
