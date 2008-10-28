@@ -1,5 +1,5 @@
 /**
- * krichtextedit.h
+ * RichTextEdit.h - Header for QTM rich text editor
  *
  * Copyright 2007 Laurent Montel  <montel@kde.org>
  * Copyright 2008 Thomas McGuire  <thomas.mcguire@gmx.net>
@@ -25,10 +25,13 @@
 #ifndef RICHTEXTEDIT_H
 #define RICHTEXTEDIT_H
 
-#include <QTextEdit> 
+#include <QTextEdit>
+#include <QString>
+#include <QColor>
 
 class QMouseEvent;
 class QKeyEvent;
+class QTextCursor;
 
 class RichTextEditPrivate;
 
@@ -116,7 +119,7 @@ public:
      *
      * @param text The text to insert
      */
-    void setTextOrHtml(const QString &text);
+    void setTextOrHtml( const QString &text );
 
 
     /**
@@ -165,7 +168,7 @@ public:
      * @param linkText The link will get this alternative text, which is the
      *                 text displayed in the text edit.
      */
-    void updateLink(const QString &linkUrl, const QString &linkText);
+    void updateLink( const QString &linkUrl, const QString &linkText );
 
     /**
      * Returns true if the list item at the current position can be indented.
@@ -209,7 +212,7 @@ public Q_SLOTS:
      *
      * @param _styleIndex The list will get this style
      */
-    void setListStyle(int _styleIndex);
+    void setListStyle( int _styleIndex );
 
     /**
      * Increases the nesting level of the current block or selected blocks.
