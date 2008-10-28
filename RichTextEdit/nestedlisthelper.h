@@ -1,7 +1,8 @@
 /**
  * Nested list helper
  *
- * Copyright 2008  Stephen Kelly <steveire@gmail.com>
+ * Copyright 2008 Stephen Kelly <steveire@gmail.com>
+ * Copyright 2008 Matthew J Smith <indigojo@blogistan.co.uk>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -21,8 +22,6 @@
 
 #ifndef NESTEDLISTHELPER_H
 #define NESTEDLISTHELPER_H
-
-//@cond PRIVATE
 
 class QTextEdit;
 
@@ -50,7 +49,7 @@ public:
      *
      * @param te The text edit object to handle lists in.
      */
-    NestedListHelper(QTextEdit *te);
+    NestedListHelper( QTextEdit *te );
 
     /**
      * Destructor
@@ -67,7 +66,7 @@ public:
      * @param event The event to be handled
      * @return Whether the event was completely handled by this method.
      */
-    bool handleBeforeKeyPressEvent(QKeyEvent *event);
+    bool handleBeforeKeyPressEvent( QKeyEvent *event );
 
     /**
      *
@@ -80,9 +79,9 @@ public:
      * @param event The event to be handled
      * @return Whether the event was completely handled by this method.
      */
-    bool handleAfterKeyPressEvent(QKeyEvent *event);
+    bool handleAfterKeyPressEvent( QKeyEvent *event );
 
-    bool handleAfterDropEvent(QDropEvent *event);
+    bool handleAfterDropEvent( QDropEvent *event );
 
     /**
      * Increases the indent (nesting level) on the current list item or selection.
@@ -100,7 +99,7 @@ public:
      *
      * @param styleIndex The QTextListStyle of the list.
      */
-    void handleOnBulletType(int styleIndex);
+    void handleOnBulletType( int styleIndex );
 
     /**
      * @brief Check whether the current item in the list may be indented.
@@ -128,12 +127,12 @@ public:
     bool canDedent() const;
 
 private:
-    void reformatBoundingItemSpacing(QTextBlock block);
+    void reformatBoundingItemSpacing( QTextBlock block );
     void reformatBoundingItemSpacing();
     QTextCursor topOfSelection();
     QTextCursor bottomOfSelection();
-    void processList(QTextList* list);
-    void reformatList(QTextBlock block);
+    void processList( QTextList* list );
+    void reformatList( QTextBlock block );
     void reformatList();
 
     QTextEdit *textEdit;
@@ -143,7 +142,5 @@ private:
     int listNoMargin;
 
 };
-
-//@endcond
 
 #endif
