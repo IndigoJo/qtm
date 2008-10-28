@@ -54,6 +54,7 @@ class QComboBox;
 class SafeHttp;
 class QHttpResponseHeader;
 class QTextEdit;
+class RichTextEdit;
 class QHBoxLayout;
 class QRegExpValidator;
 class QHostInfo;
@@ -212,6 +213,7 @@ class EditingWindow : public QMainWindow
   void insertImage();
   void insertImageFromClipboard();
   void insertMore();
+  void toggleRichText( bool );
   void cut();
   void copy();
   void paste();
@@ -295,6 +297,7 @@ class EditingWindow : public QMainWindow
   SafeHttp *http;
   TEXTEDIT *console;
   TEXTEDIT *ed;
+  RichTextEdit *rted;
   QVBoxLayout *mainWindowLayoutWithSearch;
   QHBoxLayout *mainWindowLayout;
   QPushButton *pbCopyURL;

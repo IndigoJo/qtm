@@ -6,18 +6,18 @@
     <x>0</x>
     <y>0</y>
     <width>431</width>
-    <height>257</height>
+    <height>259</height>
    </rect>
   </property>
   <property name="windowTitle" >
    <string>Blog account settings</string>
   </property>
   <layout class="QVBoxLayout" >
-   <property name="margin" >
-    <number>9</number>
-   </property>
    <property name="spacing" >
     <number>6</number>
+   </property>
+   <property name="margin" >
+    <number>9</number>
    </property>
    <item>
     <widget class="QGroupBox" name="gbLocalStorage" >
@@ -36,7 +36,7 @@
         <property name="orientation" >
          <enum>Qt::Horizontal</enum>
         </property>
-        <property name="sizeHint" >
+        <property name="sizeHint" stdset="0" >
          <size>
           <width>151</width>
           <height>20</height>
@@ -97,11 +97,11 @@
         <string>Feedback defaults</string>
        </property>
        <layout class="QVBoxLayout" >
-        <property name="margin" >
-         <number>9</number>
-        </property>
         <property name="spacing" >
          <number>6</number>
+        </property>
+        <property name="margin" >
+         <number>9</number>
         </property>
         <item>
          <widget class="QCheckBox" name="cbAllowComments" >
@@ -144,6 +144,13 @@
        </property>
       </widget>
      </item>
+     <item row="3" column="0" colspan="2" >
+      <widget class="QCheckBox" name="chEditRichText" >
+       <property name="text" >
+        <string>Edit with rich text by default</string>
+       </property>
+      </widget>
+     </item>
     </layout>
    </item>
    <item>
@@ -155,11 +162,11 @@
    </item>
    <item>
     <layout class="QHBoxLayout" >
-     <property name="margin" >
-      <number>0</number>
-     </property>
      <property name="spacing" >
       <number>6</number>
+     </property>
+     <property name="margin" >
+      <number>0</number>
      </property>
      <item>
       <widget class="QPushButton" name="pbWhatsThis" >
@@ -176,7 +183,7 @@
        <property name="orientation" >
         <enum>Qt::Horizontal</enum>
        </property>
-       <property name="sizeHint" >
+       <property name="sizeHint" stdset="0" >
         <size>
          <width>91</width>
          <height>31</height>

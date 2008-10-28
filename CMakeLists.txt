@@ -159,6 +159,8 @@ set(QTM_SRCS
     ${SYSTRAYICON_CC}
     ${DBUSADAPTOR_CC}
     XmlRpcHandler.cc
+    RichTextEdit/RichTextEdit.cc
+    RichTextEdit/nestedlisthelper.cc
 )
 
 set(QTM_MOC_HDRS
@@ -174,6 +176,8 @@ set(QTM_MOC_HDRS
     ${SUPERMENU_H}
     ${SYSTRAYICON_H}
     ${DBUSADAPTOR_H}
+    RichTextEdit/RichTextEdit.h
+    RichTextEdit/nestedlisthelper.h
 )
 
 set(QTM_UIS

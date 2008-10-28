@@ -645,13 +645,20 @@ void EditingWindow::doUiSetup()
   connect( ui.actionClear_console, SIGNAL( triggered( bool ) ),
            console, SLOT( clear() ) );
 
-  // Set up editor widget
+  // Set up code editor widget
   ed = new TEXTEDIT( mainStack );
 #if QT_VERSION < 0x040400 || defined DONT_USE_PTE
   EDITOR->setAcceptRichText( false );
 #endif
   edID = mainStack->addWidget( ed );
   EDITOR->setReadOnly( false );
+
+  // Set up rich text editor widget
+  rted = new RichTextEdit( mainStack );
+  rted->setAcceptRichText( true );
+  rtedID = mainStack->addWidget( rted );
+  rted->setReadOnly( false );
+
   previousRaisedLSWidget = edID;
   mainWindowLayout->addWidget( leftWidget, 3 );
   mainWindowLayout->addWidget( mainStack, 6 );
@@ -2394,6 +2401,16 @@ void EditingWindow::insertImageFromClipboard()
   EDITOR->insertPlainText( QString( "<img src=\"%1\">%2</img>" )
                            .arg( linkString )
                            .arg( EDITOR->textCursor().selectedText() ) );
+}
+
+void EditingWindow::toggleRichText( bool rt )
+{
+  if( rt ) {
+
+  }
+  else {
+
+  }
 }
 
 void EditingWindow::cut()

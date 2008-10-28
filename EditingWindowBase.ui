@@ -25,7 +25,7 @@
      <x>0</x>
      <y>0</y>
      <width>800</width>
-     <height>26</height>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="menu_Edit" >
@@ -42,6 +42,8 @@
      <addaction name="actionUnordered_list_2" />
      <addaction name="actionOrdered_list" />
     </widget>
+    <addaction name="actionRich_text" />
+    <addaction name="separator" />
     <addaction name="action_Cut" />
     <addaction name="actionC_opy" />
     <addaction name="actionCopy_upload_location" />
@@ -635,6 +637,20 @@
   <action name="actionOpen_recent" >
    <property name="text" >
     <string>Open &amp;recent</string>
+   </property>
+  </action>
+  <action name="actionRich_text" >
+   <property name="checkable" >
+    <bool>true</bool>
+   </property>
+   <property name="text" >
+    <string>Rich text editor</string>
+   </property>
+   <property name="statusTip" >
+    <string>Rich text</string>
+   </property>
+   <property name="whatsThis" >
+    <string>Click to switch between editing your entry in rich text mode (i.e. "what you see is what you get", and editing raw code.</string>
    </property>
   </action>
  </widget>
