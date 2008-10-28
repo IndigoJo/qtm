@@ -51,11 +51,11 @@ Section "MainSection" SEC01
   CreateDirectory "$SMPROGRAMS\QTM"
   CreateShortCut "$SMPROGRAMS\QTM\QTM.lnk" "$INSTDIR\qtm.exe"
   CreateShortCut "$DESKTOP\QTM.lnk" "$INSTDIR\qtm.exe"
-  File "..\..\..\MinGW\bin\mingwm10.dll"
-  File "..\..\..\Qt\4.4.3\bin\QtCore4.dll"
-  File "..\..\..\Qt\4.4.3\bin\QtGui4.dll"
-  File "..\..\..\Qt\4.4.3\bin\QtXml4.dll"
-  File "..\..\..\Qt\4.4.3\bin\QtNetwork4.dll"
+  File "..\..\..\..\MinGW\bin\mingwm10.dll"
+  File "..\..\..\..\Qt\4.4.3\bin\QtCore4.dll"
+  File "..\..\..\..\Qt\4.4.3\bin\QtGui4.dll"
+  File "..\..\..\..\Qt\4.4.3\bin\QtXml4.dll"
+  File "..\..\..\..\Qt\4.4.3\bin\QtNetwork4.dll"
 SectionEnd
 
 Section -AdditionalIcons

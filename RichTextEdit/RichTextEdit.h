@@ -1,9 +1,10 @@
 /**
  * krichtextedit.h
  *
- * Copyright 2007 Laurent Montel <montel@kde.org>
- * Copyright 2008 Thomas McGuire <thomas.mcguire@gmx.net>
- * Copyright 2008 Stephen Kelly  <steveire@gmail.com>
+ * Copyright 2007 Laurent Montel  <montel@kde.org>
+ * Copyright 2008 Thomas McGuire  <thomas.mcguire@gmx.net>
+ * Copyright 2008 Stephen Kelly   <steveire@gmail.com>
+ * Copyright 2008 Matthew J Smith <indigojo@blogistan.co.uk>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -21,20 +22,20 @@
  * 02110-1301  USA
  */
 
-#ifndef KRICHTEXTEDIT_H
-#define KRICHTEXTEDIT_H
+#ifndef RICHTEXTEDIT_H
+#define RICHTEXTEDIT_H
 
-#include <ktextedit.h>
+#include <QTextEdit> 
 
 class QMouseEvent;
 class QKeyEvent;
 
-class KRichTextEditPrivate;
+class RichTextEditPrivate;
 
-#include <kdeui_export.h>
+//#include <kdeui_export.h>
 
 /**
- * The KRichTextEdit class provides a widget to edit and display rich text.
+ * The RichTextEdit class provides a widget to edit and display rich text.
  *
  * It offers several additional rich text editing functions to KTextEdit and makes
  * them easier to access including:
@@ -47,7 +48,7 @@ class KRichTextEditPrivate;
  * @li Nested list handling
  * @li Simple actions to insert tables. TODO
  *
- * The KRichTextEdit can be in two modes: Rich text mode and plain text mode.
+ * The RichTextEdit can be in two modes: Rich text mode and plain text mode.
  * Calling functions which modify the format/style of the text will automatically
  * enable the rich text mode. Rich text mode is sometimes also referred to as
  * HTML mode.
@@ -56,9 +57,8 @@ class KRichTextEditPrivate;
  * connect to the slots which insert the rich text, use switchToPlainText() or
  * enableRichTextMode().
  *
- * @since 4.1
- */
-class KDEUI_EXPORT KRichTextEdit : public KTextEdit
+  */
+class RichTextEdit : public QTextEdit
 {
     Q_OBJECT
 
@@ -72,25 +72,25 @@ public:
               };
 
     /**
-     * Constructs a KRichTextEdit object
+     * Constructs a RichTextEdit object
      *
      * @param text The initial text of the text edit, which is interpreted as
      *             HTML.
      * @param parent The parent widget
      */
-    explicit KRichTextEdit(const QString& text, QWidget *parent = 0);
+    explicit RichTextEdit( const QString& text, QWidget *parent = 0 );
 
     /**
-     * Constructs a KRichTextEdit object.
+     * Constructs a RichTextEdit object.
      *
      * @param parent The parent widget
      */
-    explicit KRichTextEdit(QWidget *parent = 0);
+    explicit RichTextEdit( QWidget *parent = 0 );
 
     /**
      * Destructor.
      */
-    virtual ~KRichTextEdit();
+    virtual ~RichTextEdit();
 
     /**
      * This enables rich text mode. Nothing is done except changing the internal
@@ -145,7 +145,7 @@ public:
      * @param cursor The cursor to use to select the text.
      * @sa updateLink
      */
-    void selectLinkText(QTextCursor* cursor) const;
+    void selectLinkText( QTextCursor* cursor ) const;
 
     /**
      * Convenience function to select the link text using the active cursor.
@@ -230,21 +230,21 @@ public Q_SLOTS:
      *
      * @param fontFamily The text's font family will be changed to this one
      */
-    void setFontFamily(const QString &fontFamily);
+  void setFontFamily( const QString &ff );
 
     /**
      * Sets the current word or selection to the font size @a size
      *
      * @param size The text's font will get this size
      */
-    void setFontSize(int size);
+    void setFontSize( int size );
 
     /**
      * Sets the current word or selection to the font @a font
      *
      * @param font the font of the text will be set to this font
      */
-    void setFont(const QFont &font);
+    void setFont( const QFont &font );
 
     /**
      * Toggles the bold formatting of the current word or selection at the current
@@ -252,45 +252,45 @@ public Q_SLOTS:
      *
      * @param bold If true, the text will be set to bold
      */
-    void setTextBold(bool bold);
+    void setTextBold( bool bold );
 
     /**
      * Toggles the italic formatting of the current word or selection at the current
      * cursor position.
      *
-     * @param italic If true, the text will be set to italic
+     * @param ital If true, the text will be set to italic
      */
-    void setTextItalic(bool italic);
+    void setTextItalic( bool ital );
 
     /**
      * Toggles the underline formatting of the current word or selection at the current
      * cursor position.
      *
-     * @param underline If true, the text will be underlined
+     * @param ul If true, the text will be underlined
      */
-    void setTextUnderline(bool underline);
+    void setTextUnderline( bool ul );
 
     /**
      * Toggles the strikeout formatting of the current word or selection at the current
      * cursor position.
      *
-     * @param strikeOut If true, the text will be struck out
+     * @param st If true, the text will be struck out
      */
-    void setTextStrikeOut(bool strikeOut);
+    void setTextStrikeOut( bool st );
 
     /**
      * Sets the foreground color of the current word or selection to @a color.
      *
      * @param color The text will get this background color
      */
-    void setTextForegroundColor(const QColor &color);
+    void setTextForegroundColor( const QColor &color );
 
     /**
      * Sets the background color of the current word or selection to @a color.
      *
      * @param color The text will get this foreground color
      */
-    void setTextBackgroundColor(const QColor &color);
+    void setTextBackgroundColor( const QColor &color );
 
     /**
      * Inserts a horizontal rule below the current block.
@@ -317,7 +317,7 @@ Q_SIGNALS:
      *
      * @param mode The new text mode
      */
-    void textModeChanged(KRichTextEdit::Mode mode);
+    void textModeChanged( RichTextEdit::Mode mode );
 
     /**
      * Emitted whenever the user has finished making a selection. (on mouse up)
@@ -330,13 +330,11 @@ protected:
      * Reimplemented.
      * Catches key press events. Used to handle some key presses on lists.
      */
-    virtual void keyPressEvent(QKeyEvent *event);
+    virtual void keyPressEvent( QKeyEvent *event );
 
 private:
-    //@cond PRIVATE
-    KRichTextEditPrivate *const d;
-    friend class KRichTextEditPrivate;
-    //@endcond
+    RichTextEditPrivate *const d;
+    friend class RichTextEditPrivate;
 };
 
 
