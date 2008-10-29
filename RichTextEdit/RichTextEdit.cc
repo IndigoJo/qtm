@@ -131,7 +131,8 @@ void RichTextEdit::insertHorizontalRule( QString &id )
   QTextCharFormat cf = cursor.charFormat();
 
   cursor.beginEditBlock();
-  cursor.insertHtml( "<hr />" );
+  cursor.insertHtml( id.isEmpty() ? "<hr />" :
+                     QString( "<hr id=\"%1\" />" ).arg( id ) );
   cursor.insertBlock( bf, cf );
   setTextCursor( cursor );
   d->activateRichText();
