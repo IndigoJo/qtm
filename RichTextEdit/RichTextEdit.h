@@ -297,8 +297,10 @@ public Q_SLOTS:
 
     /**
      * Inserts a horizontal rule below the current block.
+     *
+     * @param id An XHTML id for the horizontal rule
      */
-    void insertHorizontalRule();
+    void insertHorizontalRule( const QString &id );
 
     /**
      * This will switch the editor to plain text mode.

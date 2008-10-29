@@ -2254,7 +2254,7 @@ void EditingWindow::handleConsole( bool isChecked )
 
 void EditingWindow::makeBold( bool bold )
 {
-  if( editRichText )
+  if( mainStack->currentIndex() == rtedID )
     rted->setTextBold( bold );
   else
     EDITOR->insertPlainText( QString( "<strong>%1</strong>" ).arg( EDITOR->textCursor().selectedText() ) );
@@ -2262,7 +2262,7 @@ void EditingWindow::makeBold( bool bold )
 
 void EditingWindow::makeItalic( bool ital )
 {
-  if( editRichText )
+  if( mainStack->currentIndex() == rtedID )
     rted->setTextItalic( ital );
   else
     EDITOR->insertPlainText( QString( "<em>%1</em>" ).arg( EDITOR->textCursor().selectedText() ) );
@@ -2270,7 +2270,7 @@ void EditingWindow::makeItalic( bool ital )
 
 void EditingWindow::makeUnderline( bool ul )
 {
-  if( editRichText )
+  if( mainStack->currentIndex() == rtedID )
     rted->setTextUnderline( ul );
   else
     EDITOR->insertPlainText( QString( "<u>%1</u>" ).arg( EDITOR->textCursor().selectedText() ) );
@@ -2278,10 +2278,18 @@ void EditingWindow::makeUnderline( bool ul )
 
 void EditingWindow::insertMore()
 {
-  if( !EDITOR->toPlainText().contains( "<!--more-->" ) )
-    EDITOR->insertPlainText( "<!--more-->" );
-  else
-    statusBar()->showMessage( tr( "A 'more' tag already exists." ), 2000 );
+  if( mainStack->currentIndex() == rtedID ) {
+    if( rted->toPlainText().contains( "<hr id=\"qtm-more\"" ) )
+      rted->insertHorizontalRule( "qtm-more" );
+    else
+      statusBar()->showMessage( tr( "A 'more' tag already exists." ), 2000 );
+  }
+  else {
+    if( !EDITOR->toPlainText().contains( "<!--more-->" ) )
+      EDITOR->insertPlainText( "<!--more-->" );
+    else
+      statusBar()->showMessage( tr( "A 'more' tag already exists." ), 2000 );
+  }
 }
 
 void EditingWindow::makeBlockquote()

@@ -124,14 +124,14 @@ void RichTextEdit::indentListLess()
   d->nestedListHelper->handleOnIndentLess();
 }
 
-void RichTextEdit::insertHorizontalRule()
+void RichTextEdit::insertHorizontalRule( QString &id )
 {
   QTextCursor cursor = textCursor();
   QTextBlockFormat bf = cursor.blockFormat();
   QTextCharFormat cf = cursor.charFormat();
 
   cursor.beginEditBlock();
-  cursor.insertHtml( "<hr>" );
+  cursor.insertHtml( "<hr />" );
   cursor.insertBlock( bf, cf );
   setTextCursor( cursor );
   d->activateRichText();
