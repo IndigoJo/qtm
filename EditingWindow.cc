@@ -513,12 +513,14 @@ void EditingWindow::doUiSetup()
            ui.toolBar, SLOT( setVisible( bool ) ) );
 #endif
 
+  connect( ui.actionRich_text, SIGNAL( triggered( bool ) ),
+           this, SLOT( toggleRichText( bool ) ) );
   connect( ui.action_Bold, SIGNAL( triggered( bool ) ),
-           this, SLOT( makeBold() ) );
+           this, SLOT( makeBold( bool ) ) );
   connect( ui.action_Italic, SIGNAL( triggered( bool ) ),
-           this, SLOT( makeItalic() ) );
+           this, SLOT( makeItalic( bool ) ) );
   connect( ui.actionU_nderline, SIGNAL( triggered( bool ) ),
-           this, SLOT( makeUnderline() ) );
+           this, SLOT( makeUnderline( bool ) ) );
   connect( ui.actionBlockquote, SIGNAL( triggered( bool ) ),
            this, SLOT( makeBlockquote() ) );
   connect( ui.action_More, SIGNAL( triggered( bool ) ),
@@ -594,7 +596,8 @@ void EditingWindow::doUiSetup()
   connect( ui.actionRe_move_ping, SIGNAL( triggered( bool ) ),
            this, SLOT( removeTBPing() ) );
   connect( ui.action_Blog_this, SIGNAL( triggered( bool ) ),
-           this, SLOT( newMTPost() ) );
+             connect( ui.actionRich_text, SIGNAL( triggered( bool ) ),
+                      this, SLOT( toggleRichText( bool ) ) );this, SLOT( newMTPost() ) );
   connect( ui.action_What_s_this, SIGNAL( triggered( bool ) ),
            this, SLOT( doWhatsThis() ) );
 
@@ -659,7 +662,8 @@ void EditingWindow::doUiSetup()
   rtedID = mainStack->addWidget( rted );
   rted->setReadOnly( false );
 
-  previousRaisedLSWidget = edID;
+  mainStack->setCurrentIndex( editRichText ? rtedID : edID );
+  previousRaisedLSWidget = mainStack->currentIndex();
   mainWindowLayout->addWidget( leftWidget, 3 );
   mainWindowLayout->addWidget( mainStack, 6 );
   mainWindowLayout->setSpacing( 1 );
@@ -1019,6 +1023,7 @@ void EditingWindow::readSettings()
   postAsSave = settings.value( "postAsSave", true ).toBool();
   allowComments = settings.value( "allowComments", true ).toBool();
   allowTB = settings.value( "allowTB", true ).toBool();
+  editRichText = settings.value( "editRichText", true ).toBool();
 #ifdef USE_SYSTRAYICON
   copyTitle = settings.value( "copyTitle", true ).toBool();
 #endif
@@ -1092,7 +1097,7 @@ void EditingWindow::updateRecentFileMenu()
                 recentFiles.value( j ).filename.section( "/", -1, -1 ) 
                 : t.replace( '&', "&&" ) );
       else
-        text  = tr("&%1 %2" )
+        text = tr( "&%1 %2" )
           .arg( j + 1 )
           .arg( recentFiles.value( j ).title.isEmpty() ?
                 recentFiles.value( j ).filename.section( "/", -1, -1 ) 
@@ -1427,6 +1432,7 @@ void EditingWindow::getPreferences()
                                               Qt::Unchecked );
   prefsDialog.cbAllowTB->setCheckState( allowTB ? Qt::Checked :
                                         Qt::Unchecked );
+  prefsDialog.chEditRichText->setCheckState( editRichText ? Qt::Checked : Qt::Unchecked );
 #ifdef USE_SYSTRAYICON
   prefsDialog.chCopyTitle->setCheckState( copyTitle ? Qt::Checked : Qt::Unchecked );
 #else
@@ -1472,6 +1478,7 @@ void EditingWindow::getPreferences()
     postAsSave = prefsDialog.cbPostAsSave->isChecked();
     allowComments = prefsDialog.cbAllowComments->isChecked();
     allowTB = prefsDialog.cbAllowTB->isChecked();
+    editRichText = prefsDialog.chEditRichText->isChecked();
 #ifdef USE_SYSTRAYICON
     copyTitle = prefsDialog.chCopyTitle->isChecked();
 #endif
@@ -1550,6 +1557,7 @@ void EditingWindow::getPreferences()
     settings.setValue( "postAsSave", postAsSave );
     settings.setValue( "allowComments", allowComments );
     settings.setValue( "allowTB", allowTB );
+    settings.setValue( "editRichText", editRichText );
 #ifdef USE_SYSTRAYICON
     settings.setValue( "copyTitle", copyTitle );
 #endif
@@ -2244,19 +2252,28 @@ void EditingWindow::handleConsole( bool isChecked )
   }
 }
 
-void EditingWindow::makeBold()
+void EditingWindow::makeBold( bool bold )
 {
-  EDITOR->insertPlainText( QString( "<strong>%1</strong>" ).arg( EDITOR->textCursor().selectedText() ) );
+  if( editRichText )
+    rted->setTextBold( bold );
+  else
+    EDITOR->insertPlainText( QString( "<strong>%1</strong>" ).arg( EDITOR->textCursor().selectedText() ) );
 }
 
-void EditingWindow::makeItalic()
+void EditingWindow::makeItalic( bool ital )
 {
-  EDITOR->insertPlainText( QString( "<em>%1</em>" ).arg( EDITOR->textCursor().selectedText() ) );
+  if( editRichText )
+    rted->setTextItalic( ital );
+  else
+    EDITOR->insertPlainText( QString( "<em>%1</em>" ).arg( EDITOR->textCursor().selectedText() ) );
 }
 
-void EditingWindow::makeUnderline()
+void EditingWindow::makeUnderline( bool ul )
 {
-  EDITOR->insertPlainText( QString( "<u>%1</u>" ).arg( EDITOR->textCursor().selectedText() ) );
+  if( editRichText )
+    rted->setTextUnderline( ul );
+  else
+    EDITOR->insertPlainText( QString( "<u>%1</u>" ).arg( EDITOR->textCursor().selectedText() ) );
 }
 
 void EditingWindow::insertMore()

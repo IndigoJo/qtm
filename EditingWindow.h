@@ -143,7 +143,7 @@ class EditingWindow : public QMainWindow
   QString lastAccountID;
   bool categoriesEnabled, entryBlogged, useNewWindows, savePassword,
       postAsSave, noPassword, initialChangeBlog, allowComments, allowTB, postDateTime,
-    copyTitle, allowRegexSearch, useTwoNewlines;
+      copyTitle, allowRegexSearch, useTwoNewlines, editRichText;
   QHash<QString, bool *> accountAttributes;
   QHash<QString, QString *> accountStrings;
   bool entryEverSaved, cleanSave, noAutoSave, noAlphaCats;
@@ -201,9 +201,9 @@ class EditingWindow : public QMainWindow
   void extractAccountDetails();
   void changeBlog( int );
   void handleConsole( bool );
-  void makeBold();
-  void makeItalic();
-  void makeUnderline();
+  void makeBold( bool );
+  void makeItalic( bool );
+  void makeUnderline( bool );
   void makeBlockquote();
   void makePara();
   void insertLink( bool isAutoLink = false );
@@ -304,8 +304,7 @@ class EditingWindow : public QMainWindow
   QMenu *recentFilesMenu;
   QAction *noRecentFilesAction;
 
-  int previewWindowID;
-  int consoleID, edID;
+  int previewWindowID, consoleID, edID, rtedID;
   int previousRaisedLSWidget;
   int currentHttpBusiness;
   // virtual void resizeEvent( QResizeEvent *e );
