@@ -2430,11 +2430,15 @@ void EditingWindow::insertImageFromClipboard()
 
 void EditingWindow::toggleRichText( bool rt )
 {
-  if( rt ) {
-
+  if( !rt ) {
+    EDITOR->setPlainText( rted->toCleanHtml() );
+    mainStack->setCurrentIndex( edID );
+    previousRaisedLSWidget = edID;
   }
   else {
-
+    rted->setHtml( EDITOR->plainText() );
+    mainStack->setCurrentIndex( rtedID );
+    previousRaisedLSWidget = rtedID;
   }
 }
 

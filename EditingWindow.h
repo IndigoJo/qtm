@@ -79,7 +79,7 @@ class EditingWindow : public QMainWindow
   /*  Catkin( QList<QString>, QList<QString>, int,
       QWidget *parent = 0 );*/
   EditingWindow( QString, QWidget *parent = 0 );
-  ~EditingWindow();
+  virtual ~EditingWindow();
 #if QT_VERSION >= 0x040200
 #ifdef USE_SYSTRAYICON
   void setSTI( SysTrayIcon * );
