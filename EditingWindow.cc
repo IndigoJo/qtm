@@ -2444,17 +2444,25 @@ void EditingWindow::toggleRichText( bool rt )
 
 void EditingWindow::cut()
 {
-  EDITOR->cut();
+  QTextEdit *te = qobject_cast<QTextEdit *>( mainStack->currentWidget() );
+  if( te )
+    if( !te->isReadOnly() )
+      te->cut();
 }
 
 void EditingWindow::copy()
 {
-  EDITOR->copy();
+  QTextEdit *te = qobject_cast<QTextEdit *>( mainStack->currentWidget() );
+  if( te )
+    te->copy();
 }
 
 void EditingWindow::paste()
 {
-  EDITOR->paste();
+  QTextEdit *te = qobject_cast<QTextEdit *>( mainStack->currentWidget() );
+  if( te )
+    if( !te->isReadOnly() )
+      te->paste();
 }
 
 void EditingWindow::undo()
