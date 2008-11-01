@@ -132,42 +132,7 @@
 
   readSettings();
   checkForEmptySettings();
-
-  // Set rich text editor font
-  if( richTextFontString != "" ) {
-    e.fromString( richTextFontString );
-    rted->setFont( e );
-  } else {
-    e = rted->font();
-    richTextFontString = e.toString();
-  }
-
-  // Set plain text editor font
-  if( editorFontString != "" ) {
-    f.fromString( editorFontString );
-    EDITOR->setFont( f );
-  } else {
-    f = EDITOR->font();
-    editorFontString = f.toString();
-  }
-
-  // Set preview font
-  if( previewFontString != "" ) {
-    g.fromString( previewFontString );
-    previewWindow->setFont( g );
-  } else {
-    g = previewWindow->font();
-    previewFontString = g.toString();
-  }
-
-  // Set console font
-  if( consoleFontString != "" ) {
-    h.fromString( consoleFontString );
-    console->setFont( h );
-  } else {
-    h = console->font();
-    consoleFontString = h.toString();
-  }
+  doInitialSetFonts();
 
   cw.chComments->setEnabled( true );
   cw.chComments->setCheckState( allowComments ? Qt::Checked :
@@ -261,35 +226,7 @@
 
   readSettings();
   checkForEmptySettings();
-
-  if( richTextFontString != "" ) {
-    e.fromString( richTextFontString );
-    rted->setFont( e );
-  } else {
-    e = rted->font();
-    richTextFontString = e.toString();
-  }
-  if( editorFontString != "" ) {
-    f.fromString( editorFontString );
-    EDITOR->setFont( f );
-  } else {
-    f = EDITOR->font();
-    editorFontString = f.toString();
-  }
-  if( previewFontString != "" ) {
-    g.fromString( previewFontString );
-    previewWindow->setFont( g );
-  } else {
-    g = previewWindow->font();
-    previewFontString = g.toString();
-  }
-  if( consoleFontString != "" ) {
-    h.fromString( consoleFontString );
-    console->setFont( h );
-  } else {
-    h = console->font();
-    consoleFontString = h.toString();
-  }
+  doInitialSetFonts();
 
   cw.chComments->setEnabled( true );
   cw.chComments->setEnabled( true );
@@ -586,7 +523,10 @@ void EditingWindow::doUiSetup()
   ui.actionPreview_font->setVisible( false );
   ui.actionConsole_font->setVisible( false );
 #else
-  connect( ui.action_Font, SIGNAL( triggered( bool ) ),   this, SLOT( doFont() ) );
+  connect( ui.actionRich_text_editor_font, SIGNAL( triggered( bool ) ),
+	   this, SLOT( doRichTextEditorFont() ) );
+  connect( ui.action_Font, SIGNAL( triggered( bool ) ),   
+	   this, SLOT( doEditorFont() ) );
   connect( ui.actionPreview_font, SIGNAL( triggered( bool ) ),
            this, SLOT( doPreviewFont() ) );
   connect( ui.actionConsole_font, SIGNAL( triggered( bool ) ),
@@ -936,6 +876,47 @@ void EditingWindow::checkForEmptySettings()
                                QMessageBox::Yes | QMessageBox::Default,
                                QMessageBox::No ) == QMessageBox::Yes )
       getPreferences();
+  }
+}
+
+void EditingWindow::doInitialSetFonts()
+{
+  QFont e, f, g, h;
+
+  // Set rich text editor font
+  if( richTextFontString != "" ) {
+    e.fromString( richTextFontString );
+    rted->setFont( e );
+  } else {
+    e = rted->font();
+    richTextFontString = e.toString();
+  }
+
+  // Set plain text editor font
+  if( editorFontString != "" ) {
+    f.fromString( editorFontString );
+    EDITOR->setFont( f );
+  } else {
+    f = EDITOR->font();
+    editorFontString = f.toString();
+  }
+
+  // Set preview font
+  if( previewFontString != "" ) {
+    g.fromString( previewFontString );
+    previewWindow->setFont( g );
+  } else {
+    g = previewWindow->font();
+    previewFontString = g.toString();
+  }
+
+  // Set console font
+  if( consoleFontString != "" ) {
+    h.fromString( consoleFontString );
+    console->setFont( h );
+  } else {
+    h = console->font();
+    consoleFontString = h.toString();
   }
 }
 

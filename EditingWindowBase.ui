@@ -55,6 +55,7 @@
     <addaction name="action_Find" />
     <addaction name="actionFind_again" />
     <addaction name="separator" />
+    <addaction name="actionRich_text_editor_font" />
     <addaction name="action_Font" />
     <addaction name="actionPreview_font" />
     <addaction name="actionConsole_font" />
@@ -651,6 +652,11 @@
    </property>
    <property name="whatsThis" >
     <string>Click to switch between editing your entry in rich text mode (i.e. "what you see is what you get", and editing raw code.</string>
+   </property>
+  </action>
+  <action name="actionRich_text_editor_font" >
+   <property name="text" >
+    <string>Rich text editor font ...</string>
    </property>
   </action>
  </widget>

@@ -93,6 +93,7 @@ class EditingWindow : public QMainWindow
   Ui::MainWindow ui;
   Ui::CategoryWidget cw;
   void doUiSetup();
+  void doInitialSetFonts();
   void checkForEmptySettings();
   void setInitialAccount();
   void positionWidget( QWidget *, QWidget * );
