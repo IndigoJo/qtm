@@ -678,6 +678,7 @@ void EditingWindow::doUiSetup()
   EDITOR->setAcceptRichText( false );
 #endif
   edID = mainStack->addWidget( ed );
+  EDITOR->setUndoRedoEnabled( true );
   EDITOR->setReadOnly( false );
 
   // Set up rich text editor widget
@@ -685,6 +686,7 @@ void EditingWindow::doUiSetup()
   rted->setAcceptRichText( true );
   rtedID = mainStack->addWidget( rted );
   rted->setReadOnly( false );
+  rted->setUndoRedoEnabled( true );
 
   mainStack->setCurrentIndex( editRichText ? rtedID : edID );
   previousRaisedLSWidget = mainStack->currentIndex();
