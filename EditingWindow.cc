@@ -2467,12 +2467,18 @@ void EditingWindow::paste()
 
 void EditingWindow::undo()
 {
-  EDITOR->document()->undo();
+  QTextEdit *te = qobject_cast<QTextEdit *>( mainStack->currentWidget() );
+  if( te )
+    if( !te->isReadOnly() )
+      te->document()->undo();
 }
 
 void EditingWindow::redo()
 {
-  EDITOR->document()->redo();
+  QTextEdit *te = qobject_cast<QTextEdit *>( mainStack->currentWidget() );
+  if( te )
+    if( !te->isReadOnly() )
+      te->document()->redo();
 }
 
 void EditingWindow::makeUnorderedList()
@@ -2498,8 +2504,13 @@ QString & EditingWindow::getHTMLList( QString tag, QString & text )
 
   worklist = text.split( "\n" );
   for( int a = 0; a < worklist.count(); a++ ) {
-    worklist[a].prepend( "<li>" );
-    worklist[a].append( "</li>" );
+    if( worklist[a].isEmpty() && a != 0 &&
+        a != worklist.count()-1 )
+      worklist.removeAt( a );
+    else {
+      worklist[a].prepend( "<li>" );
+      worklist[a].append( "</li>" );
+    }
   }
   text = worklist.join( "\n" );
   text.prepend( QString( "<%1>" ).arg( tag ) );
