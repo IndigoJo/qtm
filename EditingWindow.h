@@ -162,7 +162,7 @@ class EditingWindow : public QMainWindow
   int primaryCat;
   QString otherCatsList;
   QRegExpValidator *tagValidator;
-  QString editorFontString, previewFontString, consoleFontString;
+  QString richTextFontString, editorFontString, previewFontString, consoleFontString;
   bool useBloggerTitleFormatting;
   int bloggerTitleFormat;
   QStringList bloggerTitleFormatStrings;
@@ -228,7 +228,7 @@ class EditingWindow : public QMainWindow
   void makeOrderedList();
   void doPreview( bool );
   void showHighlightedURL( const QString & );
-  //void blogThis();
+  void blogThis();
   void newMTPost(); // formerly blogThis()
   void updatePostCategories();
   void saveBlogs();
@@ -254,7 +254,8 @@ class EditingWindow : public QMainWindow
   void removeTBPing();
   void handleInitialLookup( const QHostInfo & );
   void handleHostLookupFailed();
-  void doFont();
+  void doRichTextEditorFont();
+  void doEditorFont();
   void doPreviewFont();
   void doConsoleFont();
   void configureQuickpostTemplates();

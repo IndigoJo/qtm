@@ -50,6 +50,7 @@
 #include <QTextCursor>
 #include <QTextDocument>
 #include <QTextDocumentFragment>
+#include <QTextListFormat>
 #include <QClipboard>
 #include <QDir>
 #include <QTemporaryFile>
@@ -82,6 +83,7 @@
 #include "SafeHttp.h"
 #include "Application.h"
 #include "EditingWindow.h"
+#include "RichTextEdit/RichTextEdit.h"
 #ifdef USE_SYSTRAYICON
 #include "SysTrayIcon.h"
 #endif
@@ -119,7 +121,7 @@
   EditingWindow::EditingWindow( bool noRefreshBlogs, QWidget *parent )
 : QMainWindow( parent )
 {
-  QFont f, g, h;
+  QFont e, f, g, h;
 
   QDomElement detailElem, nameElem, serverElem, locElem, loginElem, pwdElem, attribElem;
   QSettings settings;
@@ -131,6 +133,16 @@
   readSettings();
   checkForEmptySettings();
 
+  // Set rich text editor font
+  if( richTextFontString != "" ) {
+    e.fromString( richTextFontString );
+    rted->setFont( e );
+  } else {
+    e = rted->font();
+    richTextFontString = e.toString();
+  }
+
+  // Set plain text editor font
   if( editorFontString != "" ) {
     f.fromString( editorFontString );
     EDITOR->setFont( f );
@@ -138,6 +150,8 @@
     f = EDITOR->font();
     editorFontString = f.toString();
   }
+
+  // Set preview font
   if( previewFontString != "" ) {
     g.fromString( previewFontString );
     previewWindow->setFont( g );
@@ -145,6 +159,8 @@
     g = previewWindow->font();
     previewFontString = g.toString();
   }
+
+  // Set console font
   if( consoleFontString != "" ) {
     h.fromString( consoleFontString );
     console->setFont( h );
@@ -236,7 +252,7 @@
   EditingWindow::EditingWindow( QString newPost, QWidget *parent )
 : QMainWindow( parent )
 {
-  QFont f, g, h;
+  QFont e, f, g, h;
   QDomElement detailElem, attribElem, nameElem, serverElem, locElem, loginElem, pwdElem;
   QSettings settings;
 
@@ -246,6 +262,13 @@
   readSettings();
   checkForEmptySettings();
 
+  if( richTextFontString != "" ) {
+    e.fromString( richTextFontString );
+    rted->setFont( e );
+  } else {
+    e = rted->font();
+    richTextFontString = e.toString();
+  }
   if( editorFontString != "" ) {
     f.fromString( editorFontString );
     EDITOR->setFont( f );
@@ -596,8 +619,9 @@ void EditingWindow::doUiSetup()
   connect( ui.actionRe_move_ping, SIGNAL( triggered( bool ) ),
            this, SLOT( removeTBPing() ) );
   connect( ui.action_Blog_this, SIGNAL( triggered( bool ) ),
-             connect( ui.actionRich_text, SIGNAL( triggered( bool ) ),
-                      this, SLOT( toggleRichText( bool ) ) );this, SLOT( newMTPost() ) );
+	   this, SLOT( blogThis() ) );
+  connect( ui.actionRich_text, SIGNAL( triggered( bool ) ),
+	   this, SLOT( toggleRichText( bool ) ) );
   connect( ui.action_What_s_this, SIGNAL( triggered( bool ) ),
            this, SLOT( doWhatsThis() ) );
 
@@ -1032,6 +1056,7 @@ void EditingWindow::readSettings()
 #endif
   settings.endGroup();
   settings.beginGroup( "fonts" );
+  richTextFontString = settings.value( "richTextFontString", "" ).toString();
   editorFontString = settings.value( "editorFontString", "" ).toString();
   previewFontString = settings.value( "previewFontString", "" ).toString();
   consoleFontString = settings.value( "consoleFontString", "" ).toString();
@@ -1450,9 +1475,12 @@ void EditingWindow::getPreferences()
   prefsDialog.tabWidget->setTabText( 1, tr( "Fonts" ) );
   prefsDialog.tabWidget->setCurrentIndex( 0 );
 
+  QFont rtFont = rted->font();
   QFont editorFont = EDITOR->font();
   QFont previewFont = previewWindow->font();
   QFont consoleFont = console->font();
+  prefsDialog.fcbRichText->setCurrentFont( rtFont );
+  prefsDialog.sbRichText->setValue( rtFont.pointSize() );
   prefsDialog.fcbComposer->setCurrentFont( editorFont );
   prefsDialog.sbComposer->setValue( editorFont.pointSize() );
   prefsDialog.fcbPreview->setCurrentFont( previewFont );
@@ -1489,6 +1517,10 @@ void EditingWindow::getPreferences()
 #ifndef NO_DEBUG_OUTPUT
     // qDebug( "setting fonts" );
 #endif
+    QFont rf = prefsDialog.fcbRichText->currentFont();
+    rf.setPointSize( prefsDialog.sbRichText->value() );
+    richTextFontString = rf.toString();
+    rted->setFont( rf );
     QFont ef = prefsDialog.fcbComposer->currentFont();
     ef.setPointSize( prefsDialog.sbComposer->value() );
     editorFontString = ef.toString();
@@ -1567,6 +1599,7 @@ void EditingWindow::getPreferences()
     settings.endGroup();
 #if QT_VERSION >= 0x040200
     settings.beginGroup( "fonts" );
+    settings.setValue( "richTextFontString", richTextFontString );
     settings.setValue( "editorFontString", editorFontString );
     settings.setValue( "previewFontString", previewFontString );
     settings.setValue( "consoleFontString", consoleFontString );
@@ -2431,14 +2464,16 @@ void EditingWindow::insertImageFromClipboard()
 void EditingWindow::toggleRichText( bool rt )
 {
   if( !rt ) {
-    EDITOR->setPlainText( rted->toCleanHtml() );
+    EDITOR->setPlainText( rted->toHtml() );
     mainStack->setCurrentIndex( edID );
     previousRaisedLSWidget = edID;
+    searchWidget->setTextEdit( EDITOR );
   }
   else {
-    rted->setHtml( EDITOR->plainText() );
+    rted->setHtml( EDITOR->toPlainText() );
     mainStack->setCurrentIndex( rtedID );
     previousRaisedLSWidget = rtedID;
+    searchWidget->setTextEdit( rted );
   }
 }
 
@@ -2483,18 +2518,28 @@ void EditingWindow::redo()
 
 void EditingWindow::makeUnorderedList()
 {
-  QString listString = EDITOR->textCursor().selection().toPlainText();
+  if( mainStack->currentIndex() == edID ) {
+    QString listString = EDITOR->textCursor().selection().toPlainText();
 
-  if( !listString.isEmpty() )
-    EDITOR->insertPlainText( getHTMLList( QString( "ul" ), listString ) );
+    if( !listString.isEmpty() )
+      EDITOR->insertPlainText( getHTMLList( QString( "ul" ), listString ) );
+  }
+  else {
+    rted->textCursor().createList( QTextListFormat::ListDisc );
+  }
 }
 
 void EditingWindow::makeOrderedList()
 {
-  QString listString = EDITOR->textCursor().selection().toPlainText();
+  if( mainStack->currentIndex() == edID ) {
+    QString listString = EDITOR->textCursor().selection().toPlainText();
 
-  if( !listString.isEmpty() )
-    EDITOR->insertPlainText( getHTMLList( QString( "ol" ), listString ) );
+    if( !listString.isEmpty() )
+      EDITOR->insertPlainText( getHTMLList( QString( "ol" ), listString ) );
+  }
+  else {
+    rted->textCursor().createList(  QTextListFormat::ListDecimal );
+  }
 }
 
 QString & EditingWindow::getHTMLList( QString tag, QString & text )
@@ -2632,10 +2677,13 @@ void EditingWindow::showHighlightedURL( const QString &highlightedURL )
   statusBar()->showMessage( highlightedURL, 2000 );
 }
 
-/*void EditingWindow::blogThis()
-  {
-  newMTPost();
-  }*/
+void EditingWindow::blogThis()
+{
+  if( entryBlogged )
+    submitMTEdit();
+  else
+    newMTPost();
+}
 
 void EditingWindow::newMTPost()
 {
@@ -4016,17 +4064,33 @@ void EditingWindow::removeTBPing()
     dirtify();
 }
 
-void EditingWindow::doFont()
+void EditingWindow::doRichTextEditorFont()
 {
 #if QT_VERSION < 0x040200
   bool isOK;
   QSettings settings;
-  QFont f( QFontDialog::getFont( &isOK, EDITOR->font() ) );
-  EDITOR->setFont( f );
-  editorFontString = f.toString();
-  settings.beginGroup( "fonts" );
-  settings.setValue( "editorFontString", editorFontString );
-  settings.endGroup();
+  QFont f( QFontDialog::getFont( &isOK, rted->font(), this,
+				 tr( "Set rich text editor font" ) ) );
+  if( isOK ) {
+    rted->setFont( f );
+    richTextFontString = f.toString();
+    settings.setValue( "fonts/richTextFontString", richTextFontString );
+  }
+#endif
+}
+
+void EditingWindow::doEditorFont()
+{
+#if QT_VERSION < 0x040200
+  bool isOK;
+  QSettings settings;
+  QFont f( QFontDialog::getFont( &isOK, EDITOR->font(), this,
+				 tr( "Set the plain text editor font" ) ) );
+  if( isOK ) {
+    EDITOR->setFont( f );
+    editorFontString = f.toString();
+    settings.setValue( "fonts/editorFontString", editorFontString );
+  }
 #endif
 }
 
@@ -4035,12 +4099,13 @@ void EditingWindow::doPreviewFont()
 #if QT_VERSION < 0x040200
   bool isOK;
   QSettings settings;
-  QFont f( QFontDialog::getFont( &isOK, previewWindow->font() ) );
-  previewWindow->setFont( f );
-  previewFontString = f.toString();
-  settings.beginGroup( "fonts" );
-  settings.setValue( "previewFontString", previewFontString );
-  settings.endGroup();
+  QFont f( QFontDialog::getFont( &isOK, previewWindow->font(), this,
+				 tr( "Set the preview font" ) ) );
+  if( isOK ) {
+    previewWindow->setFont( f );
+    previewFontString = f.toString();
+    settings.setValue( "fonts/previewFontString", previewFontString );
+  }
 #endif
 }
 
@@ -4049,12 +4114,13 @@ void EditingWindow::doConsoleFont()
 #if QT_VERSION < 0x040200
   bool isOK;
   QSettings settings;
-  QFont f( QFontDialog::getFont( &isOK, console->font() ) );
-  console->setFont( f );
-  consoleFontString = f.toString();
-  settings.beginGroup( "fonts" );
-  settings.setValue( "consoleFontString", consoleFontString );
-  settings.endGroup();
+  QFont f( QFontDialog::getFont( &isOK, console->font(), this,
+				 tr( "Set the console font" ) ) );
+  if( isOK ) {
+    console->setFont( f );
+    consoleFontString = f.toString();
+    settings.setValue( "fonts/consoleFontString", consoleFontString );
+  }
 #endif
 }
 

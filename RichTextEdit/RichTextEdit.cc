@@ -26,6 +26,7 @@
 #include "nestedlisthelper.h"
 
 #include <QTextDocumentFragment>
+#include <QTextBlock>
 #include <QMouseEvent>
 
 class RichTextEditPrivate : public QObject
@@ -124,7 +125,7 @@ void RichTextEdit::indentListLess()
   d->nestedListHelper->handleOnIndentLess();
 }
 
-void RichTextEdit::insertHorizontalRule( QString &id )
+void RichTextEdit::insertHorizontalRule( const QString &id )
 {
   QTextCursor cursor = textCursor();
   QTextBlockFormat bf = cursor.blockFormat();
@@ -194,7 +195,7 @@ void RichTextEdit::setTextUnderline( bool ul )
   d->activateRichText();
 }
 
-void RichTextEdit::setTextStrikeout( bool st )
+void RichTextEdit::setTextStrikeOut( bool st )
 {
   QTextCharFormat fmt;
   fmt.setFontStrikeOut( st );
@@ -235,6 +236,15 @@ void RichTextEdit::setFontSize( int size )
   QTextCharFormat fmt;
   fmt.setFontPointSize( size );
   d->mergeFormatOnWordOrSelection(fmt);
+  setFocus();
+  d->activateRichText();
+}
+
+void RichTextEdit::setFont( const QFont &font )
+{
+  QTextCharFormat fmt;
+  fmt.setFont( font );
+  d->mergeFormatOnWordOrSelection( fmt );
   setFocus();
   d->activateRichText();
 }
@@ -319,7 +329,7 @@ QString RichTextEdit::currentLinkUrl() const
   return textCursor().charFormat().anchorHref();
 }
 
-void KRichTextEdit::updateLink( const QString &linkUrl, const QString &linkText )
+void RichTextEdit::updateLink( const QString &linkUrl, const QString &linkText )
 {
   QTextCursor cursor = textCursor();
   cursor.beginEditBlock();
@@ -396,7 +406,7 @@ void KRichTextEdit::updateLink( const QString &linkUrl, const QString &linkText 
   cursor.endEditBlock();
 }
 
-void KRichTextEdit::keyPressEvent( QKeyEvent *event )
+void RichTextEdit::keyPressEvent( QKeyEvent *event )
 {
     bool handled = false;
     if( textCursor().currentList() ) {
@@ -406,7 +416,7 @@ void KRichTextEdit::keyPressEvent( QKeyEvent *event )
     }
 
     if( !handled ) {
-        KTextEdit::keyPressEvent( event );
+        QTextEdit::keyPressEvent( event );
     }
 
     if( textCursor().currentList() ) {
@@ -415,17 +425,17 @@ void KRichTextEdit::keyPressEvent( QKeyEvent *event )
     emit cursorPositionChanged();
 }
 
-bool KRichTextEdit::canIndentList() const
+bool RichTextEdit::canIndentList() const
 {
     return d->nestedListHelper->canIndent();
 }
 
-bool KRichTextEdit::canDedentList() const
+bool RichTextEdit::canDedentList() const
 {
     return d->nestedListHelper->canDedent();
 }
 
-QString KRichTextEdit::toCleanHtml() const
+QString RichTextEdit::toCleanHtml() const
 {
     static QString evilline = 
       "<p style=\" margin-top:0px; margin-bottom:0px; "

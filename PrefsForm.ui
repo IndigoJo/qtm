@@ -1,7 +1,7 @@
 <ui version="4.0" >
  <author>Matthew J Smith (Yusuf)</author>
- <class>cbEditRichText</class>
- <widget class="QDialog" name="cbEditRichText" >
+ <class>PrefsForm</class>
+ <widget class="QDialog" name="PrefsForm" >
   <property name="geometry" >
    <rect>
     <x>0</x>
@@ -34,7 +34,7 @@
    <item>
     <widget class="QTabWidget" name="tabWidget" >
      <property name="currentIndex" >
-      <number>0</number>
+      <number>1</number>
      </property>
      <widget class="QWidget" name="storageTab" >
       <attribute name="title" >
@@ -244,56 +244,81 @@
          <property name="spacing" >
           <number>6</number>
          </property>
-         <item row="0" column="1" >
+         <item row="1" column="1" >
           <widget class="QFontComboBox" name="fcbComposer" />
          </item>
-         <item row="0" column="0" >
+         <item row="1" column="0" >
           <widget class="QLabel" name="label_5" >
            <property name="text" >
-            <string>Editing font</string>
+            <string>&amp;Editing font</string>
+           </property>
+           <property name="buddy" >
+            <cstring>fcbComposer</cstring>
            </property>
           </widget>
          </item>
-         <item row="1" column="0" >
+         <item row="3" column="0" >
           <widget class="QLabel" name="label_8" >
            <property name="text" >
-            <string>Preview font</string>
+            <string>&amp;Preview font</string>
+           </property>
+           <property name="buddy" >
+            <cstring>fcbPreview</cstring>
            </property>
           </widget>
          </item>
-         <item row="1" column="2" >
+         <item row="3" column="2" >
           <widget class="QSpinBox" name="sbPreview" >
            <property name="minimum" >
             <number>1</number>
            </property>
           </widget>
          </item>
-         <item row="2" column="2" >
+         <item row="4" column="2" >
           <widget class="QSpinBox" name="sbConsole" >
            <property name="minimum" >
             <number>1</number>
            </property>
           </widget>
          </item>
-         <item row="2" column="1" >
+         <item row="4" column="1" >
           <widget class="QFontComboBox" name="fcbConsole" />
          </item>
-         <item row="2" column="0" >
+         <item row="4" column="0" >
           <widget class="QLabel" name="label_9" >
            <property name="text" >
-            <string>Console font</string>
+            <string>&amp;Console font</string>
+           </property>
+           <property name="buddy" >
+            <cstring>fcbConsole</cstring>
            </property>
           </widget>
          </item>
-         <item row="1" column="1" >
+         <item row="3" column="1" >
           <widget class="QFontComboBox" name="fcbPreview" />
          </item>
-         <item row="0" column="2" >
+         <item row="1" column="2" >
           <widget class="QSpinBox" name="sbComposer" >
            <property name="minimum" >
             <number>1</number>
            </property>
           </widget>
+         </item>
+         <item row="0" column="1" >
+          <widget class="QFontComboBox" name="fcbRichText" />
+         </item>
+         <item row="0" column="0" >
+          <widget class="QLabel" name="lRichTextFont" >
+           <property name="text" >
+            <string>&amp;Rich text editing font</string>
+           </property>
+           <property name="buddy" >
+            <cstring>fcbRichText</cstring>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="2" >
+          <widget class="QSpinBox" name="sbRichText" />
          </item>
         </layout>
        </item>
@@ -366,14 +391,22 @@
   <tabstop>pbBrowse</tabstop>
   <tabstop>leFileExtn</tabstop>
   <tabstop>chUseNewWindows</tabstop>
+  <tabstop>cbPostAsSave</tabstop>
+  <tabstop>chCopyTitle</tabstop>
+  <tabstop>chAllowRegexSearch</tabstop>
+  <tabstop>chEditRichText</tabstop>
   <tabstop>cbAllowComments</tabstop>
   <tabstop>cbAllowTB</tabstop>
+  <tabstop>cbSTI2ClickFunction</tabstop>
+  <tabstop>fcbRichText</tabstop>
+  <tabstop>sbRichText</tabstop>
   <tabstop>fcbComposer</tabstop>
   <tabstop>sbComposer</tabstop>
   <tabstop>fcbPreview</tabstop>
   <tabstop>sbPreview</tabstop>
   <tabstop>fcbConsole</tabstop>
   <tabstop>sbConsole</tabstop>
+  <tabstop>pbWhatsThis</tabstop>
   <tabstop>okButton</tabstop>
   <tabstop>cancelButton</tabstop>
  </tabstops>
@@ -382,7 +415,7 @@
   <connection>
    <sender>cancelButton</sender>
    <signal>clicked()</signal>
-   <receiver>cbEditRichText</receiver>
+   <receiver>PrefsForm</receiver>
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel" >
@@ -398,7 +431,7 @@
   <connection>
    <sender>okButton</sender>
    <signal>clicked()</signal>
-   <receiver>cbEditRichText</receiver>
+   <receiver>PrefsForm</receiver>
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel" >
