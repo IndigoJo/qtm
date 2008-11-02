@@ -105,6 +105,8 @@
 #include "textbold.xpm"
 #include "textital.xpm"
 #include "textul.xpm"
+#include "html_ol.xpm"
+#include "html_ul.xpm"
 #include "bquote.xpm"
 #include "addtag.xpm"
 #include "addctag.xpm"
@@ -214,8 +216,8 @@
   mainStack->setCurrentIndex( edID );
 }
 
-  EditingWindow::EditingWindow( QString newPost, QWidget *parent )
-: QMainWindow( parent )
+EditingWindow::EditingWindow( QString newPost, QWidget *parent )
+  : QMainWindow( parent )
 {
   QFont e, f, g, h;
   QDomElement detailElem, attribElem, nameElem, serverElem, locElem, loginElem, pwdElem;
@@ -396,6 +398,8 @@ void EditingWindow::doUiSetup()
   ui.action_Bold->setIcon( QIcon( QPixmap( mini_bold_xpm ) ) );
   ui.action_Italic->setIcon( QIcon( QPixmap( mini_ital_xpm ) ) );
   ui.actionU_nderline->setIcon( QIcon( QPixmap( underline_xpm ) ) );
+  ui.actionUnordered_list->setIcon( QIcon( QPixmap( html_ul ) ) );
+  ui.action_Ordered_list->setIcon( QIcon( QPixmap( html_ol ) ) );
   ui.actionBlockquote->setIcon( QIcon( QPixmap( bquote_xpm ) ) );
   ui.actionP_aragraph->setIcon( QIcon( QPixmap( paraIcon_xpm ) ) );
   ui.action_Link->setIcon( QIcon( QPixmap( linkIcon_xpm ) ) );
