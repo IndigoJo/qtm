@@ -2378,6 +2378,7 @@ void EditingWindow::insertLink( bool isAutoLink )
 void EditingWindow::insertLinkFromClipboard()
 {
   QString linkString( QApplication::clipboard()->text() );
+  //TODO: Mark up the rich text link
   EDITOR->insertPlainText( QString( "<a href=\"%1\">%2</a>" )
                            .arg( linkString )
                            .arg( EDITOR->textCursor().selectedText() ) );
@@ -2440,6 +2441,7 @@ void EditingWindow::insertImage()
         insertionString += " align=\"left\"";
     }
     insertionString += ">";
+    // TODO: insert the image into rich text
     EDITOR->insertPlainText( insertionString );
   }
 }
