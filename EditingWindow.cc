@@ -640,7 +640,8 @@ void EditingWindow::doUiSetup()
 
   // Set up search widget
   mainWindowLayoutWithSearch = new QVBoxLayout( cWidget );
-  searchWidget = new QijSearchWidget( EDITOR, this );
+  searchWidget = new QijSearchWidget( editRichText ? rted : EDITOR, 
+                                      this );
   searchWidget->hide();
   mainWindowLayoutWithSearch->setSpacing( 1 );
 #if QT_VERSION >= 0x040300
@@ -846,9 +847,11 @@ void EditingWindow::closeEvent( QCloseEvent *event )
 
 void EditingWindow::showEvent( QShowEvent *event )
 {
+  QTextEdit *te = editRichText ? rted : EDITOR;
   // If the document is empty, the window unedited and the entry never saved,
   // chances are it's new
-  if( EDITOR->document()->isEmpty() &&
+
+  if( te->document()->isEmpty() &&
       !dirtyIndicator->isVisible() &&
       !event->spontaneous() &&
       !entryEverSaved )
@@ -2256,7 +2259,7 @@ void EditingWindow::handleConsole( bool isChecked )
   if( !isChecked ) {
     ui.actionP_review->setEnabled( true );
     mainStack->setCurrentIndex( previousRaisedLSWidget );
-    searchWidget->setTextEdit( EDITOR );
+    searchWidget->setTextEdit( qobject_cast<QTextEdit *>( mainStack->currentWidget() ) );
     ui.action_View_Console->setText( tr( "&Console" ) );
     ui.action_View_Console->setIconText( tr( "Console" ) );
     ui.action_View_Console->setToolTip( tr( "Console" ) );
@@ -2355,6 +2358,7 @@ void EditingWindow::insertLink( bool isAutoLink )
       }
     }
     insertionString += ">";
+    //TODO: Mark up the rich text link
     EDITOR->insertPlainText( QString( "%1%2</a>" )
                              .arg( insertionString )
                              .arg( leui.leLinkText->text() ) );
@@ -4122,11 +4126,12 @@ void EditingWindow::dirtify()
 void EditingWindow::setDirtySignals( bool d )
 {
   QList<QWidget *> widgetList;
-  widgetList << EDITOR << cw.cbAccountSelector << cw.cbBlogSelector << cw.cbStatus
+  widgetList << EDITOR << rted << cw.cbAccountSelector << cw.cbBlogSelector << cw.cbStatus
     << cw.chComments << cw.chTB << cw.cbMainCat << cw.lwOtherCats << cw.teExcerpt;
 
   if( d ) {
     connect( EDITOR, SIGNAL( textChanged() ), this, SLOT( dirtify() ) );
+    connect( rted, SIGNAL( textChanged() ), this, SLOT( dirtify() ) );
     connect( cw.cbAccountSelector, SIGNAL( activated( int ) ), this, SLOT( dirtify() ) );
     connect( cw.cbBlogSelector, SIGNAL( activated( int ) ), this, SLOT( dirtify() ) );
     connect( cw.cbStatus, SIGNAL( activated( int ) ), this, SLOT( dirtify() ) );

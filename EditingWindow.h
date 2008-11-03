@@ -131,6 +131,8 @@ class EditingWindow : public QMainWindow
   void saveAccountsDom();
 
   int currentAccount, currentBlog, loadedEntryBlog;
+
+  // Preference strings
   QString loadedAccountId;
   QString applicationVersion;
   QString server;
@@ -142,9 +144,11 @@ class EditingWindow : public QMainWindow
   QString localStorageFileExtn;
   QString remoteFileLocation;
   QString lastAccountID;
+  // Preference bools
   bool categoriesEnabled, entryBlogged, useNewWindows, savePassword,
       postAsSave, noPassword, initialChangeBlog, allowComments, allowTB, postDateTime,
       copyTitle, allowRegexSearch, useTwoNewlines, editRichText;
+
   QHash<QString, bool *> accountAttributes;
   QHash<QString, QString *> accountStrings;
   bool entryEverSaved, cleanSave, noAutoSave, noAlphaCats;
@@ -272,9 +276,6 @@ class EditingWindow : public QMainWindow
   void getPreferences();
   void refreshBlogList();
   void changeCaptionAfterTitleChanged();
-  //bool load( const QString &, QList<QString>, QList<QString> );
-  /*bool load( const QString &, QStringList, QStringList, QStringList,
-    QStringList, QStringList ); */
   bool load( const QString &, QDomDocument & );
   bool load( const QString &, bool fromSTI = false );
   void dirtify();

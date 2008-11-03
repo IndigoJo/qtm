@@ -141,84 +141,89 @@ void QijSearchWidget::findInTextEdit( const QString &text, direction currentDire
   // This method has been adopted from the method "find" in the TabbedBrowser class
   // in Qt Assistant.
 
+  // First, make sure there actually is a text editor to work on
+  if( _textEdit != 0 || _plainTextEdit != 0 ) {
+
 #if QT_VERSION < 0x040400
-  doc = _textEdit->document();
-  c = _textEdit->textCursor();
+      doc = _textEdit->document();
+      c = _textEdit->textCursor();
 #else
-  if( _textEdit ) {
-    doc = _textEdit->document();
-    c = _textEdit->textCursor();
-  }
-  else {
-    doc = _plainTextEdit->document();
-    c = _plainTextEdit->textCursor();
-  }
+      if( _textEdit ) {
+          doc = _textEdit->document();
+          c = _textEdit->textCursor();
+      }
+      else {
+          doc = _plainTextEdit->document();
+          c = _plainTextEdit->textCursor();
+      }
 #endif
 
-  QString oldText = leFindText->text();
-  QTextDocument::FindFlags options;
-  QPalette p = leFindText->palette();
-  p.setColor( QPalette::Active, QPalette::Base, Qt::white );
+      QString oldText = leFindText->text();
+      QTextDocument::FindFlags options;
+      QPalette p = leFindText->palette();
+      p.setColor( QPalette::Active, QPalette::Base, Qt::white );
 
-  if( c.hasSelection() )
-    c.setPosition( (currentDirection == Forward) ?
-                   //	  c.setPosition( ((dir == Forward) && !stay) ? 
-      c.position() : c.anchor(), QTextCursor::MoveAnchor );
+      if( c.hasSelection() )
+          c.setPosition( (currentDirection == Forward) ?
+                  //	  c.setPosition( ((dir == Forward) && !stay) ? 
+              c.position() : c.anchor(), QTextCursor::MoveAnchor );
 
-                   QTextCursor newCursor = c;
+                  QTextCursor newCursor = c;
 
-                   if( !text.isEmpty() ) {
-                   if( currentDirection == Backward ) 
-                   options |= QTextDocument::FindBackward;
+                  if( !text.isEmpty() ) {
+                  if( currentDirection == Backward ) 
+                  options |= QTextDocument::FindBackward;
 
-                   if ( chMatchCase->isChecked() )
-                   options |= QTextDocument::FindCaseSensitively;
+                  if ( chMatchCase->isChecked() )
+                  options |= QTextDocument::FindCaseSensitively;
 
-                   if ( chWholeWords->isChecked() )
-                   options |= QTextDocument::FindWholeWords;
+                  if ( chWholeWords->isChecked() )
+                  options |= QTextDocument::FindWholeWords;
 
 #if QT_VERSION >= 040200	  
-                   if( chRegExp->isChecked() )
-                   newCursor = doc->find( QRegExp( text, chMatchCase->isChecked() ? Qt::CaseSensitive : Qt::CaseInsensitive ), c );
-                   else
+                  if( chRegExp->isChecked() )
+                  newCursor = doc->find( QRegExp( text, chMatchCase->isChecked() ? Qt::CaseSensitive : Qt::CaseInsensitive ), c );
+                  else
 #endif
-                     newCursor = doc->find( text, c, options );
-                   //ui.labelWrapped->hide();
-                   currentCursorText = newCursor.selectedText();
+                      newCursor = doc->find( text, c, options );
+                  //ui.labelWrapped->hide();
+                  currentCursorText = newCursor.selectedText();
 
-                   if (newCursor.isNull()) {
-                     //qDebug( "null cursor" );
-                     QTextCursor ac(doc);
-                     ac.movePosition(options & QTextDocument::FindBackward
-                                     ? QTextCursor::End : QTextCursor::Start);
+                  if (newCursor.isNull()) {
+                      //qDebug( "null cursor" );
+                      QTextCursor ac(doc);
+                      ac.movePosition(options & QTextDocument::FindBackward
+                              ? QTextCursor::End : QTextCursor::Start);
 #if QT_VERSION >= 0x040200
-                     if( chRegExp->isChecked() )
-                       newCursor = doc->find( QRegExp( text ), ac, options );
-                     else
+                      if( chRegExp->isChecked() )
+                          newCursor = doc->find( QRegExp( text ), ac, options );
+                      else
 #endif
-                       newCursor = doc->find( text, ac, options );
-                     if (newCursor.isNull()) {
-                       p.setColor(QPalette::Active, QPalette::Base, QColor(255, 102, 102));
-                       newCursor = c;
-                     }
-                     else
-                       emit searchMessage( tr( "Wrapped the search" ) );
-                   }
-                   }
+                          newCursor = doc->find( text, ac, options );
+                      if (newCursor.isNull()) {
+                          p.setColor(QPalette::Active, QPalette::Base, QColor(255, 102, 102));
+                          newCursor = c;
+                      }
+                      else
+                          emit searchMessage( tr( "Wrapped the search" ) );
+                  }
+                  }
 
-                   if( !isVisible() )
-                     show();
+                  if( !isVisible() )
+                      show();
 #if QT_VERSION < 0x040400
-                   _textEdit->setTextCursor(newCursor);
+                  _textEdit->setTextCursor(newCursor);
 #else
-                   if( _textEdit )
-                     _textEdit->setTextCursor(newCursor);
-                   else
-                     _plainTextEdit->setTextCursor( newCursor );
+                  if( _textEdit )
+                      _textEdit->setTextCursor(newCursor);
+                  else
+                      _plainTextEdit->setTextCursor( newCursor );
 #endif
-                   leFindText->setPalette(p);
-                   /*if( !leFindText->hasFocus() )
-                     autoHideTimer->start(); */
+                  leFindText->setPalette(p);
+                  /*if( !leFindText->hasFocus() )
+                    autoHideTimer->start(); */
+
+  }                 
 }
 
 void QijSearchWidget::on_tbClose_clicked()
@@ -282,6 +287,7 @@ void QijSearchWidget::on_chWholeWords_toggled( bool state )
 
 void QijSearchWidget::on_chRegExp_toggled( bool state )
 {
+// Regexp searching only works on Qt 4.2 or later  
 #if QT_VERSION >= 0x040200
   if( !leFindText->text().isEmpty() )
     findInTextEdit( leFindText->text(), Stay );
