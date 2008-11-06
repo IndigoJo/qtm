@@ -160,7 +160,7 @@ set(QTM_SRCS
     ${DBUSADAPTOR_CC}
     XmlRpcHandler.cc
     RichTextEdit/RichTextEdit.cc
-    RichTextEdit/nestedlisthelper.cc
+    RichTextEdit/NestedListHelper.cc
 )
 
 set(QTM_MOC_HDRS

@@ -1,5 +1,5 @@
 /* XPM */
-const char *textAlignLeft_xpm = {
+const char *textAlignLeft_xpm[] = {
   "16 16 2 1",
   "      c None",
   ".     c 0x000000",

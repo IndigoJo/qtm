@@ -99,6 +99,7 @@ class EditingWindow : public QMainWindow
   void positionWidget( QWidget *, QWidget * );
   void readSettings();
   void writeSettings();
+  void toggleRichTextActions( bool );
   void callRefreshCategories();
   //void blogger_newPost( QByteArray );
   //void blogger_editPost( QByteArray );
@@ -209,10 +210,10 @@ class EditingWindow : public QMainWindow
   void makeBold( bool );
   void makeItalic( bool );
   void makeUnderline( bool );
-  void makeAlignLeft();
-  void makeAlignRight();
-  void makeAlignCentre();
-  void makeJustify();
+  // void makeAlignLeft();
+  // void makeAlignRight();
+  // void makeAlignCentre();
+  // void makeJustify();
   void makeBlockquote();
   void makePara();
   void insertLink( bool isAutoLink = false );

@@ -111,6 +111,10 @@
 #include "addtag.xpm"
 #include "addctag.xpm"
 #include "remtag.xpm"
+#include "textAlignLeft.xpm"
+#include "textAlignRight.xpm"
+#include "textAlignCentre.xpm"
+#include "textJustify.xpm"
 
 #define EDITOR ed
 
@@ -402,10 +406,12 @@ void EditingWindow::doUiSetup()
   ui.action_Ordered_list->setIcon( QIcon( QPixmap( html_ol ) ) );
   ui.actionBlockquote->setIcon( QIcon( QPixmap( bquote_xpm ) ) );
   ui.actionP_aragraph->setIcon( QIcon( QPixmap( paraIcon_xpm ) ) );
+  qDebug() << "assigning icons to new actions";
   ui.action_Left_align->setIcon( QIcon( QPixmap( textAlignLeft_xpm ) ) );
   ui.action_Right_align->setIcon( QIcon( QPixmap( textAlignRight_xpm ) ) );
   ui.action_Centre_text->setIcon( QIcon( QPixmap( textAlignCentre_xpm ) ) );
   ui.action_Justify->setIcon( QIcon( QPixmap( textJustify_xpm ) ) );
+  qDebug() << "done assigning icons";
   ui.action_Link->setIcon( QIcon( QPixmap( linkIcon_xpm ) ) );
   ui.actionI_mage->setIcon( QIcon( QPixmap( imgIcon_xpm ) ) );
   ui.action_More->setIcon( QIcon( QPixmap( more_xpm ) ) );
@@ -525,14 +531,14 @@ void EditingWindow::doUiSetup()
            this, SLOT( pasteAsUnorderedList() ) );
   connect( ui.actionOrdered_list, SIGNAL( triggered( bool ) ),
            this, SLOT( pasteAsOrderedList() ) );
-  connect( ui.action_Left_align, SIGNAL( triggered( bool ) ),
+/*  connect( ui.action_Left_align, SIGNAL( triggered( bool ) ),
            this, SLOT( makeLeftAlign() ) );
   connect( ui.action_Right_align, SIGNAL( triggered( bool ) ),
            this, SLOT( makeRightAlign() ) );
   connect( ui.action_Centre_text, SIGNAL( triggered( bool ) ),
            this, SLOT( makeCentreText() ) );
   connect( ui.action_Justify, SIGNAL( triggered( bool ) ),
-           this, SLOT( makeJustify() ) );
+           this, SLOT( makeJustify() ) ); */
   connect( ui.action_Undo, SIGNAL( triggered( bool ) ),   this, SLOT( undo() ) );
   connect( ui.action_Redo, SIGNAL( triggered( bool ) ),   this, SLOT( redo() ) );
   connect( ui.actionUnordered_list, SIGNAL( triggered( bool ) ),
@@ -649,7 +655,13 @@ void EditingWindow::doUiSetup()
   rted->setReadOnly( false );
   rted->setUndoRedoEnabled( true );
 
-  mainStack->setCurrentIndex( editRichText ? rtedID : edID );
+  previousRaisedLSWidget = editRichText ? rtedID : edID;
+  // This raises the correct editor widget, as per the editRichText preference value
+  qDebug() << "toggling rich text";
+  mainStack->setCurrentIndex( previousRaisedLSWidget );
+  toggleRichTextActions( editRichText );
+  qDebug() << "done toggling";
+
   previousRaisedLSWidget = mainStack->currentIndex();
   mainWindowLayout->addWidget( leftWidget, 3 );
   mainWindowLayout->addWidget( mainStack, 6 );
@@ -2316,6 +2328,7 @@ void EditingWindow::makeUnderline( bool ul )
     EDITOR->insertPlainText( QString( "<u>%1</u>" ).arg( EDITOR->textCursor().selectedText() ) );
 }
 
+/*
 void EditingWindow::makeAlignLeft()
 {
 
@@ -2334,7 +2347,7 @@ void EditingWindow::makeAlignCentre()
 void EditingWindow::makeJustify()
 {
 
-}
+} */
 
 void EditingWindow::insertMore()
 {
@@ -2493,18 +2506,44 @@ void EditingWindow::insertImageFromClipboard()
 
 void EditingWindow::toggleRichText( bool rt )
 {
-  if( !rt ) {
-    EDITOR->setPlainText( rted->toHtml() );
-    mainStack->setCurrentIndex( edID );
-    previousRaisedLSWidget = edID;
-    searchWidget->setTextEdit( EDITOR );
-  }
-  else {
+  if( rt ) {
     rted->setHtml( EDITOR->toPlainText() );
     mainStack->setCurrentIndex( rtedID );
     previousRaisedLSWidget = rtedID;
     searchWidget->setTextEdit( rted );
   }
+  else {
+    EDITOR->setPlainText( rted->toHtml() );
+    mainStack->setCurrentIndex( edID );
+    previousRaisedLSWidget = edID;
+    searchWidget->setTextEdit( EDITOR );
+  }
+  toggleRichTextActions( rt );
+}
+
+void EditingWindow::toggleRichTextActions( bool rt )
+{
+  if( rt ) {
+    connect( ui.action_Left_align, SIGNAL( triggered( bool ) ),
+             rted, SLOT( alignLeft() ) );
+    connect( ui.action_Right_align, SIGNAL( triggered( bool ) ),
+             rted, SLOT( alignRight() ) );
+    connect( ui.action_Justify, SIGNAL( triggered( bool ) ),
+             rted, SLOT( alignJustify() ) );
+    connect( ui.action_Centre_text, SIGNAL( triggered( bool ) ),
+             rted, SLOT( alignCenter() ) );
+  }
+  else {
+    disconnect( ui.action_Left_align, SIGNAL( triggered( bool ) ), rted, 0 );
+    disconnect( ui.action_Right_align, SIGNAL( triggered( bool ) ), rted, 0 );
+    disconnect( ui.action_Justify, SIGNAL( triggered( bool ) ), rted, 0 );
+    disconnect( ui.action_Centre_text, SIGNAL( triggered( bool ) ), rted, 0 );
+  }
+
+  ui.action_Left_align->setEnabled( rt );
+  ui.action_Right_align->setEnabled( rt );
+  ui.action_Justify->setEnabled( rt );
+  ui.action_Centre_text->setEnabled( rt );
 }
 
 void EditingWindow::cut()

@@ -71,7 +71,7 @@ public:
 
 void RichTextEditPrivate::activateRichText()
 {
-  if( mMode = RichTextEdit::Plain ) {
+  if( mMode == RichTextEdit::Plain ) {
     q->setAcceptRichText( true );
     mMode = RichTextEdit::Rich;
     emit q->textModeChanged( mMode );
