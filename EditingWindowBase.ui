@@ -25,7 +25,7 @@
      <x>0</x>
      <y>0</y>
      <width>800</width>
-     <height>22</height>
+     <height>25</height>
     </rect>
    </property>
    <widget class="QMenu" name="menu_Edit" >
@@ -59,14 +59,7 @@
     <addaction name="action_Font" />
     <addaction name="actionPreview_font" />
     <addaction name="actionConsole_font" />
-    <addaction name="action_Bold" />
-    <addaction name="action_Italic" />
-    <addaction name="actionU_nderline" />
-    <addaction name="actionBlockquote" />
-    <addaction name="actionP_aragraph" />
     <addaction name="separator" />
-    <addaction name="actionUnordered_list" />
-    <addaction name="action_Ordered_list" />
    </widget>
    <widget class="QMenu" name="menu_Insert" >
     <property name="title" >
@@ -144,8 +137,27 @@
     <addaction name="separator" />
     <addaction name="actionE_xit" />
    </widget>
+   <widget class="QMenu" name="menuFormatting" >
+    <property name="title" >
+     <string>F&amp;ormatting</string>
+    </property>
+    <addaction name="action_Bold" />
+    <addaction name="action_Italic" />
+    <addaction name="actionU_nderline" />
+    <addaction name="actionBlockquote" />
+    <addaction name="actionP_aragraph" />
+    <addaction name="separator" />
+    <addaction name="actionUnordered_list" />
+    <addaction name="action_Ordered_list" />
+    <addaction name="separator" />
+    <addaction name="action_Left_align" />
+    <addaction name="action_Right_align" />
+    <addaction name="action_Centre_text" />
+    <addaction name="action_Justify" />
+   </widget>
    <addaction name="menu_File" />
    <addaction name="menu_Edit" />
+   <addaction name="menuFormatting" />
    <addaction name="menu_Insert" />
    <addaction name="menuView" />
    <addaction name="menu_Services" />
@@ -494,7 +506,7 @@
   </action>
   <action name="actionBlockquote" >
    <property name="text" >
-    <string>Blockquote</string>
+    <string>Block&amp;quote</string>
    </property>
    <property name="whatsThis" >
     <string>Mark the selected text as a block of quoted text</string>
@@ -545,7 +557,7 @@
   </action>
   <action name="actionUnordered_list" >
    <property name="text" >
-    <string>Unordered &amp;list</string>
+    <string>&amp;Unordered list</string>
    </property>
   </action>
   <action name="action_Ordered_list" >
@@ -657,6 +669,26 @@
   <action name="actionRich_text_editor_font" >
    <property name="text" >
     <string>Rich text editor font ...</string>
+   </property>
+  </action>
+  <action name="action_Left_align" >
+   <property name="text" >
+    <string>Align to &amp;left</string>
+   </property>
+  </action>
+  <action name="action_Right_align" >
+   <property name="text" >
+    <string>Align to &amp;right</string>
+   </property>
+  </action>
+  <action name="action_Centre_text" >
+   <property name="text" >
+    <string>Centre text</string>
+   </property>
+  </action>
+  <action name="action_Justify" >
+   <property name="text" >
+    <string>&amp;Justify</string>
    </property>
   </action>
  </widget>

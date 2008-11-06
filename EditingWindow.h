@@ -20,8 +20,8 @@
 
 // EditingWindow.h - Headers for QTM main window class.
 
-#ifndef CATKIN_H
-#define CATKIN_H
+#ifndef EDITINGWINDOW_H
+#define EDITINGWINDOW_H
 
 #include "ui_EditingWindowBase.h"
 #include "ui_SideWidget.h"
@@ -209,6 +209,10 @@ class EditingWindow : public QMainWindow
   void makeBold( bool );
   void makeItalic( bool );
   void makeUnderline( bool );
+  void makeAlignLeft();
+  void makeAlignRight();
+  void makeAlignCentre();
+  void makeJustify();
   void makeBlockquote();
   void makePara();
   void insertLink( bool isAutoLink = false );

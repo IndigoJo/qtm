@@ -402,6 +402,10 @@ void EditingWindow::doUiSetup()
   ui.action_Ordered_list->setIcon( QIcon( QPixmap( html_ol ) ) );
   ui.actionBlockquote->setIcon( QIcon( QPixmap( bquote_xpm ) ) );
   ui.actionP_aragraph->setIcon( QIcon( QPixmap( paraIcon_xpm ) ) );
+  ui.action_Left_align->setIcon( QIcon( QPixmap( textAlignLeft_xpm ) ) );
+  ui.action_Right_align->setIcon( QIcon( QPixmap( textAlignRight_xpm ) ) );
+  ui.action_Centre_text->setIcon( QIcon( QPixmap( textAlignCentre_xpm ) ) );
+  ui.action_Justify->setIcon( QIcon( QPixmap( textJustify_xpm ) ) );
   ui.action_Link->setIcon( QIcon( QPixmap( linkIcon_xpm ) ) );
   ui.actionI_mage->setIcon( QIcon( QPixmap( imgIcon_xpm ) ) );
   ui.action_More->setIcon( QIcon( QPixmap( more_xpm ) ) );
@@ -437,6 +441,11 @@ void EditingWindow::doUiSetup()
   ui.toolBar->addAction( ui.action_Italic );
   ui.toolBar->addAction( ui.actionU_nderline );
   ui.toolBar->addAction( ui.actionBlockquote );
+  ui.toolBar->addAction( ui.action_Left_align );
+  ui.toolBar->addAction( ui.action_Right_align );
+  ui.toolBar->addAction( ui.action_Centre_text );
+  ui.toolBar->addAction( ui.action_Justify );
+  ui.toolBar->addSeparator();
   ui.toolBar->addAction( ui.action_Link );
   ui.toolBar->addAction( ui.actionI_mage );
   ui.toolBar->addAction( ui.action_More );
@@ -516,6 +525,14 @@ void EditingWindow::doUiSetup()
            this, SLOT( pasteAsUnorderedList() ) );
   connect( ui.actionOrdered_list, SIGNAL( triggered( bool ) ),
            this, SLOT( pasteAsOrderedList() ) );
+  connect( ui.action_Left_align, SIGNAL( triggered( bool ) ),
+           this, SLOT( makeLeftAlign() ) );
+  connect( ui.action_Right_align, SIGNAL( triggered( bool ) ),
+           this, SLOT( makeRightAlign() ) );
+  connect( ui.action_Centre_text, SIGNAL( triggered( bool ) ),
+           this, SLOT( makeCentreText() ) );
+  connect( ui.action_Justify, SIGNAL( triggered( bool ) ),
+           this, SLOT( makeJustify() ) );
   connect( ui.action_Undo, SIGNAL( triggered( bool ) ),   this, SLOT( undo() ) );
   connect( ui.action_Redo, SIGNAL( triggered( bool ) ),   this, SLOT( redo() ) );
   connect( ui.actionUnordered_list, SIGNAL( triggered( bool ) ),
@@ -2297,6 +2314,26 @@ void EditingWindow::makeUnderline( bool ul )
     rted->setTextUnderline( ul );
   else
     EDITOR->insertPlainText( QString( "<u>%1</u>" ).arg( EDITOR->textCursor().selectedText() ) );
+}
+
+void EditingWindow::makeAlignLeft()
+{
+
+}
+
+void EditingWindow::makeAlignRight()
+{
+
+}
+
+void EditingWindow::makeAlignCentre()
+{
+
+}
+
+void EditingWindow::makeJustify()
+{
+
 }
 
 void EditingWindow::insertMore()
